@@ -3,8 +3,10 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 
 const theme = createTheme({
     color: {
-        primary: '#081b27',
-        subPrimary: '#0c2738',
+        primary: {
+            main: '#081b27',
+            light: '#0c2738'
+        },
         nav: '#899ead',
         heading: '#f1b722'
     }
