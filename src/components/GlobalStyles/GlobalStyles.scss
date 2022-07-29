@@ -10,7 +10,11 @@ html {
 }
 
 * {
-    box-sizing: inherit;
+    box-sizing: border-box !important;
     margin: 0;
     padding: 0;
+}
+
+.MuiDialog-container {
+    align-items: flex-start !important;
 }
