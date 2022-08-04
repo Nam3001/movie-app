@@ -10,7 +10,8 @@ const styles = {
         alignItems: 'center',
     },
     toolbar: {
-        height: '64px',
+        width: '100%',
+        height: theme => theme.navBar.height,
         justifyContent: 'space-between',
         px: '16px !important'
     },
@@ -25,12 +26,13 @@ const styles = {
     navItem: {
         color: (theme) => theme.color.nav,
         fontWeight: '500',
-        fontSize: '15px',
+        fontSize: '15.4px',
         cursor: 'pointer',
-        ml: 2,
-        height: '38px',
-        lineHeight: '38px',
+        height: '42px',
+        lineHeight: '42px',
+        mx: '8px',
         userSelect: 'none',
+        textDecoration: 'none',
 
         '&:hover': {
             color: '#fff'

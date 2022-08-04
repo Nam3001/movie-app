@@ -1,0 +1,22 @@
+.option-list::-webkit-scrollbar {
+	appearance: none;
+	-webkit-appearance: none;
+}
+
+.option-list::-webkit-scrollbar:vertical {
+	width: 10px;
+}
+
+.option-list::-webkit-scrollbar-thumb:vertical {
+	background-color: #ccc;
+	border-radius: 20px;
+}
+
+
+.option-list::-webkit-scrollbar-thumb:vertical:hover {
+	background-color: #ddd;
+}
+
+.option-list::-webkit-scrollbar-track:vertical {
+	background-color: #fff;
+}
