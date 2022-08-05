@@ -6,7 +6,12 @@ import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 import SameGenre from '@/pages/SameGenre'
 import Trending from '@/pages/Trending'
+import NowPlaying from '@/pages/NowPlaying'
+import Upcoming from '@/pages/Upcoming'
+import Popular from '@/pages/Popular'
+import TopRated from '@/pages/TopRated'
 import NotFound from '@/pages/NotFound'
+
 
 
 const publicRoutes = [
@@ -18,10 +23,10 @@ const publicRoutes = [
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.category, component: SameGenre },
     { path: config.routes.trending, component: Trending },
-    { path: config.routes.nowPlaying, component: () => <></> },
-    { path: config.routes.topRated, component: () => <></> },
-    { path: config.routes.popular, component: () => <></> },
-    { path: config.routes.upcoming, component: () => <></> },
+    { path: config.routes.nowPlaying, component: NowPlaying },
+    { path: config.routes.topRated, component: TopRated },
+    { path: config.routes.popular, component: Popular },
+    { path: config.routes.upcoming, component: Upcoming },
     { path: config.routes.notFound, component: NotFound }
 ]
 

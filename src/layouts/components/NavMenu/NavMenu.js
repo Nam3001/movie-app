@@ -3,22 +3,34 @@ import PropTypes from 'prop-types'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Box, IconButton, Drawer, List, ListItem } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 const styles = {
     paper: {
         backgroundColor: (theme) => theme.color.primary.main,
         color: (theme) => theme.color.nav,
         width: '280px',
-        padding: '0 40px',
+        padding: '0 48px',
         paddingTop: '50px'
     },
     menuItem: {
-        borderBottom: (theme) => '2px solid #8d9eac1a',
-        padding: '16px 0',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        color: (theme) => theme.color.nav
+        p: 0,
+        '& a': {
+            cursor: 'pointer',
+            display: 'block',
+            width: '100%',
+            textAlign: 'center',
+            borderBottom: (theme) => '2px solid #8d9eac1a',
+            padding: '18px 0',
+            justifyContent: 'center',
+            color: (theme) => theme.color.nav,
+            textDecoration: 'none',
+
+            '&.active': {
+                color: '#fff',
+                borderBottomColor: (theme) => theme.color.heading
+            }
+        }
     },
     closeIcon: {
         color: (theme) => theme.color.nav,
@@ -29,14 +41,25 @@ const styles = {
         position: 'absolute',
         top: 0,
         right: 0
+    },
+    menuIconBtn: {
+        marginTop: '4px',
+        pr: 1.5,
+        py: 2,
+        '& svg': {
+            fontSize: '28px'
+        }
     }
 }
 
 const NavMenu = ({ items, display }) => {
     const [isShowMenu, setIsShowMenu] = useState(false)
-    const toggleShowMenu = useCallback((value) => {
-        setIsShowMenu(value)
-    }, [isShowMenu])
+    const toggleShowMenu = useCallback(
+        (value) => {
+            setIsShowMenu(value)
+        },
+        [isShowMenu]
+    )
 
     return (
         <>
@@ -46,7 +69,7 @@ const NavMenu = ({ items, display }) => {
                 color="inherit"
                 aria-label="menu"
                 size="large"
-                sx={{ marginTop: '4px', display: display }}
+                sx={{ ...styles.menuIconBtn, display }}
             >
                 <MenuIcon />
             </IconButton>
@@ -68,13 +91,15 @@ const NavMenu = ({ items, display }) => {
                     onClick={() => toggleShowMenu(false)}
                 >
                     {items.map((item, idx) => (
-                        <ListItem
-                            component={Link}
-                            to={item.path}
-                            key={idx}
-                            sx={styles.menuItem}
-                        >
-                            {item.title}
+                        <ListItem key={idx} sx={styles.menuItem}>
+                            <NavLink
+                                className={({ isActive }) =>
+                                    isActive ? 'active' : undefined
+                                }
+                                to={item.path}
+                            >
+                                {item.title}
+                            </NavLink>
                         </ListItem>
                     ))}
                 </List>

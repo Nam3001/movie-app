@@ -1,4 +1,4 @@
-import { useState, memo } from 'react'
+import { useState, memo, useRef, useEffect, useCallback } from 'react'
 import logo from '@/assets/img/logo.png'
 import MenuIcon from '@mui/icons-material/Menu'
 import Search from '@/components/Search'
@@ -12,8 +12,9 @@ import {
     Container
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import config from '@/configs'
+import { useLocation } from 'react-router-dom'
 
 import Wrapper from '@/components/Wrapper'
 import NavMenu from '../NavMenu'
@@ -31,6 +32,33 @@ function Header() {
         { title: 'Phổ Biến', path: config.routes.popular },
         { title: 'Sắp Chiếu', path: config.routes.upcoming }
     ]
+
+    // reference to footer of nav item
+    const navItemFooterRef = useRef()
+    const navListRef = useRef()
+
+    const location = useLocation()
+
+    const renderNavItemFooter = useCallback(() => {
+        const itemActived = navListRef.current.querySelector('.active')
+        if (!itemActived) return
+
+        const navItemFooter = navItemFooterRef.current
+
+        const leftPos = `${itemActived.offsetLeft}px`
+        const width = `${itemActived.clientWidth}px`
+        navItemFooter.style.left = leftPos
+        navItemFooter.style.width = width
+    }, [location.pathname])
+
+    useEffect(() => {
+        renderNavItemFooter()
+    }, [location.pathname])
+
+    useEffect(() => {
+        window.addEventListener('resize', renderNavItemFooter)
+        return () => window.removeEventListener('resize', renderNavItemFooter)
+    }, [])
 
     return (
         <HideOnScroll>
@@ -53,19 +81,16 @@ function Header() {
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Box
+                                ref={navListRef}
                                 component="ul"
-                                sx={{
-                                    display: {
-                                        xs: 'none',
-                                        md: 'flex'
-                                    },
-                                    mr: 1,
-                                    alignItems: 'center'
-                                }}
+                                sx={styles.navList}
                             >
                                 {categories.map((item, index) => (
                                     <Box
-                                        component={Link}
+                                        component={NavLink}
+                                        className={({ isActive }) =>
+                                            isActive && 'active'
+                                        }
                                         key={index}
                                         to={item.path}
                                         sx={styles.navItem}
@@ -80,6 +105,10 @@ function Header() {
                             />
                             <Account />
                         </Box>
+                        <Box
+                            ref={navItemFooterRef}
+                            sx={styles.navItemFooter}
+                        ></Box>
                     </Toolbar>
                 </Wrapper>
             </AppBar>

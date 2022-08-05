@@ -39,8 +39,8 @@ function Home() {
 
     return (
         <Wrapper>
-            <Heading>phim mới cập nhật</Heading>
-            <MovieList maxPage={321} movies={movies} isLoading={isLoading} />
+            <Heading>Phim Mới Cập Nhật</Heading>
+            <MovieList maxPage={200} movies={movies} isLoading={isLoading} />
         </Wrapper>
     )
 }
