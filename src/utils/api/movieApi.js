@@ -21,6 +21,10 @@ class MovieApi {
 		return httpRequest.get(`/movie/upcoming`, { params })
 	}
 
+	getTrending(params) {
+		return httpRequest.get('trending/movie/day', { params })
+	}
+
 	getDetail(id, params) {
 		return httpRequest.get(`/movie/${id}`, { params })
 	}

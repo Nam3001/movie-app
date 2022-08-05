@@ -10,6 +10,7 @@ import queryString from 'query-string'
 import { useDispatch, useSelector } from 'react-redux'
 import { getGenres } from '@/store/genresSlice'
 import { genresSelector } from '@/store/selectors'
+import usePagination from '@/hooks/usePagination'
 
 const styles = {
     wrapper: {
@@ -38,12 +39,14 @@ const styles = {
     }
 }
 
-function MovieList({ movies, isLoading }) {
+function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
     const navigate = useNavigate()
     const location = useLocation()
 
     const dispatch = useDispatch()
     const genres = useSelector(genresSelector)
+
+    const [currentPage, onPageChange ] = usePagination()
 
     // navigate to movie detail page
     const handleClickMovie = useCallback((id) => {
@@ -57,38 +60,16 @@ function MovieList({ movies, isLoading }) {
         navigate(`/category/@${id}`)
     }, [])
 
+
     // get genre list
     useEffect(() => {
         dispatch(getGenres())
     }, [])
 
-
-    // get current page on page change
-    const page = useMemo(() => {
-        const currentPage = queryString.parse(location.search)?.page
-        return parseInt(currentPage) || 1
-    }, [location.search])
-
     // scroll to top when change page
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [movies, isLoading])
-
-    const handlePageChange = useCallback((event, newPage) => {
-        const prevSearchParam = queryString.parse(location.search)
-        console.log('page change')
-        // remove prev page param if it exist
-        prevSearchParam?.page && delete prevSearchParam?.page
-
-        const search = queryString.stringify({
-            ...prevSearchParam,
-            page: newPage
-        })
-        navigate({
-            pathname: location.pathname,
-            search
-        })
-    }, [location])
 
 
     const skeletonList = (
@@ -127,16 +108,20 @@ function MovieList({ movies, isLoading }) {
             {!isLoading && (
                 <Pagination
                     shape="rounded"
-                    page={page}
-                    onChange={handlePageChange}
+                    page={currentPage}
+                    onChange={onPageChange}
                     sx={styles.pagination}
-                    count={500}
+                    count={maxPage}
                 />
             )}
         </Box>
     )
 }
 
-MovieList.propTypes = {}
+MovieList.propTypes = {
+    maxPage: PropTypes.number,
+    isLoading: PropTypes.bool,
+    movies: PropTypes.array
+}
 
 export default memo(MovieList)
