@@ -5,6 +5,7 @@ import WatchMovie from '@/pages/WatchMovie'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 import SameGenre from '@/pages/SameGenre'
+import Trending from '@/pages/Trending'
 import NotFound from '@/pages/NotFound'
 
 
@@ -16,7 +17,7 @@ const publicRoutes = [
     { path: config.routes.login, component: Login, layout: null },
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.category, component: SameGenre },
-    { path: config.routes.trending, component: () => <></> },
+    { path: config.routes.trending, component: Trending },
     { path: config.routes.nowPlaying, component: () => <></> },
     { path: config.routes.topRated, component: () => <></> },
     { path: config.routes.popular, component: () => <></> },
