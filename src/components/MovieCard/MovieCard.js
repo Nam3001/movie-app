@@ -146,7 +146,7 @@ const MovieCard = ({
     // set default thumbnail when not pass thumbnail prop
     thumbnail ||= 'https://via.placeholder.com/200x300.png?text=Thumbnail'
 
-    const rating = parseFloat(score) / 2
+    const rating = (parseFloat(score) / 2)
 
     const handleClickMovie = useCallback(() => {
         if (!ids?.movieId) return
@@ -170,7 +170,7 @@ const MovieCard = ({
                     alt="thumbnail"
                     sx={styles.thumbnail}
                 />
-                <Box sx={styles.score}>{score}</Box>
+                <Box sx={styles.score}>{score.toFixed(1)}</Box>
             </Box>
             <Box className="rate" sx={styles.ratingWrapper}>
                 <Rating

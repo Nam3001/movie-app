@@ -80,7 +80,6 @@ class MovieApi {
 	getGenres() {
 		return httpRequest.get('genre/movie/list')
 	}
-
 }
 
 const movieApi = new MovieApi()

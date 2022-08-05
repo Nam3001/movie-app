@@ -5,6 +5,19 @@ import SearchIcon from '@mui/icons-material/Search'
 import SearchInput from '../SearchInput'
 import SearchModal from './SearchModal'
 
+const styles = {
+    searchIcon: {
+        pl: {
+            xs: 2.5,
+            md: 1
+        },
+        py: 2,
+        mr: -0.8,
+        marginTop: '4px',
+        display: { xs: 'block', lg: 'none' }
+    }
+}
+
 const Search = ({ width, placeholder, searchTerm, onSearchChange }) => {
     const [openModal, setOpenModal] = useState(false)
     const handleShowModal = useCallback(() => setOpenModal(true), [])
@@ -16,16 +29,12 @@ const Search = ({ width, placeholder, searchTerm, onSearchChange }) => {
                 <IconButton
                     onClick={handleShowModal}
                     color="inherit"
-                    sx={{
-                        mr: -0.8,
-                        marginTop: '4px',
-                        display: { xs: 'block', lg: 'none' }
-                    }}
+                    sx={styles.searchIcon}
                 >
                     <SearchIcon
                         sx={{
                             color: '#fff',
-                            fontSize: '26px',
+                            fontSize: '28px',
                             height: '30px'
                         }}
                     />

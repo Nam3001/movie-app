@@ -1,4 +1,3 @@
-
 const styles = {
     logo: {
         width: 163,
@@ -7,13 +6,14 @@ const styles = {
     appBar: {
         backgroundColor: (theme) => theme.color.primary.light,
         boxShadow: 0,
-        alignItems: 'center',
+        alignItems: 'center'
     },
     toolbar: {
         width: '100%',
-        height: theme => theme.navBar.height,
+        height: (theme) => theme.navBar.height,
         justifyContent: 'space-between',
-        px: '16px !important'
+        px: '16px !important',
+        position: 'relative'
     },
     menu: {
         color: (theme) => theme.color.nav,
@@ -22,6 +22,16 @@ const styles = {
         cursor: 'pointer',
         paddingRight: '10px',
         marginTop: '4px'
+    },
+    navList: {
+        display: {
+            xs: 'none',
+            md: 'flex'
+        },
+        alignItems: 'center',
+        marginRight: {
+            lg: 2
+        }
     },
     navItem: {
         color: (theme) => theme.color.nav,
@@ -36,6 +46,21 @@ const styles = {
 
         '&:hover': {
             color: '#fff'
+        },
+
+        '&.active': {
+            color: '#fff'
+        }
+    },
+    navItemFooter: {
+        position: 'absolute',
+        height: '2px',
+        backgroundColor: (theme) => theme.color.heading,
+        left: 0,
+        bottom: 0,
+        display: {
+            xs: 'none',
+            md: 'block',
         }
     },
     search: {
