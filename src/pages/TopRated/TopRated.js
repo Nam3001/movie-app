@@ -18,7 +18,7 @@ const TopRated = () => {
 	}, [location.search])
 
 	const { isLoading, movies } = useLoadingMovie({
-		promise: movieApi.getTopRated({ page }),
+		movieApi: movieApi.getTopRated,
 		reloadOnPageChange: true
 	})
 

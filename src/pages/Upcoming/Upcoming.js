@@ -18,7 +18,7 @@ const Upcoming = () => {
 	}, [location.search])
 
 	const { isLoading, movies } = useLoadingMovie({
-		promise: movieApi.getUpcoming({ page }),
+		movieApi: movieApi.getUpcoming,
 		reloadOnPageChange: true
 	})
 

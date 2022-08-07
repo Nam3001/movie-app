@@ -18,7 +18,7 @@ const Popular = () => {
 	}, [location.search])
 
 	const { isLoading, movies } = useLoadingMovie({
-		promise: movieApi.getPopular({ page }),
+		movieApi: movieApi.getPopular,
 		reloadOnPageChange: true
 	})
 

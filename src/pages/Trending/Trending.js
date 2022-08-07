@@ -18,7 +18,7 @@ const Trending = () => {
 	}, [location.search])
 
 	const { isLoading, movies } = useLoadingMovie({
-		promise: movieApi.getTrending({ page }),
+		movieApi: movieApi.getTrending,
 		reloadOnPageChange: true
 	})
 
