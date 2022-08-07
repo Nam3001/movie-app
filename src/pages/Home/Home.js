@@ -37,9 +37,6 @@ function Home() {
         reloadOnPageChange: true
     })
 
-    // console.log(isLoading)
-    
-
     return (
         <Wrapper>
             <Heading>Phim Mới Cập Nhật</Heading>

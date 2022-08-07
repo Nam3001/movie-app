@@ -18,7 +18,7 @@ const NowPlaying = () => {
 	}, [location.search])
 
 	const { isLoading, movies } = useLoadingMovie({
-		promise: movieApi.getNowPlaying({ page }),
+		movieApi: movieApi.getNowPlaying,
 		reloadOnPageChange: true
 	})
 
