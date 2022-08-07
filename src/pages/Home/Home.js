@@ -33,9 +33,12 @@ function Home() {
     }, [location.search])
 
     const { isLoading, movies } = useLoadingMovie({
-        promise: movieApi.getAll({ page }),
+        movieApi: movieApi.getAll,
         reloadOnPageChange: true
     })
+
+    // console.log(isLoading)
+    
 
     return (
         <Wrapper>

@@ -12,6 +12,7 @@ import {
 import StarIcon from '@mui/icons-material/Star'
 import AcUnitIcon from '@mui/icons-material/AcUnit'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
+import thumbnailPlaceholder from '@/assets/img/placeholder.png'
 
 const styles = {
     thumbnailWrapper: {
@@ -20,6 +21,7 @@ const styles = {
         position: 'relative'
     },
     thumbnail: {
+        visibility: 'hidden',
         borderRadius: {
             xs: '8px',
             lg: '6px'
@@ -135,18 +137,15 @@ const MovieCard = ({
     thumbnail
 }) => {
     const [fallback, setFallback] = useState(false)
-    const getFallback = useCallback(() => {
-        setFallback('https://via.placeholder.com/200x300.png?text=Thumbnail')
-    }, [fallback])
 
     // set base url for thumbnail url
     const thumbnailBaseURL = 'https://image.tmdb.org/t/p/original'
     thumbnail &&= thumbnailBaseURL + thumbnail
 
     // set default thumbnail when not pass thumbnail prop
-    thumbnail ||= 'https://via.placeholder.com/200x300.png?text=Thumbnail'
+    thumbnail ||= thumbnailPlaceholder
 
-    const rating = (parseFloat(score) / 2)
+    const rating = parseFloat(score) / 2
 
     const handleClickMovie = useCallback(() => {
         if (!ids?.movieId) return
@@ -165,9 +164,7 @@ const MovieCard = ({
                     onClick={handleClickMovie}
                     component="img"
                     className="thumbnail"
-                    image={fallback || thumbnail}
-                    onError={getFallback}
-                    alt="thumbnail"
+                    lazy-src={thumbnail}
                     sx={styles.thumbnail}
                 />
                 <Box sx={styles.score}>{score.toFixed(1)}</Box>
@@ -176,7 +173,7 @@ const MovieCard = ({
                 <Rating
                     sx={styles.rating}
                     value={rating}
-                    precision={0.1}
+                    precision={0.5}
                     readOnly
                     emptyIcon={<StarIcon />}
                 />
