@@ -1,4 +1,5 @@
-import { useState, useEffect, memo, useCallback, useMemo } from 'react'
+import { useState, useEffect, memo, useCallback, useMemo, useRef } from 'react'
+import { Suspense, lazy } from 'react'
 import PropTypes from 'prop-types'
 import MovieCard, { MovieSkeleton } from '@/components/MovieCard'
 import Wrapper from '@/components/Wrapper'
@@ -11,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getGenres } from '@/store/genresSlice'
 import { genresSelector } from '@/store/selectors'
 import usePagination from '@/hooks/usePagination'
+import thumbnailPlaceholder from '@/assets/img/placeholder.png'
 
 const styles = {
     wrapper: {
@@ -24,7 +26,7 @@ const styles = {
 
         '.MuiPaginationItem-root': {
             color: '#fff',
-            borderColor: theme => theme.color.nav,
+            borderColor: (theme) => theme.color.nav
         },
 
         '.MuiPagination-ul': {
@@ -46,7 +48,7 @@ function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
     const dispatch = useDispatch()
     const genres = useSelector(genresSelector)
 
-    const [currentPage, onPageChange ] = usePagination()
+    const [currentPage, onPageChange] = usePagination()
 
     // navigate to movie detail page
     const handleClickMovie = useCallback((id) => {
@@ -60,7 +62,6 @@ function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
         navigate(`/category/@${id}`)
     }, [])
 
-
     // get genre list
     useEffect(() => {
         dispatch(getGenres())
@@ -71,6 +72,47 @@ function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
         window.scrollTo(0, 0)
     }, [movies, isLoading])
 
+    const movieListRef = useRef()
+
+    useEffect(() => {
+        if (isLoading) return
+
+        const lazyImages = movieListRef.current.querySelectorAll('[lazy-src]')
+
+        const getFallback = (imgEl) => {
+            imgEl.src = thumbnailPlaceholder
+        }
+
+        const callback = (entries, observe) => {
+            for (const entry of entries) {
+                if (!entry.isIntersecting) return
+
+                const lazyImg = entry.target
+                const src = lazyImg.getAttribute('lazy-src')
+
+                // set img src from lazy-src
+                if (lazyImg.tagName.toLowerCase() === 'img') {
+                    lazyImg.src = src
+                    lazyImg.addEventListener('error', () => {
+                        getFallback(lazyImg)
+                    })
+                } else {
+                    lazyImg.style.backgroundImage = `url("${src}"), url(${thumbnailPlaceholder})`
+                }
+
+                lazyImg.style.visibility = 'visible'
+
+                // eliminate not necessary attr
+                lazyImg.removeAttribute('lazy-src')
+                observer.unobserve(lazyImg)
+            }
+        }
+        const observer = new IntersectionObserver(callback, { threshold: 0.1 })
+
+        for (const img of lazyImages) {
+            observer.observe(img)
+        }
+    }, [isLoading])
 
     const skeletonList = (
         <Grid container rowSpacing={8} columnSpacing={{ lg: 8 }}>
@@ -85,11 +127,14 @@ function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
     )
 
     const cardList = (
-        <Grid container rowSpacing={7} columnSpacing={10}>
+        <Grid ref={movieListRef} container rowSpacing={7} columnSpacing={10}>
             {movies.map((movie) => (
                 <Grid key={movie.id} item xs={12} sm={6} lg={3}>
                     <MovieCard
-                        ids={{ movieId: movie.id, genreId: movie.genre_ids[0] }}
+                        ids={{
+                            movieId: movie.id,
+                            genreId: movie.genre_ids[0]
+                        }}
                         onClick={handleClickMovie}
                         onClickGenre={handleClickGenre}
                         score={movie.vote_average}

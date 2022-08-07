@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import queryString from 'query-string'
 import { useLocation } from 'react-router-dom'
 
-function useLoadingMovie({ promise, reloadOnPageChange }) {
+function useLoadingMovie({ movieApi, reloadOnPageChange }) {
 	const location = useLocation()
 
 	const [isLoading, setIsLoading] = useState(true)
@@ -20,7 +20,7 @@ function useLoadingMovie({ promise, reloadOnPageChange }) {
 				try {
 					if (!isLoading) setIsLoading(true)
 
-					const res = await promise
+					const res = await movieApi({ page })
 
 					setIsLoading(false)
 					setMovies(res.data.results)
@@ -30,7 +30,7 @@ function useLoadingMovie({ promise, reloadOnPageChange }) {
 			})()
 		}
 	}, [page])
-
+	
 	// load movie when component mounted if not reloadOnPageChange
 	useEffect(() => {
 		if (!reloadOnPageChange) {
@@ -38,7 +38,7 @@ function useLoadingMovie({ promise, reloadOnPageChange }) {
 				try {
 					if (!isLoading) setIsLoading(true)
 
-					const res = await promise
+					const res = await movieApi()
 
 					setIsLoading(false)
 					setMovies(res.data.results)
