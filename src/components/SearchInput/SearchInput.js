@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from 'react'
+import React, { useEffect, memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { InputBase } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
@@ -60,7 +60,10 @@ const SearchInput = ({
     placeholder,
     xs,
     lg,
-    autoFocus
+    autoFocus,
+    onSearch,
+    searchTerm,
+    onSearchChange
 }) => {
     const inputRef = React.createRef()
 
@@ -69,11 +72,23 @@ const SearchInput = ({
         inputRef.current.focus()
     }, [inputRef, autoFocus])
 
+    // Handle when user type enter to search movie
+    const handleSearchMovie = useCallback((e) => {
+        if (e.key !== 'Enter') return
+
+        onSearch(e)
+        inputRef.current.blur()
+    }, [inputRef, onSearch])
+
     return (
         <Wrapper margin={margin} xs={xs} lg={lg} height={height}>
             <InputStyled
+                value={searchTerm}
                 type="search"
                 inputMode="search"
+                value={searchTerm}
+                onKeyPress={handleSearchMovie}
+                onChange={onSearchChange}
                 inputRef={inputRef}
                 width={width}
                 placeholder={placeholder}

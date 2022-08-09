@@ -33,30 +33,6 @@ class MovieApi {
 		return httpRequest.get(`/movie/${id}/account_states`, { params })
 	}
 
-	getAlternativeTitles(id, params) {
-		return httpRequest.get(`/movie/${id}/alternative_titles`, { params })
-	}
-
-	getChanges(id, params) {
-		return httpRequest.get(`/movie/${id}/changes`, { params })
-	}
-
-	getCredits(id, params) {
-		return httpRequest.get(`/movie/${id}/credits`, { params })
-	}
-
-	getImages(id, params) {
-		return httpRequest.get(`/movie/${id}/images`, { params })
-	}
-
-	getRecommendations(id, params) {
-		return httpRequest.get(`/movie/${id}/recommendations`, { params })
-	}
-
-	getReleaseDate(id, params) {
-		return httpRequest.get(`/movie/${id}/release_dates`, { params })
-	}
-
 	getReviews(id, params) {
 		return httpRequest.get(`/movie/${id}/reviews`, { params })
 	}

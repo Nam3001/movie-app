@@ -1,5 +1,4 @@
 import { useState, useEffect, memo, useCallback, useMemo, useRef } from 'react'
-import { Suspense, lazy } from 'react'
 import PropTypes from 'prop-types'
 import MovieCard, { MovieSkeleton } from '@/components/MovieCard'
 import Wrapper from '@/components/Wrapper'
@@ -13,6 +12,9 @@ import { getGenres } from '@/store/genresSlice'
 import { genresSelector } from '@/store/selectors'
 import usePagination from '@/hooks/usePagination'
 import thumbnailPlaceholder from '@/assets/img/placeholder.png'
+import config from '@/configs'
+import { createPathname } from '@/utils/common'
+import useLazyLoadImage from '@/hooks/useLazyLoadImage'
 
 const styles = {
     wrapper: {
@@ -53,13 +55,9 @@ function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
     // navigate to movie detail page
     const handleClickMovie = useCallback((id) => {
         if (!id) return
-        navigate(`/@${id}`)
-    }, [])
 
-    const handleClickGenre = useCallback((id) => {
-        if (!id) return
-
-        navigate(`/category/@${id}`)
+        const pathname = createPathname(config.routes.movieDetail, id)
+        navigate(pathname)
     }, [])
 
     // get genre list
@@ -72,47 +70,9 @@ function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
         window.scrollTo(0, 0)
     }, [movies, isLoading])
 
+    // lazy loading image
     const movieListRef = useRef()
-
-    useEffect(() => {
-        if (isLoading) return
-
-        const lazyImages = movieListRef.current.querySelectorAll('[lazy-src]')
-
-        const getFallback = (imgEl) => {
-            imgEl.src = thumbnailPlaceholder
-        }
-
-        const callback = (entries, observe) => {
-            for (const entry of entries) {
-                if (!entry.isIntersecting) return
-
-                const lazyImg = entry.target
-                const src = lazyImg.getAttribute('lazy-src')
-
-                // set img src from lazy-src
-                if (lazyImg.tagName.toLowerCase() === 'img') {
-                    lazyImg.src = src
-                    lazyImg.addEventListener('error', () => {
-                        getFallback(lazyImg)
-                    })
-                } else {
-                    lazyImg.style.backgroundImage = `url("${src}"), url(${thumbnailPlaceholder})`
-                }
-
-                lazyImg.style.visibility = 'visible'
-
-                // eliminate not necessary attr
-                lazyImg.removeAttribute('lazy-src')
-                observer.unobserve(lazyImg)
-            }
-        }
-        const observer = new IntersectionObserver(callback, { threshold: 0.1 })
-
-        for (const img of lazyImages) {
-            observer.observe(img)
-        }
-    }, [isLoading])
+    useLazyLoadImage(movieListRef, isLoading)
 
     const skeletonList = (
         <Grid container rowSpacing={8} columnSpacing={{ lg: 8 }}>
@@ -136,7 +96,6 @@ function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
                             genreId: movie.genre_ids[0]
                         }}
                         onClick={handleClickMovie}
-                        onClickGenre={handleClickGenre}
                         score={movie.vote_average}
                         title={movie.title}
                         thumbnail={movie.poster_path}
@@ -149,7 +108,9 @@ function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
 
     return (
         <Box sx={styles.wrapper}>
-            {isLoading ? skeletonList : cardList}
+            {isLoading && skeletonList}
+            {!isLoading && cardList}
+
             {!isLoading && (
                 <Pagination
                     shape="rounded"
