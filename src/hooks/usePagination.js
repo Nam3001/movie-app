@@ -25,7 +25,7 @@ const usePagination = () => {
 			pathname: location.pathname,
 			search
 		})
-	}, [currentSearchParam?.page])
+	}, [location.search])
 
 	return [ page, handlePageChange ]
 }

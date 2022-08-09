@@ -98,15 +98,10 @@ const styles = {
         marginLeft: 'auto',
         marginRight: 'auto',
         textDecoration: 'underline',
-        cursor: 'pointer',
         color: (theme) => theme.color.nav,
         '& .MuiTypography-root, & svg': {
             fontSize: '13px'
         },
-
-        '&:hover': {
-            color: '#ccc'
-        }
     },
     score: {
         position: 'absolute',
@@ -132,7 +127,6 @@ const MovieCard = ({
     score = 0,
     title,
     onClick = DEFAULT_FUNC,
-    onClickGenre = DEFAULT_FUNC,
     genre,
     thumbnail
 }) => {
@@ -152,11 +146,6 @@ const MovieCard = ({
         onClick(ids?.movieId)
     }, [ids?.movieId])
 
-    const handleClickGenre = useCallback(() => {
-        if (!ids?.genreId) return
-        onClickGenre(ids?.genreId)
-    }, [ids?.genreId])
-
     return (
         <Box sx={{ px: 2 }}>
             <Box sx={styles.thumbnailWrapper}>
@@ -164,7 +153,7 @@ const MovieCard = ({
                     onClick={handleClickMovie}
                     component="img"
                     className="thumbnail"
-                    lazy-src={thumbnail}
+                    lazy-src={thumbnail || thumbnailPlaceholder}
                     sx={styles.thumbnail}
                 />
                 <Box sx={styles.score}>{score.toFixed(1)}</Box>
@@ -173,20 +162,20 @@ const MovieCard = ({
                 <Rating
                     sx={styles.rating}
                     value={rating}
-                    precision={0.5}
+                    precision={0.1}
                     readOnly
                     emptyIcon={<StarIcon />}
                 />
             </Box>
             <Typography
-                onClick={onClick}
+                onClick={handleClickMovie}
                 sx={styles.title}
                 variant="h5"
                 component="p"
             >
                 {title}
             </Typography>
-            <Box onClick={handleClickGenre} sx={styles.genre}>
+            <Box sx={styles.genre}>
                 <LocalOfferIcon />
                 <Typography
                     sx={{ marginLeft: '4px' }}
@@ -205,7 +194,6 @@ MovieCard.propTypes = {
     score: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     title: PropTypes.string,
     onClick: PropTypes.func,
-    onClickGenre: PropTypes.func,
     genre: PropTypes.string,
     thumbnail: PropTypes.string
 }

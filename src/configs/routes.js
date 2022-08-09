@@ -1,6 +1,6 @@
 const routes = {
 	home: '/',
-	movieDetail: '/@:movieId',
+	movieDetail: '/movieDetail/@:movieId',
 	movieList: '/movie-list',
 	watchMovie: '/watch-movie',
 	login: '/login',
@@ -10,7 +10,7 @@ const routes = {
 	topRated: '/top-rated',
 	popular: '/popular',
 	upcoming: '/upcoming',
-	category: 'category/@:categoryId',
+	search: '/search',
 	notFound: '*'
 }
 

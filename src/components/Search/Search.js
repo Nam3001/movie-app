@@ -4,6 +4,7 @@ import { Box, IconButton, Dialog, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import SearchInput from '../SearchInput'
 import SearchModal from './SearchModal'
+import { useNavigate } from 'react-router-dom'
 
 const styles = {
     searchIcon: {
@@ -18,10 +19,30 @@ const styles = {
     }
 }
 
-const Search = ({ width, placeholder, searchTerm, onSearchChange }) => {
+const Search = ({ width, placeholder, onSearchChange }) => {
+    const navigate = useNavigate()
+
     const [openModal, setOpenModal] = useState(false)
     const handleShowModal = useCallback(() => setOpenModal(true), [])
     const handleHideModal = useCallback(() => setOpenModal(false), [])
+
+    // search term
+    const [searchTerm, setSearchTerm] = useState('')
+
+    const handleSearch = useCallback((e) => {
+        const searchQuery = encodeURIComponent(e.target.value)
+        navigate({
+            pathname: '/search',
+            search: `query=${searchQuery}`
+        })
+
+        setSearchTerm('')
+        handleHideModal()
+    }, [])
+
+    const handleSearchChange = useCallback(e => {
+        setSearchTerm(e.target.value)
+    }, [])
 
     return (
         <>
@@ -41,6 +62,9 @@ const Search = ({ width, placeholder, searchTerm, onSearchChange }) => {
                 </IconButton>
                 <SearchModal open={openModal} onClose={handleHideModal}>
                     <SearchInput
+                        searchTerm={searchTerm}
+                        onSearch={handleSearch}
+                        onSearchChange={handleSearchChange}
                         autoFocus
                         height="40px"
                         width="100%"
@@ -51,6 +75,9 @@ const Search = ({ width, placeholder, searchTerm, onSearchChange }) => {
                 </SearchModal>
             </Box>
             <SearchInput
+                searchTerm={searchTerm}
+                onSearch={handleSearch}
+                onSearchChange={handleSearchChange}
                 placeholder={placeholder}
                 margin="0 10px 0 0"
                 width="230px"

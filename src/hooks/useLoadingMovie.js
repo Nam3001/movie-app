@@ -8,8 +8,9 @@ function useLoadingMovie({ movieApi, reloadOnPageChange }) {
 	const [isLoading, setIsLoading] = useState(true)
 	const [movies, setMovies] = useState([])
 
+
 	const page = useMemo(() => {
-		const currentPage = queryString.parse(location.search)?.page
+	const currentPage = queryString.parse(location.search)?.page
 		return parseInt(currentPage) || 1
 	}, [location.search])
 

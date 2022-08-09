@@ -10,20 +10,6 @@ import { useLocation } from 'react-router-dom'
 import queryString from 'query-string'
 import useLoadingMovie from '@/hooks/useLoadingMovie'
 
-const styles = {
-    heading: {
-        color: (theme) => theme.color.heading,
-        fontSize: '34px',
-        textTransform: 'uppercase',
-        fontWeight: 500,
-        pt: '50px',
-        textAlign: {
-            xs: 'center',
-            lg: 'left'
-        }
-    }
-}
-
 function Home() {
     const location = useLocation()
 

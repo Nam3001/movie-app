@@ -7,6 +7,7 @@ const styles = {
         textTransform: 'uppercase',
         fontWeight: 500,
         pt: '50px',
+        px: '16px',
         textAlign: {
             xs: 'center',
             lg: 'left'
