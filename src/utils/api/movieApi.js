@@ -9,6 +9,10 @@ class MovieApi {
 		return httpRequest.get(`/movie/now_playing`, { params })
 	}
 
+	getCredits(movieId) {
+		return httpRequest.get(`/movie/${movieId}/credits`)
+	}
+
 	getPopular(params) {
 		return httpRequest.get(`/movie/popular`, { params })
 	}

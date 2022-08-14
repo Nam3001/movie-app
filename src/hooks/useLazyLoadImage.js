@@ -1,12 +1,11 @@
 import thumbnailPlaceholder from '@/assets/img/placeholder.png'
 import { useEffect } from 'react'
 
-const useLazyLoadImage = (containerRef, isLoading) => {
+const useLazyLoadImage = (containerRef, isLoading, threshold = 0.1) => {
 	useEffect(() => {
 		if (isLoading) return
 
 		const lazyImages = containerRef.current.querySelectorAll('[lazy-src]')
-
 		const getFallback = (imgEl) => {
 			imgEl.src = thumbnailPlaceholder
 		}
@@ -17,6 +16,7 @@ const useLazyLoadImage = (containerRef, isLoading) => {
 
 				const lazyImg = entry.target
 				const src = lazyImg.getAttribute('lazy-src')
+				if (!src) return
 
 				// set img src from lazy-src
 				if (lazyImg.tagName.toLowerCase() === 'img') {
@@ -35,7 +35,7 @@ const useLazyLoadImage = (containerRef, isLoading) => {
 				observer.unobserve(lazyImg)
 			}
 		}
-		const observer = new IntersectionObserver(callback, { threshold: 0.1 })
+		const observer = new IntersectionObserver(callback, { threshold })
 
 		for (const img of lazyImages) {
 			observer.observe(img)

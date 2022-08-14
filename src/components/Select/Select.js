@@ -7,11 +7,12 @@ import {
     ClickAwayListener,
     Chip
 } from '@mui/material'
-import './Select.scss'
 import { styled } from '@mui/material/styles'
-import clsx from 'clsx'
 import CloseIcon from '@mui/icons-material/Close'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import clsx from 'clsx'
+
+import './Select.scss'
 import styles from './styles'
 import { DEFAULT_FUNC } from '@/utils/constants/common'
 
@@ -69,6 +70,7 @@ const ShowMore = styled(Box)(({ theme }) => ({
 }))
 
 const Select = ({
+    className,
     isMultiple = false,
     selectValue,
     onChange = DEFAULT_FUNC,
@@ -145,7 +147,7 @@ const Select = ({
 
     return (
         <ClickAwayListener onClickAway={handleClose}>
-            <Box sx={{ ...styles.container, ...sx }}>
+            <Box className={className} sx={{ ...styles.container, ...sx }}>
                 <SelectControl
                     ref={anchorRef}
                     className={clsx({ focus: isFocus })}
@@ -240,7 +242,8 @@ Select.propTypes = {
     children: PropTypes.arrayOf(PropTypes.element).isRequired,
     onClear: PropTypes.func,
     onRemove: PropTypes.func,
-    sx: PropTypes.object
+    sx: PropTypes.object,
+    className: PropTypes.string
 }
 
-export default Select
+export default memo(Select)

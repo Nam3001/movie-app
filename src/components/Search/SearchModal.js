@@ -1,6 +1,7 @@
 import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import { Dialog, Fade } from '@mui/material'
+
 import { DEFAULT_FUNC } from '@/utils/constants/common'
 
 const Transition = React.forwardRef(function Transition(props, ref) {

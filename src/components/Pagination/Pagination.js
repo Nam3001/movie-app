@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Pagination as MuiPagination } from '@mui/material'
+
 import { DEFAULT_FUNC } from '@/utils/constants/common'
 
 const styles = {

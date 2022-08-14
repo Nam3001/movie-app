@@ -1,7 +1,5 @@
 import { useState, memo, useRef, useEffect, useCallback } from 'react'
-import logo from '@/assets/img/logo.png'
 import MenuIcon from '@mui/icons-material/Menu'
-import Search from '@/components/Search'
 import {
     AppBar,
     Box,
@@ -13,9 +11,11 @@ import {
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import { Link, NavLink } from 'react-router-dom'
-import config from '@/configs'
 import { useLocation } from 'react-router-dom'
 
+import logo from '@/assets/img/logo.png'
+import Search from '@/components/Search'
+import config from '@/configs'
 import Wrapper from '@/components/Wrapper'
 import NavMenu from '../NavMenu'
 import Account from '../Account'

@@ -1,4 +1,6 @@
+import { memo } from 'react'
 import { Typography } from '@mui/material'
+import PropTypes from 'prop-types'
 
 const styles = {
     heading: {
@@ -15,12 +17,16 @@ const styles = {
     }
 }
 
-function Heading({ children }) {
+function Heading({ children, sx }) {
     return (
-        <Typography sx={styles.heading} variant="h1" component="p">
+        <Typography sx={{...styles.heading, ...sx}} variant="h1" component="p">
             { children }
         </Typography>
     )
 }
 
-export default Heading
+Heading.propTypes = {
+    sx: PropTypes.object
+}
+
+export default memo(Heading)

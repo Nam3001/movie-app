@@ -1,6 +1,6 @@
 import { memo } from 'react'
-import Header from '../components/Header'
 import { Toolbar } from '@mui/material'
+import Header from '../components/Header'
 
 function MainLayout({ children }) {
     return (

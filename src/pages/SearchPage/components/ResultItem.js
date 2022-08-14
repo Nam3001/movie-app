@@ -1,7 +1,9 @@
-import React, { memo } from 'react'
+import React, { memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import thumbnailPlaceholder from '@/assets/img/placeholder.png'
 import { Box, CardMedia, Typography } from '@mui/material'
+
+import thumbnailPlaceholder from '@/assets/img/placeholder.png'
+import  { DEFAULT_FUNC, BASE_URL_IMAGE } from '@/utils/constants/common'
 
 const styles = {
 	container: {
@@ -60,12 +62,16 @@ const styles = {
 	}
 }
 
-const ResultItem = ({ title, overview, thumbnail, onClick }) => {
+const ResultItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }) => {
 	const thumbnailBaseURL = 'https://image.tmdb.org/t/p/original'
 	thumbnail &&= thumbnailBaseURL + thumbnail
 
+	const handleClick = useCallback(() => {
+		if (id) onClick(id)
+	}, [id, onClick])
+
 	return (
-		<Box sx={styles.container}>
+		<Box sx={styles.container} onClick={handleClick}>
 			<Box sx={styles.thumbnailWrapper}>
 				<CardMedia
 					sx={styles.thumbnailImage}
@@ -89,7 +95,8 @@ ResultItem.propTypes = {
 	title: PropTypes.string.isRequired,
 	overview: PropTypes.string.isRequired,
 	thumbnail: PropTypes.string,
-	onClick: PropTypes.func
+	onClick: PropTypes.func,
+	id: PropTypes.number
 }
 
 export default memo(ResultItem)
