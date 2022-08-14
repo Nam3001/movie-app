@@ -9,10 +9,17 @@ import {
     CardContent,
     Rating
 } from '@mui/material'
+import { lazy, Suspense } from 'react'
 import StarIcon from '@mui/icons-material/Star'
 import AcUnitIcon from '@mui/icons-material/AcUnit'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
+import clsx from 'clsx'
+
+import Genre from '@/components/Genre'
+import { BASE_URL_IMAGE } from '@/utils/constants/common'
 import thumbnailPlaceholder from '@/assets/img/placeholder.png'
+
+const LazyRating = lazy(() => import('@mui/material/Rating'))
 
 const styles = {
     thumbnailWrapper: {
@@ -21,7 +28,9 @@ const styles = {
         position: 'relative'
     },
     thumbnail: {
-        visibility: 'hidden',
+        '&.lazy-image': {
+            visibility: 'hidden'
+        },
         borderRadius: {
             xs: '8px',
             lg: '6px'
@@ -45,10 +54,11 @@ const styles = {
         mt: 2.7,
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        height: '18px'
     },
     rating: {
-        '.MuiRating-decimal + .MuiRating-decimal': {
+        '& span + span': {
             ml: '3px'
         },
         '& svg': {
@@ -90,19 +100,6 @@ const styles = {
             textDecoration: 'underline'
         }
     },
-    genre: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 'fit-content',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        textDecoration: 'underline',
-        color: (theme) => theme.color.nav,
-        '& .MuiTypography-root, & svg': {
-            fontSize: '13px'
-        },
-    },
     score: {
         position: 'absolute',
         top: 0,
@@ -123,79 +120,81 @@ const styles = {
 const DEFAULT_FUNC = () => {}
 
 const MovieCard = ({
-    ids,
     score = 0,
     title,
     onClick = DEFAULT_FUNC,
     genre,
-    thumbnail
+    thumbnail,
+    id,
+    isLazy = true
 }) => {
     const [fallback, setFallback] = useState(false)
 
-    // set base url for thumbnail url
-    const thumbnailBaseURL = 'https://image.tmdb.org/t/p/original'
-    thumbnail &&= thumbnailBaseURL + thumbnail
+    thumbnail &&= BASE_URL_IMAGE + thumbnail
 
     // set default thumbnail when not pass thumbnail prop
     thumbnail ||= thumbnailPlaceholder
 
     const rating = parseFloat(score) / 2
 
-    const handleClickMovie = useCallback(() => {
-        if (!ids?.movieId) return
-        onClick(ids?.movieId)
-    }, [ids?.movieId])
+    const handleClick = useCallback(() => {
+        onClick(id)
+    })
 
     return (
         <Box sx={{ px: 2 }}>
             <Box sx={styles.thumbnailWrapper}>
                 <CardMedia
-                    onClick={handleClickMovie}
+                    onClick={handleClick}
                     component="img"
                     className="thumbnail"
-                    lazy-src={thumbnail || thumbnailPlaceholder}
+                    lazy-src={isLazy ? thumbnail || thumbnailPlaceholder : null}
+                    image={isLazy ? null : thumbnail || thumbnailPlaceholder}
                     sx={styles.thumbnail}
+                    className={clsx({ ['lazy-image']: isLazy })}
                 />
                 <Box sx={styles.score}>{score.toFixed(1)}</Box>
             </Box>
             <Box className="rate" sx={styles.ratingWrapper}>
-                <Rating
-                    sx={styles.rating}
-                    value={rating}
-                    precision={0.1}
-                    readOnly
-                    emptyIcon={<StarIcon />}
-                />
+                <Suspense
+                    fallback={
+                        <Rating
+                            sx={styles.rating}
+                            value={0}
+                            readOnly
+                            emptyIcon={<StarIcon />}
+                        />
+                    }
+                >
+                    <LazyRating
+                        sx={styles.rating}
+                        value={rating}
+                        readOnly
+                        emptyIcon={<StarIcon />}
+                    />
+                </Suspense>
             </Box>
             <Typography
-                onClick={handleClickMovie}
+                onClick={handleClick}
                 sx={styles.title}
                 variant="h5"
                 component="p"
             >
                 {title}
             </Typography>
-            <Box sx={styles.genre}>
-                <LocalOfferIcon />
-                <Typography
-                    sx={{ marginLeft: '4px' }}
-                    component="p"
-                    variant="body2"
-                >
-                    {genre}
-                </Typography>
-            </Box>
+            <Genre>{genre}</Genre>
         </Box>
     )
 }
 
 MovieCard.propTypes = {
-    ids: PropTypes.objectOf(PropTypes.number),
+    id: PropTypes.number,
     score: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     title: PropTypes.string,
     onClick: PropTypes.func,
     genre: PropTypes.string,
-    thumbnail: PropTypes.string
+    thumbnail: PropTypes.string,
+    isLazy: PropTypes.bool
 }
 
 export default memo(MovieCard)

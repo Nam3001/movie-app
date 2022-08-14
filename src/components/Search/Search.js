@@ -1,10 +1,11 @@
 import React, { useState, useCallback, memo } from 'react'
 import PropTypes from 'prop-types'
 import { Box, IconButton, Dialog, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+
 import SearchIcon from '@mui/icons-material/Search'
 import SearchInput from '../SearchInput'
 import SearchModal from './SearchModal'
-import { useNavigate } from 'react-router-dom'
 
 const styles = {
     searchIcon: {

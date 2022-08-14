@@ -22,7 +22,7 @@ const styles = {
 	selectMultiLabel: {
 		borderRadius: 1,
 		height: 'auto',
-		maxWidth: '70px',
+		maxWidth: '80px',
 		overflow: 'hidden',
 		textOverflow: 'ellipsis',
 		whiteSpace: 'nowrap',
