@@ -143,6 +143,7 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
                         />
                         {openSuggest && (
                             <SuggestComponent
+                                max_height="300px"
                                 ref={rootRef}
                                 className="suggest-results"
                                 bgcolor="#fff"

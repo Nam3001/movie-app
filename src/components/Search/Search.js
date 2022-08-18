@@ -13,9 +13,9 @@ import { createPathname } from '@/utils/common'
 import useInfiniteScroll from '@/hooks/useInfiniteScroll'
 
 const SearchSuggest = styled('div')(
-    ({ theme, bgcolor, color, fontSize, width, maxHeight, mobile, pc }) => ({
+    ({ theme, bgcolor, color, font_size, width, max_height, mobile, pc }) => ({
         width: width || '100%',
-        maxHeight: maxHeight || '420px',
+        maxHeight: max_height || '420px',
         overflow: 'auto',
         position: 'absolute',
         zIndex: '1',
@@ -24,7 +24,7 @@ const SearchSuggest = styled('div')(
         borderRadius: '3px',
         backgroundColor: bgcolor || '#fff',
         color: color || '#333',
-        fontSize: fontSize || '16px',
+        fontSize: font_size || '16px',
         [theme.breakpoints.down('lg')]: {
             display: mobile ? 'block' : 'none'
         },

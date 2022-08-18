@@ -1,5 +1,5 @@
-import { useState, useEffect, memo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState, useEffect, memo, useCallback } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
 import {
     Box,
@@ -14,6 +14,7 @@ import { styled } from '@mui/material/styles'
 import dayjs from 'dayjs'
 
 import Tabs from '@/components/Tabs'
+import { createPathname } from '@/utils/common'
 import config from '@/configs'
 import Genre from '@/components/Genre'
 import movieApi from '@/utils/api/movieApi'
@@ -42,8 +43,10 @@ const Button = styled('button')((props) => ({
     }
 }))
 
+
 function MovieDetail() {
     const params = useParams()
+    const navigate = useNavigate()
 
     const [isLoading, setIsLoading] = useState(true)
     const movieId = params.movieId
@@ -69,8 +72,6 @@ function MovieDetail() {
                     castsPromise,
                     reviewsRes
                 ])
-
-                console.log('load data')
 
                 setMovieInfo(all[0].data)
                 setCasts(all[1].data.cast)
@@ -98,6 +99,21 @@ function MovieDetail() {
         setReviews,
         setMovieInfo
     }
+
+    const handleClickMovie = useCallback(
+        (id) => {
+            if (!id) return
+
+            // movie detail pathname
+            const parentPathname = createPathname(config.routes.movieDetail, id)
+
+            // children route of movie detail
+            // default is overall
+            const pathname = `${parentPathname}/${config.routes.overall}`
+            navigate(pathname)
+        },
+        []
+    )
 
     if (isLoading) return <LinearProgress sx={styles.progress} />
 
@@ -161,7 +177,7 @@ function MovieDetail() {
 
                     <Outlet context={outletContext} />
                 </Box>
-                    <RecommendsMovie movieId={movieId} />
+                <RecommendsMovie movieId={507086} onClick={handleClickMovie} />
             </Wrapper>
         </Box>
     )

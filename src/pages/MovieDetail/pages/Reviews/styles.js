@@ -15,6 +15,7 @@ const styles = {
     avatar: {
         flex: '0 0 70px',
         overflow: 'hidden',
+        visibility: 'hidden',
         '& img': {
             borderRadius: '50%',
             width: '70px',
@@ -27,12 +28,12 @@ const styles = {
         ml: 2,
         hyphens: 'auto',
         minWidth: '0',
-        'flex': 1,
-        color: theme => theme.color.nav
+        flex: 1,
+        color: (theme) => theme.color.nav
     },
     name: {
         fontSize: '20px',
-        color: (theme) => theme.color.heading,
+        color: (theme) => theme.color.heading
     },
     emptyReview: {
         ml: '20px',
@@ -65,7 +66,7 @@ const styles = {
     },
     fromNow: {
         textAlign: 'right',
-        color: theme => theme.color.nav,
+        color: (theme) => theme.color.nav,
         fontStyle: 'italic',
         fontWeight: '300'
     }

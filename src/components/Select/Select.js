@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback, memo } from 'react'
 import PropTypes from 'prop-types'
 import {
     Box,
-    InputBase,
-    MenuItem,
     ClickAwayListener,
     Chip
 } from '@mui/material'
@@ -84,39 +82,21 @@ const Select = ({
     const [openOptionList, setOpenOptionList] = useState(false)
     const anchorRef = React.useRef(null)
     const menuRef = React.useRef(null)
-    const inputRef = React.useRef(null)
 
-    // apply for input
-    const handleFocus = useCallback(() => {
-        setIsFocus(true)
-        inputRef.current.focus()
-    }, [inputRef.current])
-
-    const handleBlur = useCallback(() => {
-        setIsFocus(false)
-        inputRef.current.blur()
-    }, [inputRef.current])
-
-    const handleOpenOptionList = useCallback(() => setOpenOptionList(true), [])
     const handleCloseOptionList = useCallback(() => {
+        setIsFocus(false)
         setOpenOptionList(false)
     }, [])
 
     const handleClickSelectControl = useCallback((e) => {
         if (e.target.closest('.clear-indicator')) return
 
-        handleFocus()
+        setIsFocus(prev => !prev)
         setOpenOptionList((prev) => !prev)
-    }, [])
-
-    const handleClose = useCallback(() => {
-        handleBlur()
-        handleCloseOptionList()
     }, [])
 
     const handleClickOption = useCallback((e) => {
         const optionValue = e.target.getAttribute('value')
-        inputRef.current.focus()
 
         if (isMultiple) {
             if (selectValue.includes(optionValue)) onRemove(optionValue)
@@ -125,7 +105,8 @@ const Select = ({
             onChange(optionValue)
             handleCloseOptionList()
         }
-    }, [inputRef.current, isMultiple, selectValue, onChange])
+        // eslint-disable-next-line
+    }, [isMultiple, selectValue, onChange])
 
     useEffect(() => {
         // mark selected option
@@ -146,7 +127,7 @@ const Select = ({
     }, [selectValue])
 
     return (
-        <ClickAwayListener onClickAway={handleClose}>
+        <ClickAwayListener onClickAway={handleCloseOptionList}>
             <Box className={className} sx={{ ...styles.container, ...sx }}>
                 <SelectControl
                     ref={anchorRef}
@@ -187,11 +168,6 @@ const Select = ({
                                 {selectValue}
                             </Box>
                         )}
-                        <InputBase
-                            inputRef={inputRef}
-                            className="select-input"
-                            sx={styles.selectInput}
-                        />
                     </Box>
 
                     <Box
