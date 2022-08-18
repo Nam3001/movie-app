@@ -16,7 +16,7 @@ const SearchSuggest = styled('div')(
     ({ theme, bgcolor, color, font_size, width, max_height, mobile, pc }) => ({
         width: width || '100%',
         maxHeight: max_height || '420px',
-        scrollSnapType: 'y proximity',
+        scrollSnapType: 'y mandatory',
         overflow: 'auto',
         position: 'absolute',
         zIndex: '1',
@@ -36,6 +36,9 @@ const SearchSuggest = styled('div')(
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden'
+        },
+        '& li': {
+            scrollSnapAlign: 'start',
         }
     })
 )
