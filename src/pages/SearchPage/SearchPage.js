@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRef, memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, Link, Outlet } from 'react-router-dom'
 import { Box, Typography } from '@mui/material'
 import queryString from 'query-string'
 
@@ -9,19 +9,41 @@ import Wrapper from '@/components/Wrapper'
 import Heading from '@/components/Heading'
 import movieApi from '@/utils/api/movieApi'
 import ResultItem from './components/ResultItem'
-import Pagination from '@/components/Pagination'
 import config from '@/configs'
 import usePagination from '@/hooks/usePagination'
 import useLazyLoadImage from '@/hooks/useLazyLoadImage'
 import ResultSkeletonList from './components/ResultSkeletonList'
 import { createPathname } from '@/utils/common'
+import useInfiniteScroll from '@/hooks/useInfiniteScroll'
+import SpinnerLoading from '@/components/SpinnerLoading'
+import { uniqBy } from '@/utils/common'
 
 const styles = {
     searchList: {
         px: '16px',
         my: 5
+    },
+    notFound: {
+        color: theme => theme.color.nav,
+        textAlign: 'center',
+        fontSize: '20px'
     }
 }
+
+
+const Test = () => {
+    return (
+        <div>
+            <Link to="overall">Overall</Link>
+            {' | '}
+            <Link to="casts">casts</Link>
+            {' | '}
+            <Link to="reviews">reviews</Link>
+            <Outlet />
+        </div>
+    )
+}
+
 
 const Search = () => {
     const location = useLocation()
@@ -30,37 +52,71 @@ const Search = () => {
     const movieListRef = useRef()
 
     const [movies, setMovies] = useState([])
-    const [maxPage, setMaxPage] = useState(1)
     const [loading, setLoading] = useState(true)
+    const [hasMore, setHasMore] = useState(true)
+
+    const lastElementRef = useRef(null)
+
+    const { currentPage, resetCurrentPage } = useInfiniteScroll({
+        hasMore,
+        loading,
+        lastElementRef
+    })
 
     useEffect(() => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop
+        if (scrollTop <= 0) return
         window.scrollTo(0, 0)
-    }, [loading])
+    }, [location.search])
+
+    useEffect(() => {
+        if (currentPage === 1) return
+
+        const queryParams = queryString.parse(location.search)
+        ;(async () => {
+            try {
+                if (!loading) setLoading(true)
+
+                const res = await movieApi.searchMovies(queryParams?.query, {
+                    ...queryParams,
+                    page: currentPage
+                })
+                const data = res.data
+                setMovies((prevMovies) => {
+                    const newMovies = uniqBy(
+                        [...prevMovies, ...data.results],
+                        'id'
+                    )
+                    return newMovies
+                })
+                setHasMore(!!(data.page < data.total_pages))
+                setLoading(false)
+            } catch (err) {
+                console.log(err)
+            }
+        })()
+    }, [currentPage])
 
     useEffect(() => {
         const queryParams = queryString.parse(location.search)
         ;(async () => {
             try {
                 if (!loading) setLoading(true)
+                setMovies([])
 
-                const res = await movieApi.searchMovies(
-                    queryParams?.query,
-                    queryParams
-                )
+                const res = await movieApi.searchMovies(queryParams?.query, {
+                    ...queryParams
+                })
                 const data = res.data
-
-                setMaxPage(data?.total_pages)
                 setMovies(data.results)
+                setHasMore(!!(data.page < data.total_pages))
                 setLoading(false)
+                resetCurrentPage()
             } catch (err) {
                 console.log(err)
             }
         })()
     }, [location.search])
-
-    // lazy load image
-    useLazyLoadImage(movieListRef, loading)
-    const [page, handlePageChange] = usePagination()
 
     const handleClickMovie = useCallback((id) => {
         if (!id) return
@@ -73,27 +129,43 @@ const Search = () => {
     return (
         <Wrapper>
             <Heading>Tìm Phim</Heading>
+            <Test />
             <Box ref={movieListRef} sx={styles.searchList}>
-                {!loading &&
-                    movies.map((movie, id) => (
-                        <ResultItem
-                            id={movie.id}
-                            onClick={handleClickMovie}
-                            key={movie.id}
-                            title={movie.title}
-                            thumbnail={movie.poster_path}
-                            overview={movie.overview}
-                        />
-                    ))}
-
-                {loading && <ResultSkeletonList />}
-
-                {!loading && (
-                    <Pagination
-                        page={page}
-                        onPageChange={handlePageChange}
-                        maxPage={maxPage}
-                    />
+                {movies.length > 0 &&
+                    movies.map((movie, idx) => {
+                        if (idx === movies.length - 1) {
+                            return (
+                                <ResultItem
+                                    ref={lastElementRef}
+                                    id={movie.id}
+                                    onClick={handleClickMovie}
+                                    key={movie.id}
+                                    title={movie.title}
+                                    thumbnail={movie.poster_path}
+                                    overview={movie.overview}
+                                />
+                            )
+                        } else {
+                            return (
+                                <ResultItem
+                                    id={movie.id}
+                                    onClick={handleClickMovie}
+                                    key={movie.id}
+                                    title={movie.title}
+                                    thumbnail={movie.poster_path}
+                                    overview={movie.overview}
+                                />
+                            )
+                        }
+                    })}
+                {movies.length === 0 && loading && <ResultSkeletonList />}
+                {loading && movies.length > 0 && (
+                    <SpinnerLoading color="primary" />
+                )}
+                {movies.length === 0 && (
+                    <Typography sx={styles.notFound}>
+                        No matching results.
+                    </Typography>
                 )}
             </Box>
         </Wrapper>

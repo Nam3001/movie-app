@@ -79,6 +79,8 @@ const RecommendsMovie = ({ movieId }) => {
             <Carousel
                 innerRef={containerRef}
                 style={{ paddingTop: '24px' }}
+                dragThreshold={0.1}
+                autoplayInterval={4000}
                 wrapAround
                 slidesToShow={slideAmount}
                 swiping

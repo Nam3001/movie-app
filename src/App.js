@@ -1,14 +1,15 @@
 import './App.scss'
 import { useEffect, memo, Fragment } from 'react'
-import Test from '@/Test'
-import { Typography } from '@mui/material'
 import { publicRoutes as routes } from '@/routes'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+} from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import { useDispatch, useSelector } from 'react-redux'
 import { getGenres } from '@/store/genresSlice'
 import { genresSelector } from '@/store/selectors'
-
 
 function App() {
     const dispatch = useDispatch()
@@ -19,13 +20,14 @@ function App() {
         if (Object.keys(genres).length > 0) return
 
         dispatch(getGenres())
+        // eslint-disable-next-line
     }, [])
-    
+
     return (
         <>
             <Router>
                 <div className="app">
-                    <Routes>
+                        <Routes>
                         {routes.map((route, idx) => {
                             let Element = route.component
 
@@ -38,18 +40,21 @@ function App() {
                                 route.children &&
                                 Array.isArray(route.children)
                             ) {
-                                {ChildRoute = route.children.map(
-                                    (childRoute, idx) => {
-                                        const El = childRoute?.component
-                                        return (
-                                            <Route
-                                                key={idx}
-                                                path={childRoute.path}
-                                                element={<El />}
-                                            />
-                                        )
-                                    }
-                                )}
+                                // eslint-disable-next-line
+                                {
+                                    ChildRoute = route.children.map(
+                                        (childRoute, idx) => {
+                                            const El = childRoute?.component
+                                            return (
+                                                <Route
+                                                    key={idx}
+                                                    path={childRoute.path}
+                                                    element={<El />}
+                                                />
+                                            )
+                                        }
+                                    )
+                                }
                             }
 
                             return (
@@ -73,4 +78,4 @@ function App() {
     )
 }
 
-export default App
+export default memo(App)

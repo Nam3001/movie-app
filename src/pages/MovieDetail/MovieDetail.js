@@ -20,8 +20,8 @@ import movieApi from '@/utils/api/movieApi'
 import { BASE_URL_IMAGE } from '@/utils/constants/common'
 import placeholderImage from '@/assets/img/placeholder.png'
 import Wrapper from '@/components/Wrapper'
-import RecommendsMovie from '@/components/RecommendsMovie'
 import styles from './styles'
+import RecommendsMovie from '@/components/RecommendsMovie'
 
 const Button = styled('button')((props) => ({
     cursor: 'pointer',
@@ -69,6 +69,8 @@ function MovieDetail() {
                     castsPromise,
                     reviewsRes
                 ])
+
+                console.log('load data')
 
                 setMovieInfo(all[0].data)
                 setCasts(all[1].data.cast)
@@ -156,9 +158,10 @@ function MovieDetail() {
                             { to: config.routes.reviews, name: 'Reviews' }
                         ]}
                     />
+
                     <Outlet context={outletContext} />
                 </Box>
-                <RecommendsMovie movieId={movieId} />
+                    <RecommendsMovie movieId={movieId} />
             </Wrapper>
         </Box>
     )

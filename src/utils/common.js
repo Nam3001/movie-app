@@ -19,3 +19,17 @@ export function sortByDate({ arr, order = 'asc', key }) {
 	}
 	return arr
 }
+
+export const uniqBy = (arr, key) => {
+	if (!arr) return []
+	if (!key) return arr
+
+	const tmp = {}
+	return arr.reduce((agg, cur) => {
+		if (!tmp[cur[key]]) {
+			tmp[cur[key]] = cur[key]
+			agg.push(cur)
+		}
+		return agg
+	}, [])
+}
