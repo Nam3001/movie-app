@@ -1,94 +1,61 @@
-import React, { useState, useCallback, memo } from 'react'
+import { useState, useCallback, memo, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { Box, IconButton, Dialog, Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { styled } from '@mui/material/styles'
+import { Box, Typography, MenuItem } from '@mui/material'
+import { useNavigate, useLocation } from 'react-router-dom'
 
-import SearchIcon from '@mui/icons-material/Search'
-import SearchInput from '../SearchInput'
-import SearchModal from './SearchModal'
+import SearchMobile from './SearchMobile'
+import SearchPC from './SearchPC'
+import movieApi from '@/utils/api/movieApi'
+import useDebounce from '@/hooks/useDebounce'
+import config from '@/configs'
+import { createPathname } from '@/utils/common'
+import useInfiniteScroll from '@/hooks/useInfiniteScroll'
 
-const styles = {
-    searchIcon: {
-        pl: {
-            xs: 2.5,
-            md: 1
+const SearchSuggest = styled('div')(
+    ({ theme, bgcolor, color, fontSize, width, maxHeight, mobile, pc }) => ({
+        width: width || '100%',
+        maxHeight: maxHeight || '420px',
+        overflow: 'auto',
+        position: 'absolute',
+        zIndex: '1',
+        left: '0',
+        marginTop: '10px',
+        borderRadius: '3px',
+        backgroundColor: bgcolor || '#fff',
+        color: color || '#333',
+        fontSize: fontSize || '16px',
+        [theme.breakpoints.down('lg')]: {
+            display: mobile ? 'block' : 'none'
         },
-        py: 2,
-        mr: -0.8,
-        marginTop: '4px',
-        display: { xs: 'block', lg: 'none' }
-    }
-}
+        [theme.breakpoints.up('lg')]: {
+            display: pc ? 'block' : 'none'
+        },
+        '& span': {
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden'
+        }
+    })
+)
 
-const Search = ({ width, placeholder, onSearchChange }) => {
-    const navigate = useNavigate()
-
-    const [openModal, setOpenModal] = useState(false)
-    const handleShowModal = useCallback(() => setOpenModal(true), [])
-    const handleHideModal = useCallback(() => setOpenModal(false), [])
-
-    // search term
-    const [searchTerm, setSearchTerm] = useState('')
-
-    const handleSearch = useCallback((e) => {
-        const searchQuery = encodeURIComponent(e.target.value)
-        navigate({
-            pathname: '/search',
-            search: `query=${searchQuery}`
-        })
-
-        setSearchTerm('')
-        handleHideModal()
-    }, [])
-
-    const handleSearchChange = useCallback(e => {
-        setSearchTerm(e.target.value)
-    }, [])
-
+const Search = ({ placeholder }) => {
     return (
-        <>
-            <Box className="search-mobile">
-                <IconButton
-                    onClick={handleShowModal}
-                    color="inherit"
-                    sx={styles.searchIcon}
-                >
-                    <SearchIcon
-                        sx={{
-                            color: '#fff',
-                            fontSize: '28px',
-                            height: '30px'
-                        }}
-                    />
-                </IconButton>
-                <SearchModal open={openModal} onClose={handleHideModal}>
-                    <SearchInput
-                        searchTerm={searchTerm}
-                        onSearch={handleSearch}
-                        onSearchChange={handleSearchChange}
-                        autoFocus
-                        height="40px"
-                        width="100%"
-                        placeholder={placeholder}
-                        xs="block"
-                        md="none"
-                    />
-                </SearchModal>
-            </Box>
-            <SearchInput
-                searchTerm={searchTerm}
-                onSearch={handleSearch}
-                onSearchChange={handleSearchChange}
+        <Box sx={{ mr: 1 }}>
+            <SearchMobile
                 placeholder={placeholder}
-                margin="0 10px 0 0"
-                width="230px"
-                xs="none"
-                lg="block"
+                SuggestComponent={SearchSuggest}
             />
-        </>
+            <SearchPC
+                placeholder={placeholder}
+                SuggestComponent={SearchSuggest}
+            />
+        </Box>
     )
 }
 
-Search.propTypes = {}
+Search.propTypes = {
+    placeholder: PropTypes.string
+}
 
 export default memo(Search)

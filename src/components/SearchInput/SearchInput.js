@@ -63,7 +63,9 @@ const SearchInput = ({
     autoFocus,
     onSearch,
     searchTerm,
-    onSearchChange
+    onSearchChange,
+    onFocus,
+    onBlur
 }) => {
     const inputRef = React.createRef()
 
@@ -92,6 +94,8 @@ const SearchInput = ({
                 inputRef={inputRef}
                 width={width}
                 placeholder={placeholder}
+                onFocus={onFocus}
+                onBlur={onBlur}
             />
             <SearchIconWrapper>
                 <SearchIcon sx={{ color: '#333' }} />
@@ -109,7 +113,9 @@ SearchInput.propTypes = {
     lg: PropTypes.string,
     autoFocus: PropTypes.bool,
     searchTerm: PropTypes.string,
-    onSearchChange: PropTypes.func
+    onSearchChange: PropTypes.func,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func
 }
 
 export default memo(SearchInput)

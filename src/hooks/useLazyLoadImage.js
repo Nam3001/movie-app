@@ -1,7 +1,7 @@
 import thumbnailPlaceholder from '@/assets/img/placeholder.png'
 import { useEffect } from 'react'
 
-const useLazyLoadImage = (containerRef, isLoading, threshold = 0.1) => {
+const useLazyLoadImage = (containerRef, isLoading, threshold = 0) => {
 	useEffect(() => {
 		if (isLoading) return
 

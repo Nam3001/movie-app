@@ -45,6 +45,17 @@ const styles = {
         ml: '20px',
         fontSize: '18px',
         color: '#fff'
+    },
+    emptyCast: {
+        ml: '20px',
+        mt: '24px',
+        fontSize: '18px',
+        color: '#fff',
+        maxHeight: '360px',
+        overflow: 'auto',
+        paddingRight: '10px',
+        width: '100%',
+        textAlign: 'center'
     }
 }
 
@@ -56,32 +67,43 @@ const Casts = () => {
 
     useLazyLoadImage(listRef, isLoading)
 
+    if (casts.length === 0)
+        return (
+            <Typography sx={styles.emptyReview}>Not have any cast!</Typography>
+        )
+
     return (
-        <Box sx={styles.castList} ref={listRef}>
-            {casts.map((cast) => (
-                <Box sx={styles.cast} key={cast.cast_id}>
-                    <Box sx={styles.avatar}>
-                        <img
-                            alt="avatar"
-                            lazy-src={
-                                cast.profile_path
-                                    ? `${BASE_URL_IMAGE}/${cast.profile_path}`
-                                    : avatarPlaceholder
-                            }
-                        />
-                    </Box>
-                    <Box sx={styles.text}>
-                        <Typography sx={styles.name}>{cast.name}</Typography>
-                        {cast?.character && (
-                            <Typography sx={styles.role}>
-                                as {cast.character}
+        <>
+            <Box sx={styles.castList} ref={listRef}>
+                {casts.map((cast) => (
+                    <Box sx={styles.cast} key={cast.cast_id}>
+                        <Box sx={styles.avatar}>
+                            <img
+                                alt="avatar"
+                                lazy-src={
+                                    cast.profile_path
+                                        ? `${BASE_URL_IMAGE}/${cast.profile_path}`
+                                        : avatarPlaceholder
+                                }
+                            />
+                        </Box>
+                        <Box sx={styles.text}>
+                            <Typography sx={styles.name}>
+                                {cast.name}
                             </Typography>
-                        )}
+                            {cast?.character && (
+                                <Typography sx={styles.role}>
+                                    as {cast.character}
+                                </Typography>
+                            )}
+                        </Box>
                     </Box>
-                </Box>
-            ))}
-        </Box>
+                ))}
+            </Box>
+        </>
     )
 }
 
 export default memo(Casts)
+
+// lazy route

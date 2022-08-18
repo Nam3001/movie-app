@@ -34,7 +34,8 @@ const Reviews = () => {
         const newReviews = [...reviews]
         sortByDate({ arr: newReviews, order: params.sort, key: 'updated_at' })
         setReviews(newReviews)
-    }, [params.sort, sortBy, reviews, setReviews])
+        // eslint-disable-next-line
+    }, [params.sort, sortBy])
 
     useEffect(() => {
         if (!params?.sort) {
@@ -64,26 +65,27 @@ const Reviews = () => {
                 search: queryParams
             })
         }
-    }, [sortBy, location.pathname, params, navigate])
+        // eslint-disable-next-line
+    }, [sortBy, location.pathname])
 
     // Handle select event
-    const handleChangeOption = useCallback(
-        (value) => {
-            setSortBy(value)
-        },
-        []
-    )
+    const handleChangeOption = useCallback((value) => {
+        setSortBy(value)
+    }, [])
     const handleResetOption = useCallback(() => setSortBy('Ascending'), [])
 
-    const setFallback = useCallback(
-        (e) => {
-            e.target.setAttribute('src', avatarPlaceholder)
-        },
-        []
-    )
+    const setFallback = useCallback((e) => {
+        e.target.setAttribute('src', avatarPlaceholder)
+    }, [])
 
+
+    
     if (reviews.length === 0)
-        return <Typography sx={styles.content}>Không có review nào!</Typography>
+        return (
+            <Typography sx={styles.emptyReview}>
+                Không có review nào!
+            </Typography>
+        )
 
     return (
         <>
@@ -100,7 +102,7 @@ const Reviews = () => {
                 <Typography className="label">Sort by date: </Typography>
             </Box>
             {reviews.map((review) => (
-                <Box sx={styles.cast} key={review.id}>
+                <Box sx={styles.review} key={review.id}>
                     <Box sx={styles.avatar}>
                         <img
                             src={

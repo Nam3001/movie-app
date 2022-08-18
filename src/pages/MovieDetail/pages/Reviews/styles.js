@@ -1,10 +1,10 @@
 const styles = {
-    castList: {
+    reviewList: {
         display: 'flex',
         flexFlow: 'row wrap',
         m: 'auto'
     },
-    cast: {
+    review: {
         flex: {
             xs: '0 0 100%',
             sm: '0 0 50%'
@@ -24,24 +24,26 @@ const styles = {
     },
     text: {
         mr: 4,
+        ml: 2,
         hyphens: 'auto',
         minWidth: '0',
         'flex': 1,
+        color: theme => theme.color.nav
     },
     name: {
         fontSize: '20px',
         color: (theme) => theme.color.heading,
-        ml: '20px'
     },
-    content: {
+    emptyReview: {
         ml: '20px',
-        mt: '8px',
+        mt: '24px',
         fontSize: '18px',
         color: '#fff',
         maxHeight: '360px',
         overflow: 'auto',
         paddingRight: '10px',
-        width: '100%'
+        width: '100%',
+        textAlign: 'center'
     },
     selectContainer: {
         mt: '20px',

@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react'
+import React, { memo, useCallback, forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import { Box, CardMedia, Typography } from '@mui/material'
 
@@ -62,7 +62,7 @@ const styles = {
 	}
 }
 
-const ResultItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }) => {
+const ResultItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }, ref) => {
 	const thumbnailBaseURL = 'https://image.tmdb.org/t/p/original'
 	thumbnail &&= thumbnailBaseURL + thumbnail
 
@@ -71,12 +71,12 @@ const ResultItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }) 
 	}, [id, onClick])
 
 	return (
-		<Box sx={styles.container} onClick={handleClick}>
+		<Box sx={styles.container} onClick={handleClick} ref={ref}>
 			<Box sx={styles.thumbnailWrapper}>
 				<CardMedia
 					sx={styles.thumbnailImage}
 					component="img"
-					lazy-src={thumbnail || thumbnailPlaceholder}
+					image={thumbnail || thumbnailPlaceholder}
 				/>
 			</Box>
 			<Box sx={styles.content}>
@@ -91,7 +91,9 @@ const ResultItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }) 
 	)
 }
 
-ResultItem.propTypes = {
+const Component = forwardRef(ResultItem)
+
+Component.propTypes = {
 	title: PropTypes.string.isRequired,
 	overview: PropTypes.string.isRequired,
 	thumbnail: PropTypes.string,
@@ -99,4 +101,4 @@ ResultItem.propTypes = {
 	id: PropTypes.number
 }
 
-export default memo(ResultItem)
+export default memo(Component)

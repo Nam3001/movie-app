@@ -50,7 +50,7 @@ function Header() {
 
         const leftPos = `${itemActived.offsetLeft}px`
         const width = `${itemActived.clientWidth}px`
-        
+
         navItemFooter.style.display = 'block'
         navItemFooter.style.left = leftPos
         navItemFooter.style.width = width
@@ -75,7 +75,7 @@ function Header() {
                                 display={{ sx: 'block', md: 'none' }}
                                 items={categories}
                             />
-                            <Link to={config.routes.home}>
+                            <Link to="/">
                                 <Box
                                     component="img"
                                     sx={styles.logo}
@@ -93,7 +93,9 @@ function Header() {
                                 {categories.map((item, index) => (
                                     <Box
                                         component={NavLink}
-                                        className={({ isActive }) => isActive && 'active'}
+                                        className={({ isActive }) =>
+                                            isActive && 'active'
+                                        }
                                         key={index}
                                         to={item.path}
                                         sx={styles.navItem}

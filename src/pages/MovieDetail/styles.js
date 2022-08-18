@@ -181,7 +181,7 @@ const styles = {
     progress: {
         backgroundColor: '#505e68',
         '& span': {
-            backgroundColor: theme => theme.color.nav,
+            backgroundColor: (theme) => theme.color.nav
         }
     }
 }
