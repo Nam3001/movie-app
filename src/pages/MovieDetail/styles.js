@@ -109,6 +109,7 @@ const styles = {
         mt: 2.5,
         maxWidth: '400px',
         alignItems: 'center',
+        justifyContent: 'center',
         marginLeft: {
             xs: 'auto',
             md: 0

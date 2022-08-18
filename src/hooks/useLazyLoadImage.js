@@ -5,7 +5,9 @@ const useLazyLoadImage = (containerRef, isLoading, threshold = 0) => {
 	useEffect(() => {
 		if (isLoading) return
 
-		const lazyImages = containerRef.current.querySelectorAll('[lazy-src]')
+		const lazyImages = containerRef?.current?.querySelectorAll('[lazy-src]')
+		if(!lazyImages) return
+			
 		const getFallback = (imgEl) => {
 			imgEl.src = thumbnailPlaceholder
 		}

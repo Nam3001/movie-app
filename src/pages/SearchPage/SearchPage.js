@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRef, memo, useCallback } from 'react'
-import PropTypes from 'prop-types'
-import { useLocation, useNavigate, Link, Outlet } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Box, Typography } from '@mui/material'
 import queryString from 'query-string'
 
@@ -10,8 +9,6 @@ import Heading from '@/components/Heading'
 import movieApi from '@/utils/api/movieApi'
 import ResultItem from './components/ResultItem'
 import config from '@/configs'
-import usePagination from '@/hooks/usePagination'
-import useLazyLoadImage from '@/hooks/useLazyLoadImage'
 import ResultSkeletonList from './components/ResultSkeletonList'
 import { createPathname } from '@/utils/common'
 import useInfiniteScroll from '@/hooks/useInfiniteScroll'
@@ -29,21 +26,6 @@ const styles = {
         fontSize: '20px'
     }
 }
-
-
-const Test = () => {
-    return (
-        <div>
-            <Link to="overall">Overall</Link>
-            {' | '}
-            <Link to="casts">casts</Link>
-            {' | '}
-            <Link to="reviews">reviews</Link>
-            <Outlet />
-        </div>
-    )
-}
-
 
 const Search = () => {
     const location = useLocation()
@@ -95,6 +77,7 @@ const Search = () => {
                 console.log(err)
             }
         })()
+        // eslint-disable-next-line
     }, [currentPage])
 
     useEffect(() => {
@@ -116,6 +99,7 @@ const Search = () => {
                 console.log(err)
             }
         })()
+        // eslint-disable-next-line
     }, [location.search])
 
     const handleClickMovie = useCallback((id) => {
@@ -124,12 +108,12 @@ const Search = () => {
         const ParentPathname = createPathname(config.routes.movieDetail, id)
         const pathname = `${ParentPathname}/${config.routes.overall}`
         navigate(pathname)
+        // eslint-disable-next-line
     }, [])
 
     return (
         <Wrapper>
             <Heading>Tìm Phim</Heading>
-            <Test />
             <Box ref={movieListRef} sx={styles.searchList}>
                 {movies.length > 0 &&
                     movies.map((movie, idx) => {

@@ -1,4 +1,4 @@
-import { memo, useCallback, useState, useEffect, useMemo } from 'react'
+import { memo, useCallback, useState, useEffect, useMemo, useRef } from 'react'
 import { useOutletContext, useLocation, useNavigate } from 'react-router-dom'
 import { Box, Typography, MenuItem } from '@mui/material'
 import queryString from 'query-string'
@@ -9,6 +9,7 @@ import avatarPlaceholder from '@/assets/img/avatar-placeholder.png'
 import { BASE_URL_IMAGE } from '@/utils/constants/common'
 import Truncate from '@/components/Truncate'
 import Select from '@/components/Select'
+import useLazyLoadImage from '@/hooks/useLazyLoadImage'
 import { sortByDate } from '@/utils/common'
 import styles from './styles'
 
@@ -31,6 +32,8 @@ const Reviews = () => {
 
     // Sort reviews by date
     useEffect(() => {
+        if (reviews.length === 0) return
+
         const newReviews = [...reviews]
         sortByDate({ arr: newReviews, order: params.sort, key: 'updated_at' })
         setReviews(newReviews)
@@ -78,8 +81,9 @@ const Reviews = () => {
         e.target.setAttribute('src', avatarPlaceholder)
     }, [])
 
+    const listRef = useRef(null)
+    useLazyLoadImage(listRef)
 
-    
     if (reviews.length === 0)
         return (
             <Typography sx={styles.emptyReview}>
@@ -101,32 +105,34 @@ const Reviews = () => {
                 </Select>
                 <Typography className="label">Sort by date: </Typography>
             </Box>
-            {reviews.map((review) => (
-                <Box sx={styles.review} key={review.id}>
-                    <Box sx={styles.avatar}>
-                        <img
-                            src={
-                                review?.author_details?.avatar_path
-                                    ? `${BASE_URL_IMAGE}/${review?.author_details?.avatar_path}`
-                                    : avatarPlaceholder
-                            }
-                            alt="avatar"
-                            onError={setFallback}
-                        />
+            <Box ref={listRef} sx={{maxHeight: '800px'}}>
+                {reviews.map((review) => (
+                    <Box sx={styles.review} key={review.id}>
+                        <Box sx={styles.avatar}>
+                            <img
+                                lazy-src={
+                                    review?.author_details?.avatar_path
+                                        ? `${BASE_URL_IMAGE}/${review?.author_details?.avatar_path}`
+                                        : avatarPlaceholder
+                                }
+                                alt="avatar"
+                                onError={setFallback}
+                            />
+                        </Box>
+                        <Box sx={styles.text}>
+                            <Typography sx={styles.name}>
+                                {review?.author_details?.username}
+                            </Typography>
+                            <Truncate length={160} sx={styles.content}>
+                                {review?.content}
+                            </Truncate>
+                            <Typography sx={styles.fromNow}>
+                                {dayjs(review.updated_at).fromNow()}
+                            </Typography>
+                        </Box>
                     </Box>
-                    <Box sx={styles.text}>
-                        <Typography sx={styles.name}>
-                            {review?.author_details?.username}
-                        </Typography>
-                        <Truncate length={160} sx={styles.content}>
-                            {review?.content}
-                        </Truncate>
-                        <Typography sx={styles.fromNow}>
-                            {dayjs(review.updated_at).fromNow()}
-                        </Typography>
-                    </Box>
-                </Box>
-            ))}
+                ))}
+            </Box>
         </>
     )
 }

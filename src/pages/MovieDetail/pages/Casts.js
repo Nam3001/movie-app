@@ -10,7 +10,9 @@ const styles = {
     castList: {
         display: 'flex',
         flexFlow: 'row wrap',
-        m: 'auto'
+        m: 'auto',
+        maxHeight: '800px',
+        overflow: 'auto'
     },
     cast: {
         flex: {
@@ -61,11 +63,10 @@ const styles = {
 
 const Casts = () => {
     const { casts } = useOutletContext()
-    const isLoading = Boolean(casts.length <= 0)
 
     const listRef = useRef()
 
-    useLazyLoadImage(listRef, isLoading)
+    useLazyLoadImage(listRef)
 
     if (casts.length === 0)
         return (
@@ -73,7 +74,7 @@ const Casts = () => {
         )
 
     return (
-        <>
+        <Box sx={{ paddingTop: '10px' }}>
             <Box sx={styles.castList} ref={listRef}>
                 {casts.map((cast) => (
                     <Box sx={styles.cast} key={cast.cast_id}>
@@ -100,7 +101,7 @@ const Casts = () => {
                     </Box>
                 ))}
             </Box>
-        </>
+        </Box>
     )
 }
 

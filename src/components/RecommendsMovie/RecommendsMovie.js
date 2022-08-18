@@ -1,24 +1,19 @@
-import { useEffect, useState, useRef, memo, useCallback } from 'react'
+import { useEffect, useState, useRef, memo } from 'react'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
 import Carousel from 'nuka-carousel'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 
 import { genresSelector } from '@/store/selectors'
-import MovieCard from '@/components/MovieCard'
 import movieApi from '@/utils/api/movieApi'
 import Heading from '@/components/Heading'
-import { createPathname } from '@/utils/common'
-import config from '@/configs'
+import MovieCard from '@/components/MovieCard'
 
-const RecommendsMovie = ({ movieId }) => {
-    const navigate = useNavigate()
 
+const RecommendsMovie = ({ movieId, onClick }) => {
     const [slideAmount, setSlideAmount] = useState(4)
-
     const genres = useSelector(genresSelector)
 
     useEffect(() => {
@@ -36,20 +31,6 @@ const RecommendsMovie = ({ movieId }) => {
         return () => window.removeEventListener('resize', handleSetSlideAmount)
     }, [])
 
-    const handleClickMovie = useCallback(
-        (id) => {
-            if (!id) return
-
-            // movie detail pathname
-            const parentPathname = createPathname(config.routes.movieDetail, id)
-
-            // children route of movie detail
-            // default is overall
-            const pathname = `${parentPathname}/${config.routes.overall}`
-            navigate(pathname)
-        },
-        [navigate]
-    )
 
     const [list, setList] = useState([])
     useEffect(() => {
@@ -104,7 +85,7 @@ const RecommendsMovie = ({ movieId }) => {
                         key={item.id}
                         score={item.vote_average}
                         title={item.title}
-                        onClick={handleClickMovie}
+                        onClick={onClick}
                         thumbnail={item.poster_path}
                         genre={genres?.[item.genre_ids?.[0]]}
                         id={item.id}
