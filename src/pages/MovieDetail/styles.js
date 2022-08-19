@@ -105,8 +105,8 @@ const styles = {
     },
     info: {
         display: 'flex',
+        mt: 1,
         flexFlow: 'row wrap',
-        mt: 2.5,
         maxWidth: '400px',
         alignItems: 'center',
         justifyContent: 'center',
@@ -117,6 +117,9 @@ const styles = {
         marginRight: {
             xs: 'auto',
             md: 0
+        },
+        '& > *': {
+            mt: 1.5,
         }
     },
     rating: {
@@ -146,6 +149,7 @@ const styles = {
     },
     releaseDay: {
         display: 'flex',
+        flex: 'flex-end',
         '& svg': {
             color: (theme) => theme.color.heading
         },

@@ -11,30 +11,10 @@ import Popular from '@/pages/Popular'
 import TopRated from '@/pages/TopRated'
 import NotFound from '@/pages/NotFound'
 import SearchPage from '@/pages/SearchPage'
-import Casts from '@/pages/MovieDetail/pages/Casts'
-import Overall from '@/pages/MovieDetail/pages/Overall'
-import Reviews from '@/pages/MovieDetail/pages/Reviews'
 
 const publicRoutes = [
     { path: config.routes.home, component: Home },
-    {
-        path: config.routes.movieDetail,
-        component: MovieDetail,
-        children: [
-            {
-                path: config.routes.overall,
-                component: Overall
-            },
-            {
-                path: config.routes.casts,
-                component: Casts
-            },
-            {
-                path: config.routes.reviews,
-                component: Reviews
-            }
-        ]
-    },
+    { path: config.routes.movieDetail, component: MovieDetail },
     { path: config.routes.watchMovie, component: WatchMovie },
     { path: config.routes.watchMovie, component: WatchMovie },
     { path: config.routes.search, component: SearchPage },

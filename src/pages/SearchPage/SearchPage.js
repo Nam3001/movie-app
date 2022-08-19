@@ -21,7 +21,7 @@ const styles = {
         my: 5
     },
     notFound: {
-        color: theme => theme.color.nav,
+        color: (theme) => theme.color.nav,
         textAlign: 'center',
         fontSize: '20px'
     }
@@ -105,8 +105,7 @@ const Search = () => {
     const handleClickMovie = useCallback((id) => {
         if (!id) return
 
-        const ParentPathname = createPathname(config.routes.movieDetail, id)
-        const pathname = `${ParentPathname}/${config.routes.overall}`
+        const pathname = createPathname(config.routes.movieDetail, id)
         navigate(pathname)
         // eslint-disable-next-line
     }, [])

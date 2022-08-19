@@ -11,9 +11,6 @@ const routes = {
 	popular: '/popular',
 	upcoming: '/upcoming',
 	search: '/search',
-	overall: 'overall',
-	casts: 'casts',
-	reviews: 'reviews',
 	notFound: '*'
 }
 

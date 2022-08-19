@@ -15,11 +15,11 @@ import styles from './styles'
 
 dayjs.extend(relativeTime)
 
-const Reviews = () => {
+const Reviews = (props) => {
     const navigate = useNavigate()
     const location = useLocation()
 
-    const { reviews, setReviews } = useOutletContext()
+    const { reviews, setReviews } = props.data
 
     const params = queryString.parse(location.search)
 
@@ -35,41 +35,16 @@ const Reviews = () => {
         if (reviews.length === 0) return
 
         const newReviews = [...reviews]
-        sortByDate({ arr: newReviews, order: params.sort, key: 'updated_at' })
-        setReviews(newReviews)
+        const sortedReviews = sortByDate({
+            arr: newReviews,
+            order: sortBy,
+            key: 'updated_at'
+        })
+
+        setReviews(sortedReviews)
         // eslint-disable-next-line
-    }, [params.sort, sortBy])
-
-    useEffect(() => {
-        if (!params?.sort) {
-            const queryParams = queryString.stringify({
-                ...params,
-                sort: 'asc'
-            })
-
-            if (params?.sort === 'asc') return
-
-            navigate(
-                {
-                    pathname: location.pathname,
-                    search: queryParams
-                },
-                { replace: true }
-            )
-        } else {
-            const queryParams = queryString.stringify({
-                ...params,
-                sort: sortBy === 'Ascending' ? 'asc' : 'desc'
-            })
-            const { sort } = queryString.parse(queryParams)
-            if (params.sort === sort) return
-            navigate({
-                pathname: location.pathname,
-                search: queryParams
-            })
-        }
-        // eslint-disable-next-line
-    }, [sortBy, location.pathname])
+    }, [sortBy])
+    console.log(reviews)
 
     // Handle select event
     const handleChangeOption = useCallback((value) => {
@@ -105,7 +80,7 @@ const Reviews = () => {
                 </Select>
                 <Typography className="label">Sort by date: </Typography>
             </Box>
-            <Box ref={listRef} sx={{maxHeight: '800px'}}>
+            <Box ref={listRef} sx={{ maxHeight: '800px' }}>
                 {reviews.map((review) => (
                     <Box sx={styles.review} key={review.id}>
                         <Box sx={styles.avatar}>

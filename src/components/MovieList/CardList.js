@@ -8,30 +8,27 @@ import MovieCard from '@/components/MovieCard'
 import { createPathname } from '@/utils/common'
 import useLazyLoadImage from '@/hooks/useLazyLoadImage'
 
-
 function CardList({ movies = [], isLoading = true, genres }) {
-	const navigate = useNavigate()
+    const navigate = useNavigate()
 
-	 // navigate to movie detail page
-    const handleClickMovie = useCallback((id) => {
-        if (!id) return
+    // navigate to movie detail page
+    const handleClickMovie = useCallback(
+        (id) => {
+            if (!id) return
 
-        // movie detail pathname
-        const parentPathname = createPathname(config.routes.movieDetail, id)
-
-        // children route of movie detail
-        // default is overall
-        const pathname = `${parentPathname}/${config.routes.overall}`
-        navigate(pathname)
-    }, [navigate])
-
+            // movie detail pathname
+            const pathname = createPathname(config.routes.movieDetail, id)
+            navigate(pathname)
+        },
+        [navigate]
+    )
 
     // lazy loading image
     const movieListRef = useRef()
     useLazyLoadImage(movieListRef, isLoading)
 
-	return (
-		<Grid ref={movieListRef} container rowSpacing={7} columnSpacing={10}>
+    return (
+        <Grid ref={movieListRef} container rowSpacing={7} columnSpacing={10}>
             {movies.map((movie) => (
                 <Grid key={movie.id} item xs={12} sm={6} lg={3}>
                     <MovieCard
@@ -45,11 +42,11 @@ function CardList({ movies = [], isLoading = true, genres }) {
                 </Grid>
             ))}
         </Grid>
-	)
+    )
 }
 
 CardList.propTypes = {
-	movies: PropTypes.array
+    movies: PropTypes.array
 }
 
 export default memo(CardList)

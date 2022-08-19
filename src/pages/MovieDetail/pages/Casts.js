@@ -61,8 +61,8 @@ const styles = {
     }
 }
 
-const Casts = () => {
-    const { casts } = useOutletContext()
+const Casts = (props) => {
+    const { casts } = props.data
 
     const listRef = useRef()
 
@@ -106,5 +106,3 @@ const Casts = () => {
 }
 
 export default memo(Casts)
-
-// lazy route

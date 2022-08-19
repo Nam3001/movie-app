@@ -23,6 +23,9 @@ import placeholderImage from '@/assets/img/placeholder.png'
 import Wrapper from '@/components/Wrapper'
 import styles from './styles'
 import RecommendsMovie from '@/components/RecommendsMovie'
+import Reviews from './pages/Reviews'
+import Overall from './pages/Overall'
+import Casts from './pages/Casts'
 
 const Button = styled('button')((props) => ({
     cursor: 'pointer',
@@ -43,7 +46,6 @@ const Button = styled('button')((props) => ({
     }
 }))
 
-
 function MovieDetail() {
     const params = useParams()
     const navigate = useNavigate()
@@ -53,6 +55,31 @@ function MovieDetail() {
     const [movieInfo, setMovieInfo] = useState({})
     const [casts, setCasts] = useState([])
     const [reviews, setReviews] = useState([])
+
+    const [tabs, setTabs] = useState([
+        { name: 'Overall', active: true, component: Overall },
+        { name: 'Casts', active: false, component: Casts },
+        { name: 'Reviews', active: false, component: Reviews }
+    ])
+
+    const handleClickTab = useCallback(
+        (name) => {
+            if (!name) return
+            const newTabs = Array.from(tabs)
+
+            for (let tab of newTabs) {
+                if (tab.name === name) {
+                    for (let t of newTabs) {
+                        if (t.active) t.active = false
+                    }
+                    tab.active = true
+                    break
+                }
+            }
+            setTabs(newTabs)
+        },
+        [tabs]
+    )
 
     useEffect(() => {
         window.scrollTo(0, 0)
@@ -91,7 +118,17 @@ function MovieDetail() {
 
     const formatedDate = dayjs(movieInfo?.release_date).format('DD/MM/YYYY')
 
-    const outletContext = {
+    const handleClickMovie = useCallback((id) => {
+        if (!id) return
+
+        // movie detail pathname
+        const pathname = createPathname(config.routes.movieDetail, id)
+        navigate(pathname)
+    }, [])
+
+    if (isLoading) return <LinearProgress sx={styles.progress} />
+
+    const tabData = {
         movieInfo,
         casts,
         reviews,
@@ -99,23 +136,6 @@ function MovieDetail() {
         setReviews,
         setMovieInfo
     }
-
-    const handleClickMovie = useCallback(
-        (id) => {
-            if (!id) return
-
-            // movie detail pathname
-            const parentPathname = createPathname(config.routes.movieDetail, id)
-
-            // children route of movie detail
-            // default is overall
-            const pathname = `${parentPathname}/${config.routes.overall}`
-            navigate(pathname)
-        },
-        []
-    )
-
-    if (isLoading) return <LinearProgress sx={styles.progress} />
 
     return (
         <Box sx={{ paddingBottom: '50px' }}>
@@ -167,17 +187,14 @@ function MovieDetail() {
                     </Box>
                 </Box>
                 <Box sx={styles.pageContent}>
-                    <Tabs
-                        tabs={[
-                            { to: config.routes.overall, name: 'Overall' },
-                            { to: config.routes.casts, name: 'Cast' },
-                            { to: config.routes.reviews, name: 'Reviews' }
-                        ]}
-                    />
-
-                    <Outlet context={outletContext} />
+                    <Tabs tabs={tabs} onClick={handleClickTab} />
+                    {tabs.map((tab) => {
+                        const Component = tab.component
+                        if (tab.active)
+                            return <Component key={tab.name} data={tabData} />
+                    })}
                 </Box>
-                <RecommendsMovie movieId={507086} onClick={handleClickMovie} />
+                <RecommendsMovie movieId={movieId} onClick={handleClickMovie} />
             </Wrapper>
         </Box>
     )
