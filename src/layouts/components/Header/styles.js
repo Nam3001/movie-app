@@ -1,6 +1,6 @@
 const styles = {
     logo: {
-        width: 163,
+        width: 110,
         cursor: 'pointer'
     },
     appBar: {
@@ -61,7 +61,8 @@ const styles = {
         display: {
             xs: 'none',
             md: 'block',
-        }
+        },
+        transition: 'left 0.1s linear'
     },
     search: {
         height: '32px',

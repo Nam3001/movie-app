@@ -45,7 +45,7 @@ const SearchSuggest = styled('div')(
 
 const Search = ({ placeholder }) => {
     return (
-        <Box sx={{ mr: 1 }}>
+        <Box>
             <SearchMobile
                 placeholder={placeholder}
                 SuggestComponent={SearchSuggest}

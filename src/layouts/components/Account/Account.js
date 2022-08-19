@@ -23,14 +23,33 @@ const styles = {
         backgroundColor: '#333',
         color: '#fff',
         px: 1.5,
-        pt: 1.5
     },
     menuItem: {
         justifyContent: 'center',
-        mb: 0.5,
+        '& + li': {
+            mt: 0.5
+        },
         '&:hover': {
             borderRadius: 1,
             backgroundColor: '#999'
+        }
+    },
+    accountButton: {
+        p: 0,
+        ml: {
+            lg: 1,
+            xs: 0
+        }
+    },
+    avatarIcon: {
+        backgroundColor: (theme) => theme.color.primary.main,
+        width: {
+            xs: '50px',
+            md: '46px'
+        },
+        height: {
+            xs: '50px',
+            md: '46px'
         }
     }
 }
@@ -55,16 +74,10 @@ const Account = () => {
                 color="inherit"
                 aria-label="account"
                 size="large"
-                sx={{ ml: 1, p: 0 }}
+                sx={styles.accountButton}
                 onClick={handleToggle}
             >
-                <Avatar
-                    sx={{
-                        backgroundColor: (theme) => theme.color.primary.main,
-                        width: '44px',
-                        height: '44px'
-                    }}
-                >
+                <Avatar sx={styles.avatarIcon}>
                     <PermIdentityIcon />
                 </Avatar>
             </IconButton>
@@ -88,7 +101,13 @@ const Account = () => {
                         <Paper sx={styles.menu}>
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MenuList>
-                                    <Box sx={{ mb: 1.2 }}>Nguyen Van Nam</Box>
+                                    <MenuItem
+                                        sx={{ mb: 1.2 }}
+                                        sx={styles.menuItem}
+                                        onClick={handleClose}
+                                    >
+                                        Nguyen Van Nam
+                                    </MenuItem>
                                     <MenuItem
                                         sx={styles.menuItem}
                                         onClick={handleClose}

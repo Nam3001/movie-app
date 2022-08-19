@@ -17,7 +17,7 @@ import logo from '@/assets/img/logo.png'
 import Search from '@/components/Search'
 import config from '@/configs'
 import Wrapper from '@/components/Wrapper'
-import NavMenu from '../NavMenu'
+import NavList from '../NavList'
 import Account from '../Account'
 import HideOnScroll from './HideOnScroll'
 
@@ -71,7 +71,7 @@ function Header() {
                 <Wrapper>
                     <Toolbar component="nav" sx={styles.toolbar}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <NavMenu
+                            <NavList
                                 display={{ sx: 'block', md: 'none' }}
                                 items={categories}
                             />

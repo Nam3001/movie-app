@@ -72,9 +72,10 @@ const Search = () => {
                     return newMovies
                 })
                 setHasMore(!!(data.page < data.total_pages))
-                setLoading(false)
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
         })()
         // eslint-disable-next-line
@@ -93,10 +94,11 @@ const Search = () => {
                 const data = res.data
                 setMovies(data.results)
                 setHasMore(!!(data.page < data.total_pages))
-                setLoading(false)
                 resetCurrentPage()
             } catch (err) {
                 console.log(err)
+            } finally {
+                setLoading(false)
             }
         })()
         // eslint-disable-next-line
