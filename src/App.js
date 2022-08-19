@@ -1,11 +1,7 @@
 import './App.scss'
 import { useEffect, memo, Fragment } from 'react'
 import { publicRoutes as routes } from '@/routes'
-import {
-    BrowserRouter as Router,
-    Routes,
-    Route,
-} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import { useDispatch, useSelector } from 'react-redux'
 import { getGenres } from '@/store/genresSlice'
@@ -27,36 +23,13 @@ function App() {
         <>
             <Router>
                 <div className="app">
-                        <Routes>
+                    <Routes>
                         {routes.map((route, idx) => {
                             let Element = route.component
 
                             let Layout = MainLayout
                             if (route.layout === null) Layout = Fragment
                             else if (route.layout) Layout = route.layout
-
-                            let ChildRoute = null
-                            if (
-                                route.children &&
-                                Array.isArray(route.children)
-                            ) {
-                                // eslint-disable-next-line
-                                {
-                                    ChildRoute = route.children.map(
-                                        (childRoute, idx) => {
-                                            const El = childRoute?.component
-                                            return (
-                                                <Route
-                                                    key={idx}
-                                                    path={childRoute.path}
-                                                    element={<El />}
-                                                />
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-
                             return (
                                 <Route
                                     key={idx}
@@ -66,9 +39,7 @@ function App() {
                                             <Element />
                                         </Layout>
                                     }
-                                >
-                                    {route.children && ChildRoute}
-                                </Route>
+                                />
                             )
                         })}
                     </Routes>

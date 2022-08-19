@@ -40,8 +40,8 @@ const styles = {
     }
 }
 
-const Overall = () => {
-    const { movieInfo } = useOutletContext()
+const Overall = (props) => {
+    const { movieInfo } = props.data
 
     const formatedDate = useMemo(() => {
         if (!movieInfo?.release_date) return ''

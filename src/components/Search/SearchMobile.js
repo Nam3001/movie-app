@@ -55,7 +55,7 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
         rootRef
     })
 
-    useEffect(()=> {
+    useEffect(() => {
         const pathname = location.pathname
         if (pathname === config.routes.home) {
             setSearchTerm('')
@@ -82,14 +82,7 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
 
             setTimeout(() => {
                 // movie detail pathname
-                const parentPathname = createPathname(
-                    config.routes.movieDetail,
-                    id
-                )
-
-                // children route of movie detail
-                // default is overall
-                const pathname = `${parentPathname}/${config.routes.overall}`
+                const pathname = createPathname(config.routes.movieDetail, id)
                 navigate(pathname)
             }, 0)
         },
@@ -100,7 +93,7 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
     const handleChange = useCallback((e) => {
         if (!openSuggest) setOpenSuggest(true)
         setSearchTerm(e.target.value)
-    // eslint-disable-next-line
+        // eslint-disable-next-line
     }, [])
 
     const [openModal, setOpenModal] = useState(false)

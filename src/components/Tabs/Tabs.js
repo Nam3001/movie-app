@@ -4,6 +4,8 @@ import { Box } from '@mui/material'
 import { NavLink } from 'react-router-dom'
 import clsx from 'clsx'
 
+import { DEFAULT_FUNC } from '@/utils/constants/common'
+
 const styles = {
     root: {
         display: 'flex',
@@ -13,11 +15,10 @@ const styles = {
     tab: {
         padding: '18px 10px',
         fontSize: '17px',
+        cursor: 'pointer',
         '& + li': {
             marginLeft: '24px'
-        }
-    },
-    link: {
+        },
         padding: '10px 4px',
         color: '#9ca3af',
         textDecoration: 'none',
@@ -28,21 +29,19 @@ const styles = {
     }
 }
 
-// tabs prop is array: [{ name, to }, ...]
 
-const Tabs = ({ tabs, rootSx, tabSx }) => {
+const Tabs = ({ tabs = [], onClick = DEFAULT_FUNC, rootSx, tabSx }) => {
     return (
         <Box component="ul" sx={{ ...styles.root, ...rootSx }}>
-            {tabs?.map?.((tab, i) => (
-                <Box component="li" key={i} sx={{ ...styles.tab, tabSx }}>
-                    <Box
-                        sx={styles.link}
-                        component={NavLink}
-                        className={({ isActive }) => clsx({ active: isActive })}
-                        to={tab?.to}
-                    >
-                        {tab?.name}
-                    </Box>
+            {tabs?.map?.((tab) => (
+                <Box
+                    component="li"
+                    key={tab.name}
+                    sx={{ ...styles.tab, tabSx }}
+                    className={clsx({ active: tab?.active })}
+                    onClick={() => onClick(tab.name)}
+                >
+                    <Box>{tab?.name}</Box>
                 </Box>
             ))}
         </Box>
@@ -51,8 +50,9 @@ const Tabs = ({ tabs, rootSx, tabSx }) => {
 
 Tabs.propTypes = {
     tabs: PropTypes.array,
+    onClick: PropTypes.func,
     rootSx: PropTypes.object,
-    tabSx: PropTypes.object
+    tabSx: PropTypes.object,
 }
 
 export default Tabs
