@@ -44,15 +44,14 @@ const styles = {
     },
     menuIconBtn: {
         marginTop: '4px',
-        pr: 1.5,
-        py: 2,
+        p: 2,
         '& svg': {
             fontSize: '28px'
         }
     }
 }
 
-const NavMenu = ({ items, display }) => {
+const NavList = ({ items, display }) => {
     const [isShowMenu, setIsShowMenu] = useState(false)
     const toggleShowMenu = useCallback(
         (value) => {
@@ -108,9 +107,9 @@ const NavMenu = ({ items, display }) => {
     )
 }
 
-NavMenu.propTypes = {
+NavList.propTypes = {
     items: PropTypes.array,
     display: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 }
 
-export default memo(NavMenu)
+export default memo(NavList)

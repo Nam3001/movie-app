@@ -26,25 +26,7 @@ import RecommendsMovie from '@/components/RecommendsMovie'
 import Reviews from './pages/Reviews'
 import Overall from './pages/Overall'
 import Casts from './pages/Casts'
-
-const Button = styled('button')((props) => ({
-    cursor: 'pointer',
-    border: 'none',
-    padding: '12px 14px',
-    backgroundColor:
-        (props.color === 'primary' && '#3898ec') ||
-        (props.color === 'danger' && '#e46466') ||
-        '#ccc',
-    borderRadius: '5px',
-    color: '#fff',
-    fontSize: '16px',
-    '& + button': {
-        marginLeft: '10px'
-    },
-    '&:hover': {
-        opacity: 0.9
-    }
-}))
+import Button from '@/components/Button'
 
 function MovieDetail() {
     const params = useParams()
@@ -181,7 +163,7 @@ function MovieDetail() {
                             </Box>
                         </Box>
                         <Box sx={styles.control}>
-                            <Button color="primary">Trailer</Button>
+                            <Button color="info">Trailer</Button>
                             <Button color="danger">Xem Phim</Button>
                         </Box>
                     </Box>

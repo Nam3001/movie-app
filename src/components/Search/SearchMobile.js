@@ -25,12 +25,10 @@ const styles = {
         backgroundColor: 'transparent'
     },
     searchIcon: {
-        pl: {
-            xs: 2.5,
-            md: 1
+        p: {
+            xs: 2,
+            md: 1.5
         },
-        py: 2,
-        mr: -0.8,
         marginTop: '4px',
         display: { xs: 'block', lg: 'none' }
     }

@@ -25,12 +25,8 @@ const styles = {
     thumbnailWrapper: {
         maxWidth: '100%',
         margin: 'auto',
-        position: 'relative'
-    },
-    thumbnail: {
-        '&.lazy-image': {
-            visibility: 'hidden'
-        },
+        position: 'relative',
+        backgroundColor: '#212529',
         borderRadius: {
             xs: '8px',
             lg: '6px'
@@ -42,7 +38,18 @@ const styles = {
         height: {
             xs: '300px',
             lg: '256px'
+        }
+    },
+    thumbnail: {
+        '&.lazy-image': {
+            visibility: 'hidden'
         },
+        borderRadius: {
+            xs: '8px',
+            lg: '6px'
+        },
+        width: '100%',
+        height: '100%',
         objectFit: 'cover',
         cursor: 'pointer',
         margin: 'auto',

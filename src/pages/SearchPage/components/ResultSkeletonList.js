@@ -21,33 +21,58 @@ const styles = {
 		}
 	},
 	content: {
-		marginLeft: '20px',
-		flex: 1
+		marginLeft: {
+			xs: 0,
+			sm: '20px'
+		},
+		flex: 1,
+		minWidth: '130px',
+		'& span': {
+			margin: {
+				xs: 'auto',
+				sm: 0
+			}
+		}
 	}
 }
 
 const ResultSkeletonList = () => {
 	return (
 		<Box>
-			{Array(2).fill(null).map((_, idx) => (
-				<Box sx={styles.container} key={idx}>
-					<Skeleton variant="rounded" width={150} height={225} />
-					<Box sx={styles.content}>
+			{Array(2)
+				.fill(null)
+				.map((_, idx) => (
+					<Box sx={styles.container} key={idx}>
 						<Skeleton
-							variant="text"
-							sx={{ fontSize: '1rem', height: '35px', width: '60%' }}
+							variant="rounded"
+							width={150}
+							height={225}
+							sx={{ borderRadius: '6px' }}
 						/>
-						<Skeleton
-							variant="text"
-							sx={{ fontSize: '1rem', height: '20px' }}
-						/>
-						<Skeleton
-							variant="text"
-							sx={{ fontSize: '1rem', height: '20px', width: '90%' }}
-						/>
+						<Box sx={styles.content}>
+							<Skeleton
+								variant="text"
+								sx={{
+									fontSize: '1rem',
+									height: '35px',
+									width: '60%'
+								}}
+							/>
+							<Skeleton
+								variant="text"
+								sx={{ fontSize: '1rem', height: '20px' }}
+							/>
+							<Skeleton
+								variant="text"
+								sx={{
+									fontSize: '1rem',
+									height: '20px',
+									width: '90%'
+								}}
+							/>
+						</Box>
 					</Box>
-				</Box>
-			))}
+				))}
 		</Box>
 	)
 }
