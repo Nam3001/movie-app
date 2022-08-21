@@ -36,7 +36,6 @@ const styles = {
         color: (theme) => theme.color.heading
     },
     emptyReview: {
-        ml: '20px',
         mt: '24px',
         fontSize: '18px',
         color: '#fff',

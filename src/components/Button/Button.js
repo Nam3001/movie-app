@@ -40,8 +40,9 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 	cursor: 'pointer',
 	border: 'none',
 	fontSize: '16px',
-	backgroundColor: props.color ? colors[props.color] : colors.primary,
 	color: '#fff',
+	minWidth: '80px',
+	backgroundColor: props.color ? colors[props.color] : colors.primary,
 	display: props.display === 'block' ? 'block' : null,
 	padding: props.size ? sizes[props.size].padding : sizes.md.padding,
 	fontSize: props.size ? sizes[props.size].fontSize : sizes.md.fontSize,
@@ -60,10 +61,11 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 
 const OutlineButton = styled('button')(({ theme, ...props }) => ({
 	cursor: 'pointer',
-	border: `1px solid ${colors[props.color]}`,
 	fontSize: '16px',
-	display: props.display === 'block' ? 'block' : null,
 	backgroundColor: 'transparent',
+	minWidth: '80px',
+	border: `1px solid ${colors[props.color]}`,
+	display: props.display === 'block' ? 'block' : null,
 	color: colors[props.color],
 	padding: props.size ? sizes[props.size].padding : sizes.md.padding,
 	fontSize: props.size ? sizes[props.size].fontSize : sizes.md.fontSize,
@@ -86,6 +88,7 @@ const Button = ({
 	sx,
 	children,
 	onClick = DEFAULT_FUNC,
+	type,
 	display = 'inline-block',
 	variant,
 	color,
@@ -96,6 +99,7 @@ const Button = ({
 		<>
 			{variant !== 'outline' ? (
 				<FillButton
+					type={type}
 					className={className}
 					sx={sx}
 					onClick={onClick}
@@ -109,6 +113,7 @@ const Button = ({
 				</FillButton>
 			) : (
 				<OutlineButton
+					type={type}
 					className={className}
 					sx={sx}
 					onClick={onClick}
@@ -127,6 +132,8 @@ const Button = ({
 
 Button.propTypes = {
 	children: PropTypes.any,
+	sx: PropTypes.object,
+	type: PropTypes.string,
 	onClick: PropTypes.func,
 	size: PropTypes.oneOf(['sm', 'md', 'lg']),
 	variant: PropTypes.oneOf(['outline', 'fill', 'link']),

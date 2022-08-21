@@ -1,8 +1,9 @@
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { Box, Typography, CardMedia, IconButton } from '@mui/material'
-import { Link } from 'react-router-dom'
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { Link, useNavigate } from 'react-router-dom'
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 
+import RegisterForm from './RegisterForm'
 import Button from '@/components/Button'
 import logo from '@/assets/img/logo.png'
 import googleIcon from '@/assets/img/google.png'
@@ -14,7 +15,8 @@ const styles = {
         bgcolor: (theme) => theme.color.primary.light,
         width: '600px',
         maxWidth: '90vw',
-        height: '85vh',
+        height: '580px',
+        maxHeight: '94vh',
         position: 'absolute',
         top: 0,
         left: 0,
@@ -30,7 +32,7 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     heading: {
         '& h1': {
@@ -39,7 +41,7 @@ const styles = {
             textAlign: 'center',
             fontWeight: '500'
         },
-        '& > img': {
+        '& img': {
             mx: 'auto'
         }
     },
@@ -47,15 +49,21 @@ const styles = {
         width: '150px',
         mt: 2
     },
-    content: {
+    registerMethod: {
         mt: 5,
-        maxWidth: '300px',
+        width: '320px',
+        maxWidth: '100%',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        alignItems: 'center'
     },
     signInButton: {
         fontSize: '15px',
         py: '10px',
+        px: {
+            sm: '18px'
+        },
+        width: '98%',
         mt: 2,
         '&:hover': { color: '#333' }
     },
@@ -63,24 +71,25 @@ const styles = {
         display: 'flex',
 
         '& > img, & > svg': {
-            mr: 1
-        },
-        '& > img': {
             width: '22px',
-            height: '22px'
+            height: '22px',
+            mr: 1
         },
         '& > p': {
             m: 'auto',
-            fontSize: '15px'
+            fontSize: '15px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
         }
     },
-    hadAccount: {
+    donHaveAccount: {
         color: (theme) => theme.color.nav,
         fontSize: '15px',
         textAlign: 'center',
         mt: 4,
         '& > a': {
-            color: theme => theme.color.heading,
+            color: (theme) => theme.color.heading,
             textDecoration: 'none',
             fontWeight: 500
         }
@@ -88,66 +97,94 @@ const styles = {
     goBack: {
         position: 'absolute',
         color: '#fff',
-        left: '20px',
-        top: '20px',
+        left: '10px',
+        top: '10px',
         width: '56px',
         height: '56px'
+    },
+    hadAccount: {
+        color: (theme) => theme.color.nav,
+        fontSize: '15px',
+        textAlign: 'center',
+        mt: 4,
+        '& > a': {
+            color: (theme) => theme.color.heading,
+            textDecoration: 'none',
+            fontWeight: 500
+        }
     }
 }
 
 function Register() {
+    const navigate = useNavigate()
+
+    // use to determine current position is sign in method or login form
+    const [isRegisterForm, setIsRegisterForm] = useState(false)
+
+    const handleClickBack = () => {
+        if (isRegisterForm) {
+            setIsRegisterForm(false)
+        } else {
+            navigate(-1)
+        }
+    }
+
     return (
         <Box sx={styles.container}>
-            <IconButton sx={styles.goBack}>
+            <IconButton sx={styles.goBack} onClick={handleClickBack}>
                 <ArrowBackIosIcon />
             </IconButton>
             <Box sx={styles.heading}>
                 <Typography component="h1">Đăng ký tài khoản</Typography>
                 <CardMedia sx={styles.logo} image={logo} component="img" />
             </Box>
-            <Box sx={styles.content}>
-                <Button
-                    sx={styles.signInButton}
-                    variant="outline"
-                    color="light"
-                    display="block"
-                    pill
-                >
-                    <Box sx={styles.btnContent}>
-                        <PermIdentityIcon />
-                        <Typography>
-                            Sử dụng email / hoặc số điện thoại
-                        </Typography>
-                    </Box>
-                </Button>
-                <Button
-                    sx={styles.signInButton}
-                    variant="outline"
-                    color="light"
-                    display="block"
-                    pill
-                >
-                    <Box sx={styles.btnContent}>
-                        <CardMedia component="img" image={googleIcon} />
-                        <Typography>Tiếp tục với Google</Typography>
-                    </Box>
-                </Button>
-                <Button
-                    sx={styles.signInButton}
-                    variant="outline"
-                    color="light"
-                    display="block"
-                    pill
-                >
-                    <Box sx={styles.btnContent}>
-                        <CardMedia component="img" image={facebookIcon} />
-                        <Typography>Tiếp tục với Facebook</Typography>
-                    </Box>
-                </Button>
-                <Typography sx={styles.hadAccount}>
-                    Bạn chưa có tài khoản? <Link to="/login">Đăng nhập</Link>
-                </Typography>
-            </Box>
+            {!isRegisterForm && (
+                <Box sx={styles.registerMethod}>
+                    <Button
+                        sx={styles.signInButton}
+                        onClick={() => setIsRegisterForm(true)}
+                        variant="outline"
+                        color="light"
+                        display="block"
+                        pill
+                    >
+                        <Box sx={styles.btnContent}>
+                            <PermIdentityIcon />
+                            <Typography>
+                                Sử dụng email / hoặc số điện thoại
+                            </Typography>
+                        </Box>
+                    </Button>
+                    <Button
+                        sx={styles.signInButton}
+                        variant="outline"
+                        color="light"
+                        display="block"
+                        pill
+                    >
+                        <Box sx={styles.btnContent}>
+                            <CardMedia component="img" image={googleIcon} />
+                            <Typography>Tiếp tục với Google</Typography>
+                        </Box>
+                    </Button>
+                    <Button
+                        sx={styles.signInButton}
+                        variant="outline"
+                        color="light"
+                        display="block"
+                        pill
+                    >
+                        <Box sx={styles.btnContent}>
+                            <CardMedia component="img" image={facebookIcon} />
+                            <Typography>Tiếp tục với Facebook</Typography>
+                        </Box>
+                    </Button>
+                    <Typography sx={styles.hadAccount}>
+                        Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+                    </Typography>
+                </Box>
+            )}
+            {isRegisterForm && <RegisterForm />}
         </Box>
     )
 }

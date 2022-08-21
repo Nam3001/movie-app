@@ -62,7 +62,6 @@ const styles = {
             xs: 'none',
             md: 'block',
         },
-        transition: 'left 0.1s linear'
     },
     search: {
         height: '32px',

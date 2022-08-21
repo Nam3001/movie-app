@@ -23,9 +23,9 @@ import placeholderImage from '@/assets/img/placeholder.png'
 import Wrapper from '@/components/Wrapper'
 import styles from './styles'
 import RecommendsMovie from '@/components/RecommendsMovie'
-import Reviews from './pages/Reviews'
-import Overall from './pages/Overall'
-import Casts from './pages/Casts'
+import Reviews from './components/Reviews'
+import Overall from './components/Overall'
+import Casts from './components/Casts'
 import Button from '@/components/Button'
 
 function MovieDetail() {
