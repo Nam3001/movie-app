@@ -49,7 +49,6 @@ const styles = {
         color: '#fff'
     },
     emptyCast: {
-        ml: '20px',
         mt: '24px',
         fontSize: '18px',
         color: '#fff',
