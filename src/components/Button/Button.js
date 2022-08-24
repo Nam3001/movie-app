@@ -1,13 +1,12 @@
-import React from 'react'
+import React, { memo } from 'react'
 import PropTypes from 'prop-types'
-import { Box } from '@mui/material'
-import { styled, alpha } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 
 import { DEFAULT_FUNC } from '@/utils/constants/common'
 
 const colors = {
 	primary: '#0D6EFD',
-	secondary: '#DCE0E3',
+	secondary: '#6C757D',
 	info: '#3898EC',
 	warning: '#FFC107',
 	danger: '#E46466',
@@ -38,15 +37,14 @@ const sizes = {
 
 const FillButton = styled('button')(({ theme, ...props }) => ({
 	cursor: props.disable ? 'not-allowed' : 'pointer',
-	border: 'none',
-	fontSize: '16px',
 	color: '#fff',
-	minWidth: '80px',
+	minWidth: '70px',
+	border: `1px solid ${props.color ? colors[props.color] : colors.primary}`,
 	backgroundColor: props.color ? colors[props.color] : colors.primary,
 	display: props.display === 'block' ? 'block' : null,
 	padding: props.size ? sizes[props.size].padding : sizes.md.padding,
 	fontSize: props.size ? sizes[props.size].fontSize : sizes.md.fontSize,
-	opacity: props.disable ? 0.5 : 1,
+	opacity: props.disable ? 0.6 : 1,
 	borderRadius:
 		(props.pill
 			? sizes?.[props?.size]?.borderRadiusPill
@@ -56,15 +54,14 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 		marginLeft: props.display === 'inline-block' ? '10px' : '0'
 	},
 	'&:hover': {
-		opacity: props.disable ? 0.5 : 0.9
+		opacity: props.disable ? 0.5 : 0.85
 	}
 }))
 
 const OutlineButton = styled('button')(({ theme, ...props }) => ({
 	cursor: props.disable ? 'not-allowed' : 'pointer',
-	fontSize: '16px',
 	backgroundColor: 'transparent',
-	minWidth: '80px',
+	minWidth: '70px',
 	border: `1px solid ${colors[props.color]}`,
 	display: props.display === 'block' ? 'block' : null,
 	color: colors[props.color],
@@ -160,4 +157,4 @@ Button.propTypes = {
 	disable: PropTypes.bool
 }
 
-export default Button
+export default memo(Button)

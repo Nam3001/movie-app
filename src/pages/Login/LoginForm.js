@@ -1,8 +1,6 @@
-import { useState, useEffect, memo, useRef } from 'react'
+import { useState, useEffect, memo, useCallback } from 'react'
 import { Box, Typography, IconButton, CircularProgress } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import CloseIcon from '@mui/icons-material/Close'
-import { useSnackbar } from 'notistack'
 import { Link } from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
@@ -13,6 +11,7 @@ import Button from '@/components/Button'
 import { auth } from '@/services/firebaseConfig'
 import PhoneNumberField from '@/components/form-control/PhoneNumberField'
 import { signIn } from '@/store/authSlice'
+import useToastMessage from '@/hooks/useToastMessage'
 
 const styles = {
     formContainer: {
@@ -59,25 +58,14 @@ function LoginForm() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const showToast = useToastMessage()
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const [loging, setLoging] = useState(false)
 
-    const action = (snackbarId) => (
-        <IconButton
-            sx={{ color: '#fff' }}
-            onClick={() => {
-                closeSnackbar(snackbarId)
-            }}
-        >
-            <CloseIcon />
-        </IconButton>
-    )
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault()
         try {
             setLoging(true)
@@ -95,32 +83,28 @@ function LoginForm() {
             // dispatch sign in action
             dispatch(signIn(credential.user))
 
-            enqueueSnackbar('Đăng nhập thành công!', {
+            showToast('Đăng nhập thành công!', {
                 variant: 'success',
-                action,
                 autoHideDuration: 3000
             })
-            setTimeout(() => {
-                navigate('/')
-            }, [1000])
+            navigate('/')
         } catch (err) {
-            enqueueSnackbar(err.message, {
+            showToast(err.message, {
                 variant: 'error',
-                action,
                 autoHideDuration: 10000
             })
         } finally {
             setLoging(false)
         }
-    }
+    }, [])
 
-    const handleEmailChange = (e) => {
+    const handleEmailChange = useCallback((e) => {
         setEmail(e.target.value)
-    }
+    }, [])
 
-    const handlePasswordChange = (e) => {
+    const handlePasswordChange = useCallback((e) => {
         setPassword(e.target.value)
-    }
+    }, [])
 
     return (
         <Box sx={styles.formContainer}>

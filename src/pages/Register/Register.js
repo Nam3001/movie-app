@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useState, useCallback } from 'react'
 import { Box, Typography, CardMedia, IconButton } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
@@ -7,8 +7,6 @@ import {
     GoogleAuthProvider,
     FacebookAuthProvider
 } from 'firebase/auth'
-import { useSnackbar } from 'notistack'
-import CloseIcon from '@mui/icons-material/Close'
 import { useSelector, useDispatch } from 'react-redux'
 
 import RegisterForm from './RegisterForm'
@@ -19,6 +17,7 @@ import facebookIcon from '@/assets/img/facebook.png'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import { auth } from '@/services/firebaseConfig'
 import { signIn } from '@/store/authSlice'
+import useToastMessage from '@/hooks/useToastMessage'
 
 const styles = {
     container: {
@@ -129,80 +128,61 @@ function Register() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const showToast = useToastMessage()
 
     // use to determine current position is sign in method or login form
     const [isRegisterForm, setIsRegisterForm] = useState(false)
 
-    const handleClickBack = () => {
+    const handleClickBack = useCallback(() => {
         if (isRegisterForm) {
             setIsRegisterForm(false)
         } else {
             navigate(-1)
         }
-    }
+    }, [isRegisterForm])
 
-    const action = (snackbarId) => (
-        <IconButton
-            sx={{ color: '#fff' }}
-            onClick={() => {
-                closeSnackbar(snackbarId)
-            }}
-        >
-            <CloseIcon />
-        </IconButton>
-    )
-
-    const handleLoginWithGoogle = async () => {
+    const handleLoginWithGoogle = useCallback(async () => {
         try {
             const googleProvider = new GoogleAuthProvider()
             const credential = await signInWithPopup(auth, googleProvider)
-            
+
             // dispatch sign in action
             dispatch(signIn(credential.user))
 
-            enqueueSnackbar('Đăng nhập thành công!', {
+            showToast('Đăng nhập thành công!', {
                 variant: 'success',
-                action,
                 autoHideDuration: 3000
             })
 
-            setTimeout(() => {
-                navigate('/')
-            }, 1000)
+            navigate('/')
         } catch (error) {
-            enqueueSnackbar(error.code, {
+            showToast(error.code, {
                 variant: 'error',
-                action,
                 autoHideDuration: 10000
             })
         }
-    }
+    }, [])
 
-    const handleLoginWithFacebook = async () => {
+    const handleLoginWithFacebook = useCallback(async () => {
         try {
             const facebookProvider = new FacebookAuthProvider()
             const credential = await signInWithPopup(auth, facebookProvider)
-            
+
             // dispatch sign in action
             dispatch(signIn(credential.user))
 
-            enqueueSnackbar('Đăng nhập thành công!', {
+            showToast('Đăng nhập thành công!', {
                 variant: 'success',
-                action,
                 autoHideDuration: 3000
             })
-            setTimeout(() => {
-                navigate('/')
-            }, 1000)
+            navigate('/')
         } catch (error) {
-            enqueueSnackbar(error.code, {
+            showToast(error.code, {
                 variant: 'error',
-                action,
                 autoHideDuration: 10000
             })
         }
-    }
+    }, [])
 
     return (
         <Box sx={styles.container}>
@@ -225,9 +205,7 @@ function Register() {
                     >
                         <Box sx={styles.btnContent}>
                             <PermIdentityIcon />
-                            <Typography>
-                                Sử dụng email / mật khẩu
-                            </Typography>
+                            <Typography>Sử dụng email / mật khẩu</Typography>
                         </Box>
                     </Button>
                     <Button

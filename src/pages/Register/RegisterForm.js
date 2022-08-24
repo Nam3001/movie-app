@@ -1,4 +1,4 @@
-import { useState, useEffect, memo, useRef } from 'react'
+import { useState, useEffect, memo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
     Box,
@@ -7,10 +7,8 @@ import {
     IconButton,
     CircularProgress
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
 import { styled } from '@mui/material/styles'
 import { Link } from 'react-router-dom'
-import { useSnackbar } from 'notistack'
 import {
     createUserWithEmailAndPassword,
     sendEmailVerification,
@@ -24,6 +22,7 @@ import PhoneNumberField from '@/components/form-control/PhoneNumberField'
 import Button from '@/components/Button'
 import { auth } from '@/services/firebaseConfig'
 import { signIn } from '@/store/authSlice'
+import useToastMessage from '@/hooks/useToastMessage'
 
 const styles = {
     inputLabelGroup: {
@@ -81,6 +80,8 @@ function RegisterForm() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    const showToast = useToastMessage()
+
     const [userFullName, setUserFullName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -101,32 +102,19 @@ function RegisterForm() {
         setIsDisableSubmit(!enableSubmit)
     }, [validFullName, email, password])
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-
-    const action = (snackbarId) => (
-        <IconButton
-            sx={{ color: '#fff' }}
-            onClick={() => {
-                closeSnackbar(snackbarId)
-            }}
-        >
-            <CloseIcon />
-        </IconButton>
-    )
-
-    const handleUserNameChange = (e) => {
+    const handleUserNameChange = useCallback((e) => {
         setUserFullName(e.target.value)
-    }
+    }, [])
 
-    const handleEmailChange = (e) => {
+    const handleEmailChange = useCallback((e) => {
         setEmail(e.target.value)
-    }
+    }, [])
 
-    const handlePasswordChange = (e) => {
+    const handlePasswordChange = useCallback((e) => {
         setPassword(e.target.value)
-    }
+    }, [])
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault()
 
         const formData = new FormData(e.target)
@@ -154,20 +142,18 @@ function RegisterForm() {
             // dispatch sign in action
             dispatch(signIn(user))
 
-            enqueueSnackbar('Xác minh email của bạn!', {
+            showToast('Xác minh email của bạn!', {
                 variant: 'info',
-                action,
                 autoHideDuration: 10000
             })
         } catch (error) {
-            enqueueSnackbar(error.code, {
+            showToast(error.code, {
                 variant: 'error',
-                action
             })
         } finally {
             setIsRegisting(false)
         }
-    }
+    }, [])
 
     return (
         <Box sx={styles.formContainer}>

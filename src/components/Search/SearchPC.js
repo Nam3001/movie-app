@@ -80,6 +80,7 @@ const SearchPC = ({ placeholder, SuggestComponent }) => {
         <ClickAwayListener onClickAway={handleClickAway}>
             <Box sx={{ position: 'relative' }}>
                 <SearchInput
+                    sx={{ marginRight: '10px' }}
                     onFocus={handleFocus}
                     searchTerm={searchTerm}
                     onSearch={handleSearch}

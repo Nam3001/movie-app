@@ -11,10 +11,10 @@ const Wrapper = styled('div')(({ theme, margin, bgColor, height, xs, lg }) => ({
     borderRadius: '6px',
     margin: margin,
     [theme.breakpoints.up('xs')]: {
-        display: xs
+        display: xs // block/none/...
     },
     [theme.breakpoints.up('lg')]: {
-        display: lg
+        display: lg // block/none/...
     }
 }))
 
@@ -58,6 +58,7 @@ const SearchInput = ({
     height,
     margin,
     placeholder,
+    sx,
     xs,
     lg,
     autoFocus,
@@ -83,8 +84,9 @@ const SearchInput = ({
     }, [inputRef, onSearch])
 
     return (
-        <Wrapper margin={margin} xs={xs} lg={lg} height={height}>
+        <Wrapper margin={margin} xs={xs} lg={lg} height={height} sx={sx}>
             <InputStyled
+
                 value={searchTerm}
                 type="search"
                 inputMode="search"
@@ -109,8 +111,9 @@ SearchInput.propTypes = {
     height: PropTypes.string,
     margin: PropTypes.string,
     placeholder: PropTypes.string,
-    xs: PropTypes.string,
-    lg: PropTypes.string,
+    sx: PropTypes.object,
+    xs: PropTypes.oneOf(['block', 'none', 'flex', 'inline-block']),
+    lg: PropTypes.oneOf(['block', 'none', 'flex', 'inline-block']),
     autoFocus: PropTypes.bool,
     searchTerm: PropTypes.string,
     onSearchChange: PropTypes.func,
