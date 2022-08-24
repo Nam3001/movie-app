@@ -1,17 +1,16 @@
-import { useState, useEffect, memo, useCallback } from 'react'
-import { Box, Typography, IconButton, CircularProgress } from '@mui/material'
-import { styled } from '@mui/material/styles'
+import { useState, memo, useCallback } from 'react'
+import { Box, Typography, CircularProgress } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import InputField from '@/components/form-control/InputField'
 import Button from '@/components/Button'
 import { auth } from '@/services/firebaseConfig'
-import PhoneNumberField from '@/components/form-control/PhoneNumberField'
 import { signIn } from '@/store/authSlice'
 import useToastMessage from '@/hooks/useToastMessage'
+import config from '@/configs'
 
 const styles = {
     formContainer: {
@@ -96,6 +95,7 @@ function LoginForm() {
         } finally {
             setLoging(false)
         }
+         // eslint-disable-next-line
     }, [])
 
     const handleEmailChange = useCallback((e) => {
@@ -104,6 +104,11 @@ function LoginForm() {
 
     const handlePasswordChange = useCallback((e) => {
         setPassword(e.target.value)
+    }, [])
+
+    const handleClickForgotPassword = useCallback(() => {
+        navigate(config.routes.forgotPassword)
+         // eslint-disable-next-line
     }, [])
 
     return (
@@ -143,7 +148,12 @@ function LoginForm() {
             <Typography sx={styles.donHaveAccount}>
                 Bạn chưa có tài khoản? <Link to="/register">Đăng ký</Link>
             </Typography>
-            <Typography sx={styles.forgotPassword}>Quên mật khẩu?</Typography>
+            <Typography
+                onClick={handleClickForgotPassword}
+                sx={styles.forgotPassword}
+            >
+                Quên mật khẩu?
+            </Typography>
         </Box>
     )
 }

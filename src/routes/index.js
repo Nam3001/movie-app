@@ -11,6 +11,7 @@ import Popular from '@/pages/Popular'
 import TopRated from '@/pages/TopRated'
 import NotFound from '@/pages/NotFound'
 import SearchPage from '@/pages/SearchPage'
+import ForgotPassword from '@/pages/ForgotPassword'
 
 const publicRoutes = [
     { path: config.routes.home, component: Home },
@@ -25,6 +26,7 @@ const publicRoutes = [
     { path: config.routes.topRated, component: TopRated },
     { path: config.routes.popular, component: Popular },
     { path: config.routes.upcoming, component: Upcoming },
+    { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
     { path: config.routes.notFound, component: NotFound }
 ]
 
