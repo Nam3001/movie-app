@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useState, useCallback } from 'react'
 import LoginForm from './LoginForm'
 import { Box, Typography, CardMedia, IconButton } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
@@ -9,8 +9,6 @@ import {
     FacebookAuthProvider,
     promptUserForPassword
 } from 'firebase/auth'
-import { useSnackbar } from 'notistack'
-import CloseIcon from '@mui/icons-material/Close'
 import { useSelector, useDispatch } from 'react-redux'
 
 import Button from '@/components/Button'
@@ -20,6 +18,7 @@ import facebookIcon from '@/assets/img/facebook.png'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import { auth } from '@/services/firebaseConfig'
 import { signIn } from '@/store/authSlice'
+import useToastMessage from '@/hooks/useToastMessage'
 
 const styles = {
     container: {
@@ -119,31 +118,20 @@ function Login() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const showToast = useToastMessage()
 
     // use to determine current position is sign in method or login form
     const [isLoginForm, setIsLoginForm] = useState(false)
 
-    const handleClickBack = () => {
+    const handleClickBack = useCallback(() => {
         if (isLoginForm) {
             setIsLoginForm(false)
         } else {
             navigate(-1)
         }
-    }
+    }, [isLoginForm])
 
-    const action = (snackbarId) => (
-        <IconButton
-            sx={{ color: '#fff' }}
-            onClick={() => {
-                closeSnackbar(snackbarId)
-            }}
-        >
-            <CloseIcon />
-        </IconButton>
-    )
-
-    const handleLoginWithGoogle = async () => {
+    const handleLoginWithGoogle = useCallback(async () => {
         try {
             const googleProvider = new GoogleAuthProvider()
             const credential = await signInWithPopup(auth, googleProvider)
@@ -151,24 +139,20 @@ function Login() {
             // dispatch 
             dispatch(signIn(credential.user))
 
-            enqueueSnackbar('Đăng nhập thành công!', {
+            showToast('Đăng nhập thành công!', {
                 variant: 'success',
-                action,
                 autoHideDuration: 3000
             })
-            setTimeout(() => {
-                navigate('/')
-            }, 1000)
+            navigate('/')
         } catch (error) {
-            enqueueSnackbar(error.code, {
+            showToast(error.code, {
                 variant: 'error',
-                action,
                 autoHideDuration: 10000
             })
         }
-    }
+    }, [])
 
-    const handleLoginWithFacebook = async () => {
+    const handleLoginWithFacebook = useCallback(async () => {
         try {
             const facebookProvider = new FacebookAuthProvider()
             const credential = await signInWithPopup(auth, facebookProvider)
@@ -176,23 +160,19 @@ function Login() {
             // dispatch action
             dispatch(signIn(credential.user))
 
-            enqueueSnackbar('Đăng nhập thành công!', {
+            showToast('Đăng nhập thành công!', {
                 variant: 'success',
-                action,
                 autoHideDuration: 3000
             })
 
-            setTimeout(() => {
-                navigate('/')
-            }, 1000)
+            navigate('/')
         } catch (error) {
-            enqueueSnackbar(error.code, {
+            showToast(error.code, {
                 variant: 'error',
-                action,
                 autoHideDuration: 10000
             })
         }
-    }
+    }, [])
 
     return (
         <Box sx={styles.container}>

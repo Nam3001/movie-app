@@ -1,21 +1,7 @@
-import React, { useState, useCallback, memo } from 'react'
-import PropTypes from 'prop-types'
-import {
-    IconButton,
-    Avatar,
-    Menu,
-    MenuItem,
-    Popper,
-    Grow,
-    Box,
-    MenuList,
-    Paper,
-    ClickAwayListener,
-    Typography,
-    CardMedia
-} from '@mui/material'
-import { useSnackbar } from 'notistack'
-import CloseIcon from '@mui/icons-material/Close'
+import { useState, useCallback, memo, useRef } from 'react'
+import { IconButton, Avatar, Menu } from '@mui/material'
+import { Paper, ClickAwayListener, Typography, CardMedia } from '@mui/material'
+import { MenuItem, Popper, Grow, Box, MenuList } from '@mui/material'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
@@ -28,6 +14,8 @@ import { signOut as signOutAction } from '@/store/authSlice'
 import { userInfoSelector, loggedSelector } from '@/store/selectors'
 import avatarPlaceholder from '@/assets/img/avatar-placeholder.png'
 import config from '@/configs'
+import useToastMessage from '@/hooks/useToastMessage'
+import DialogAlert from '@/components/DialogAlert'
 
 const styles = {
     menu: {
@@ -71,63 +59,62 @@ const styles = {
 }
 
 const Account = () => {
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    // global state
+    const showToast = useToastMessage()
+
     const logged = useSelector(loggedSelector)
     const userInfo = useSelector(userInfoSelector)
 
+    // fallback for avatar
     const [fallback, setFallback] = useState('')
 
-    const [open, setOpen] = React.useState(false)
-    const anchorRef = React.useRef(null)
+    const [openMenu, setOpenMenu] = useState(false)
+    const [showSignOutConfirm, setShowSignOutConfirm] = useState(false)
 
-    const handleToggle = useCallback(() => {
-        setOpen((prev) => !prev)
-    }, [open])
+    const anchorRef = useRef(null)
 
-    const handleClose = useCallback(() => {
-        setOpen(false)
-    }, [open])
+    const handleToggleMenu = useCallback(() => {
+        setOpenMenu((prev) => !prev)
+    }, [openMenu])
+
+    const handleCloseMenu = useCallback(() => {
+        setOpenMenu(false)
+    }, [openMenu])
 
     const handleSignOut = useCallback(async () => {
         try {
-            handleClose()
+            handleCloseMenu()
+            setShowSignOutConfirm(false)
             await signOut(auth)
 
             // dispatch sign out action
             dispatch(signOutAction())
 
-            enqueueSnackbar('Đăng xuất thành công!', {
+            showToast('Đăng xuất thành công!', {
                 variant: 'success',
-                action,
                 autoHideDuration: 3000
             })
         } catch (err) {
-            enqueueSnackbar(err.message, {
+            showToast(err.message, {
                 variant: 'error',
-                action
+                autoHideDuration: 5000
             })
         }
     }, [auth])
 
-    const action = (snackbarId) => (
-        <IconButton
-            sx={{ color: '#fff' }}
-            onClick={() => {
-                closeSnackbar(snackbarId)
-            }}
-        >
-            <CloseIcon />
-        </IconButton>
-    )
+    const handleShowConfirm = useCallback(() => {
+        setShowSignOutConfirm(true)
+    }, [])
 
-    const handleNavigateLoginPage = () => {
+    const handleCloseMenuConfirm = useCallback(() => {
+        setShowSignOutConfirm(false)
+    }, [])
+
+    const handleNavigateLoginPage = useCallback(() => {
         navigate(config.routes.login)
-    }
+    }, [])
 
     return (
         <>
@@ -140,20 +127,22 @@ const Account = () => {
                         aria-label="account"
                         size="large"
                         sx={styles.accountButton}
-                        onClick={handleToggle}
+                        onClick={handleToggleMenu}
                     >
                         <Avatar sx={styles.avatarIcon}>
                             {userInfo.photoURL && (
                                 <CardMedia
                                     component="img"
                                     image={fallback || userInfo.photoURL}
-                                    onError={() => { setFallback(avatarPlaceholder) }}
+                                    onError={() => {
+                                        setFallback(avatarPlaceholder)
+                                    }}
                                 />
                             )}
                         </Avatar>
                     </IconButton>
                     <Popper
-                        open={open}
+                        open={openMenu}
                         anchorEl={anchorRef.current}
                         placement="bottom-end"
                         transition
@@ -171,19 +160,19 @@ const Account = () => {
                             >
                                 <Paper sx={styles.menu}>
                                     <ClickAwayListener
-                                        onClickAway={handleClose}
+                                        onClickAway={handleCloseMenu}
                                     >
                                         <MenuList>
                                             <MenuItem
                                                 sx={{ mb: 1.2 }}
                                                 sx={styles.menuItem}
-                                                onClick={handleClose}
+                                                onClick={handleCloseMenu}
                                             >
                                                 {userInfo.displayName}
                                             </MenuItem>
                                             <MenuItem
                                                 sx={styles.menuItem}
-                                                onClick={handleClose}
+                                                onClick={handleCloseMenu}
                                             >
                                                 <BookmarkBorderOutlinedIcon />
                                                 <Typography variant="body2">
@@ -192,7 +181,7 @@ const Account = () => {
                                             </MenuItem>
                                             <MenuItem
                                                 sx={styles.menuItem}
-                                                onClick={handleSignOut}
+                                                onClick={handleShowConfirm}
                                             >
                                                 <LogoutOutlinedIcon />
                                                 <Typography variant="body2">
@@ -208,6 +197,7 @@ const Account = () => {
                 </>
             )}
 
+            {/* Button to navigate to login page */}
             {!logged && (
                 <IconButton
                     edge="start"
@@ -222,10 +212,15 @@ const Account = () => {
                     </Avatar>
                 </IconButton>
             )}
+            <DialogAlert
+                open={showSignOutConfirm}
+                onClose={handleCloseMenuConfirm}
+                onAllow={handleSignOut}
+                title="Đăng xuất tài khoản"
+                content="Bạn có chắc đăng xuất tài khoản này không?"
+            />
         </>
     )
 }
-
-Account.propTypes = {}
 
 export default memo(Account)
