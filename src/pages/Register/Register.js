@@ -2,6 +2,14 @@ import { memo, useState } from 'react'
 import { Box, Typography, CardMedia, IconButton } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
+import {
+    signInWithPopup,
+    GoogleAuthProvider,
+    FacebookAuthProvider
+} from 'firebase/auth'
+import { useSnackbar } from 'notistack'
+import CloseIcon from '@mui/icons-material/Close'
+import { useSelector, useDispatch } from 'react-redux'
 
 import RegisterForm from './RegisterForm'
 import Button from '@/components/Button'
@@ -9,22 +17,23 @@ import logo from '@/assets/img/logo.png'
 import googleIcon from '@/assets/img/google.png'
 import facebookIcon from '@/assets/img/facebook.png'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
+import { auth } from '@/services/firebaseConfig'
+import { signIn } from '@/store/authSlice'
 
 const styles = {
     container: {
         bgcolor: (theme) => theme.color.primary.light,
         width: '600px',
         maxWidth: '90vw',
-        height: '580px',
-        maxHeight: '94vh',
+        minHeight: '480px',
+        maxHeight: '100vh',
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        margin: 'auto',
+        left: '50%',
+        top: '50%',
+        overflow: 'auto',
+        transform: 'translate(-50%, -50%)',
         borderRadius: '10px',
-        py: '30px',
+        py: '40px',
         px: {
             xs: '12px',
             sm: '30px'
@@ -50,7 +59,7 @@ const styles = {
         mt: 2
     },
     registerMethod: {
-        mt: 5,
+        mt: 4,
         width: '320px',
         maxWidth: '100%',
         display: 'flex',
@@ -96,9 +105,10 @@ const styles = {
     },
     goBack: {
         position: 'absolute',
+        paddingLeft: '20px',
         color: '#fff',
-        left: '10px',
-        top: '10px',
+        left: 0,
+        top: 0,
         width: '56px',
         height: '56px'
     },
@@ -117,6 +127,9 @@ const styles = {
 
 function Register() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     // use to determine current position is sign in method or login form
     const [isRegisterForm, setIsRegisterForm] = useState(false)
@@ -126,6 +139,68 @@ function Register() {
             setIsRegisterForm(false)
         } else {
             navigate(-1)
+        }
+    }
+
+    const action = (snackbarId) => (
+        <IconButton
+            sx={{ color: '#fff' }}
+            onClick={() => {
+                closeSnackbar(snackbarId)
+            }}
+        >
+            <CloseIcon />
+        </IconButton>
+    )
+
+    const handleLoginWithGoogle = async () => {
+        try {
+            const googleProvider = new GoogleAuthProvider()
+            const credential = await signInWithPopup(auth, googleProvider)
+            
+            // dispatch sign in action
+            dispatch(signIn(credential.user))
+
+            enqueueSnackbar('Đăng nhập thành công!', {
+                variant: 'success',
+                action,
+                autoHideDuration: 3000
+            })
+
+            setTimeout(() => {
+                navigate('/')
+            }, 1000)
+        } catch (error) {
+            enqueueSnackbar(error.code, {
+                variant: 'error',
+                action,
+                autoHideDuration: 10000
+            })
+        }
+    }
+
+    const handleLoginWithFacebook = async () => {
+        try {
+            const facebookProvider = new FacebookAuthProvider()
+            const credential = await signInWithPopup(auth, facebookProvider)
+            
+            // dispatch sign in action
+            dispatch(signIn(credential.user))
+
+            enqueueSnackbar('Đăng nhập thành công!', {
+                variant: 'success',
+                action,
+                autoHideDuration: 3000
+            })
+            setTimeout(() => {
+                navigate('/')
+            }, 1000)
+        } catch (error) {
+            enqueueSnackbar(error.code, {
+                variant: 'error',
+                action,
+                autoHideDuration: 10000
+            })
         }
     }
 
@@ -151,12 +226,13 @@ function Register() {
                         <Box sx={styles.btnContent}>
                             <PermIdentityIcon />
                             <Typography>
-                                Sử dụng email / hoặc số điện thoại
+                                Sử dụng email / mật khẩu
                             </Typography>
                         </Box>
                     </Button>
                     <Button
                         sx={styles.signInButton}
+                        onClick={handleLoginWithGoogle}
                         variant="outline"
                         color="light"
                         display="block"
@@ -169,6 +245,7 @@ function Register() {
                     </Button>
                     <Button
                         sx={styles.signInButton}
+                        onClick={handleLoginWithFacebook}
                         variant="outline"
                         color="light"
                         display="block"

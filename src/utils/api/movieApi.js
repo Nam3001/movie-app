@@ -1,4 +1,4 @@
-import httpRequest from './httpRequest'
+import httpRequest from '@/services/httpRequest'
 
 class MovieApi {
 	getAll(params) {

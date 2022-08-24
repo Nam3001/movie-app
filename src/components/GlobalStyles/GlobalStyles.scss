@@ -19,11 +19,9 @@ html {
     align-items: flex-start !important;
 }
 
-
-input[type=search]::-webkit-search-cancel-button{
-    display: none; 
+input[type='search']::-webkit-search-cancel-button {
+    display: none;
 }
-
 
 ::-webkit-scrollbar {
     appearance: none;
@@ -45,4 +43,14 @@ input[type=search]::-webkit-search-cancel-button{
 
 ::-webkit-scrollbar-thumb:vertical:hover {
     background-color: #999;
+}
+
+
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }

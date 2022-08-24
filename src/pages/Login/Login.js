@@ -3,12 +3,23 @@ import LoginForm from './LoginForm'
 import { Box, Typography, CardMedia, IconButton } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
+import {
+    signInWithPopup,
+    GoogleAuthProvider,
+    FacebookAuthProvider,
+    promptUserForPassword
+} from 'firebase/auth'
+import { useSnackbar } from 'notistack'
+import CloseIcon from '@mui/icons-material/Close'
+import { useSelector, useDispatch } from 'react-redux'
 
 import Button from '@/components/Button'
 import logo from '@/assets/img/logo.png'
 import googleIcon from '@/assets/img/google.png'
 import facebookIcon from '@/assets/img/facebook.png'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
+import { auth } from '@/services/firebaseConfig'
+import { signIn } from '@/store/authSlice'
 
 const styles = {
     container: {
@@ -18,13 +29,12 @@ const styles = {
         height: '580px',
         maxHeight: '94vh',
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        margin: 'auto',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        overflowY: 'auto',
         borderRadius: '10px',
-        py: '30px',
+        py: '40px',
         px: {
             xs: '12px',
             sm: '30px'
@@ -96,9 +106,10 @@ const styles = {
     },
     goBack: {
         position: 'absolute',
+        paddingLeft: '20px',
         color: '#fff',
-        left: '10px',
-        top: '10px',
+        left: 0,
+        top: 0,
         width: '56px',
         height: '56px'
     }
@@ -106,6 +117,9 @@ const styles = {
 
 function Login() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     // use to determine current position is sign in method or login form
     const [isLoginForm, setIsLoginForm] = useState(false)
@@ -115,6 +129,68 @@ function Login() {
             setIsLoginForm(false)
         } else {
             navigate(-1)
+        }
+    }
+
+    const action = (snackbarId) => (
+        <IconButton
+            sx={{ color: '#fff' }}
+            onClick={() => {
+                closeSnackbar(snackbarId)
+            }}
+        >
+            <CloseIcon />
+        </IconButton>
+    )
+
+    const handleLoginWithGoogle = async () => {
+        try {
+            const googleProvider = new GoogleAuthProvider()
+            const credential = await signInWithPopup(auth, googleProvider)
+            
+            // dispatch 
+            dispatch(signIn(credential.user))
+
+            enqueueSnackbar('Đăng nhập thành công!', {
+                variant: 'success',
+                action,
+                autoHideDuration: 3000
+            })
+            setTimeout(() => {
+                navigate('/')
+            }, 1000)
+        } catch (error) {
+            enqueueSnackbar(error.code, {
+                variant: 'error',
+                action,
+                autoHideDuration: 10000
+            })
+        }
+    }
+
+    const handleLoginWithFacebook = async () => {
+        try {
+            const facebookProvider = new FacebookAuthProvider()
+            const credential = await signInWithPopup(auth, facebookProvider)
+
+            // dispatch action
+            dispatch(signIn(credential.user))
+
+            enqueueSnackbar('Đăng nhập thành công!', {
+                variant: 'success',
+                action,
+                autoHideDuration: 3000
+            })
+
+            setTimeout(() => {
+                navigate('/')
+            }, 1000)
+        } catch (error) {
+            enqueueSnackbar(error.code, {
+                variant: 'error',
+                action,
+                autoHideDuration: 10000
+            })
         }
     }
 
@@ -141,12 +217,13 @@ function Login() {
                         <Box sx={styles.btnContent}>
                             <PermIdentityIcon />
                             <Typography>
-                                Sử dụng email / hoặc số điện thoại
+                                Sử dụng email / mật khẩu
                             </Typography>
                         </Box>
                     </Button>
                     <Button
                         sx={styles.signInButton}
+                        onClick={handleLoginWithGoogle}
                         variant="outline"
                         color="light"
                         display="block"
@@ -159,6 +236,7 @@ function Login() {
                     </Button>
                     <Button
                         sx={styles.signInButton}
+                        onClick={handleLoginWithFacebook}
                         variant="outline"
                         color="light"
                         display="block"
