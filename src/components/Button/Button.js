@@ -37,7 +37,7 @@ const sizes = {
 }
 
 const FillButton = styled('button')(({ theme, ...props }) => ({
-	cursor: 'pointer',
+	cursor: props.disable ? 'not-allowed' : 'pointer',
 	border: 'none',
 	fontSize: '16px',
 	color: '#fff',
@@ -46,6 +46,7 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 	display: props.display === 'block' ? 'block' : null,
 	padding: props.size ? sizes[props.size].padding : sizes.md.padding,
 	fontSize: props.size ? sizes[props.size].fontSize : sizes.md.fontSize,
+	opacity: props.disable ? 0.5 : 1,
 	borderRadius:
 		(props.pill
 			? sizes?.[props?.size]?.borderRadiusPill
@@ -55,12 +56,12 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 		marginLeft: props.display === 'inline-block' ? '10px' : '0'
 	},
 	'&:hover': {
-		opacity: 0.9
+		opacity: props.disable ? 0.5 : 0.9
 	}
 }))
 
 const OutlineButton = styled('button')(({ theme, ...props }) => ({
-	cursor: 'pointer',
+	cursor: props.disable ? 'not-allowed' : 'pointer',
 	fontSize: '16px',
 	backgroundColor: 'transparent',
 	minWidth: '80px',
@@ -78,13 +79,14 @@ const OutlineButton = styled('button')(({ theme, ...props }) => ({
 		marginLeft: props.display === 'inline-block' ? '10px' : '0'
 	},
 	'&:hover': {
-		backgroundColor: colors[props.color],
+		backgroundColor: props.disable ? 'transparent' : colors[props.color],
 		color: '#fff'
 	}
 }))
 
 const Button = ({
 	className,
+	id,
 	sx,
 	children,
 	onClick = DEFAULT_FUNC,
@@ -93,35 +95,40 @@ const Button = ({
 	variant,
 	color,
 	pill,
-	size
+	size,
+	disable = false
 }) => {
 	return (
 		<>
 			{variant !== 'outline' ? (
 				<FillButton
+					id={id}
 					type={type}
 					className={className}
 					sx={sx}
-					onClick={onClick}
+					onClick={disable ? DEFAULT_FUNC : onClick}
 					variant={variant}
 					color={color}
 					size={size}
+					disable={disable ? 'true' : undefined}
 					display={display}
-					pill={pill && 'true'}
+					pill={pill ? 'true' : undefined}
 				>
 					{children}
 				</FillButton>
 			) : (
 				<OutlineButton
+					id={id}
 					type={type}
 					className={className}
 					sx={sx}
-					onClick={onClick}
+					onClick={disable ? DEFAULT_FUNC : onClick}
 					variant={variant}
 					color={color}
 					size={size}
+					disable={disable ? 'true' : undefined}
 					display={display}
-					pill={pill && 'true'}
+					pill={pill ? 'true' : undefined}
 				>
 					{children}
 				</OutlineButton>
@@ -131,6 +138,8 @@ const Button = ({
 }
 
 Button.propTypes = {
+	className: PropTypes.string,
+	id: PropTypes.string,
 	children: PropTypes.any,
 	sx: PropTypes.object,
 	type: PropTypes.string,
@@ -147,7 +156,8 @@ Button.propTypes = {
 		'success',
 		'light'
 	]),
-	pill: PropTypes.bool
+	pill: PropTypes.bool,
+	disable: PropTypes.bool
 }
 
 export default Button

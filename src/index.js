@@ -4,17 +4,27 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import GlobalStyles from './components/GlobalStyles'
 import { Provider } from 'react-redux'
+import { SnackbarProvider } from 'notistack'
+import { styled } from '@mui/material/styles'
 import store from './store'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-    //<React.StrictMode>
+    <React.StrictMode>
         <GlobalStyles>
             <Provider store={store}>
-                <App />
+                <SnackbarProvider
+                    preventDuplicate
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right'
+                    }}
+                >
+                    <App />
+                </SnackbarProvider>
             </Provider>
         </GlobalStyles>
-    //</React.StrictMode>
+    </React.StrictMode>
 )
 
 // If you want to start measuring performance in your app, pass a function

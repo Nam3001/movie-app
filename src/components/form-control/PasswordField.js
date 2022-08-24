@@ -19,14 +19,12 @@ const Input = styled('input')(({ theme, ...props }) => ({
 	}
 }))
 
-const InputField = ({
+const PasswordField = ({
 	placeholder,
 	pill,
 	sx,
 	invalid,
 	name,
-	type = 'text',
-	inputMode = 'text',
 	value = '',
 	onChange = DEFAULT_FUNC
 }) => {
@@ -37,23 +35,21 @@ const InputField = ({
 			pill={pill ? 'true' : undefined}
 			invalid={invalid ? 'true' : undefined}
 			name={name}
-			type={type}
-			inputMode={inputMode}
+			type="password"
+			inputMode="password"
 			onChange={onChange}
 			value={value}
 		/>
 	)
 }
 
-InputField.propTypes = {
+PasswordField.propTypes = {
 	placeholder: PropTypes.string,
 	pill: PropTypes.bool,
 	sx: PropTypes.object,
 	invalid: PropTypes.bool,
-	type: PropTypes.string,
-	inputMode: PropTypes.string,
 	value: PropTypes.string,
 	onChange: PropTypes.func
 }
 
-export default InputField
+export default PasswordField

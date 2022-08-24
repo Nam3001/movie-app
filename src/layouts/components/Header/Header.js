@@ -18,7 +18,7 @@ import Search from '@/components/Search'
 import config from '@/configs'
 import Wrapper from '@/components/Wrapper'
 import NavList from '../NavList'
-import Account from '../Account'
+import Account from '@/components/Account'
 import HideOnScroll from './HideOnScroll'
 
 // styles
