@@ -4,13 +4,15 @@ import { Link } from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import { useForm, Controller } from 'react-hook-form'
 
 import InputField from '@/components/form-control/InputField'
 import Button from '@/components/Button'
 import { auth } from '@/services/firebaseConfig'
 import { signIn } from '@/store/authSlice'
-import useToastMessage from '@/hooks/useToastMessage'
 import config from '@/configs'
+import validationSchema from './validationSchema'
+import useYupValidationResolver from '@/hooks/useYupValidationResolver'
 
 const styles = {
     formContainer: {
@@ -26,7 +28,7 @@ const styles = {
         width: '100%',
         fontSize: '16px',
         fontWeight: '500',
-        mt: 4,
+        mt: 3,
         backgroundColor: (theme) => theme.color.heading
     },
     donHaveAccount: {
@@ -50,94 +52,90 @@ const styles = {
         color: '#fff',
         width: '15px !important',
         height: '15px !important'
+    },
+    wrongPassword: {
+        color: '#e92040',
+        mt: 2,
+        ml: 2,
+        fontSize: '14px'
     }
 }
 
-function LoginForm() {
+function LoginForm({ loging, onSubmit, wrongPassword }) {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const showToast = useToastMessage()
-
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-
-    const [loging, setLoging] = useState(false)
-
-    const handleSubmit = useCallback(async (e) => {
-        e.preventDefault()
-        try {
-            setLoging(true)
-            const formData = new FormData(e.target)
-
-            const email = formData.get('email')
-            const password = formData.get('password')
-
-            const credential = await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            )
-
-            // dispatch sign in action
-            dispatch(signIn(credential.user))
-
-            showToast('Đăng nhập thành công!', {
-                variant: 'success',
-                autoHideDuration: 3000
-            })
-            navigate('/')
-        } catch (err) {
-            showToast(err.message, {
-                variant: 'error',
-                autoHideDuration: 10000
-            })
-        } finally {
-            setLoging(false)
-        }
-         // eslint-disable-next-line
-    }, [])
-
-    const handleEmailChange = useCallback((e) => {
-        setEmail(e.target.value)
-    }, [])
-
-    const handlePasswordChange = useCallback((e) => {
-        setPassword(e.target.value)
-    }, [])
+    const yupResolver = useYupValidationResolver(validationSchema)
+    const {
+        handleSubmit,
+        control,
+        formState: { errors }
+    } = useForm({
+        mode: 'onSubmit',
+        defaultValues: {
+            email: '',
+            password: ''
+        },
+        resolver: yupResolver
+    })
 
     const handleClickForgotPassword = useCallback(() => {
         navigate(config.routes.forgotPassword)
-         // eslint-disable-next-line
+        // eslint-disable-next-line
     }, [])
 
     return (
         <Box sx={styles.formContainer}>
-            <form onSubmit={handleSubmit} noValidate>
+            <form
+                onSubmit={handleSubmit}
+                noValidate
+                onSubmit={handleSubmit(onSubmit)}
+            >
                 <Box>
-                    <InputField
-                        onChange={handleEmailChange}
-                        value={email}
-                        type="email"
+                    <Controller
+                        control={control}
                         name="email"
-                        inputMode="email"
-                        sx={styles.inputField}
-                        placeholder="Địa chỉ email"
-                        pill
+                        render={({ field }) => (
+                            <InputField
+                                {...field}
+                                type="email"
+                                inputMode="email"
+                                invalid={!!errors.email}
+                                errorMessage={errors.email?.message}
+                                sx={styles.inputField}
+                                placeholder="Địa chỉ email"
+                                pill
+                            />
+                        )}
                     />
-                    <InputField
-                        onChange={handlePasswordChange}
-                        value={password}
+                    <Controller
+                        control={control}
                         name="password"
-                        inputMode="text"
-                        sx={styles.inputField}
-                        placeholder="Mật khẩu"
-                        pill
-                        type="password"
+                        render={({ field }) => (
+                            <InputField
+                                {...field}
+                                invalid={!!errors.password}
+                                errorMessage={errors.password?.message}
+                                sx={styles.inputField}
+                                placeholder="Mật khẩu"
+                                pill
+                                type="password"
+                            />
+                        )}
                     />
                 </Box>
+                {wrongPassword && (
+                    <Typography sx={styles.wrongPassword}>
+                        Mật khẩu không chính xác!
+                    </Typography>
+                )}
 
-                <Button color="warning" sx={styles.submitBtn} type="submit">
+                <Button
+                    color="warning"
+                    sx={styles.submitBtn}
+                    type="submit"
+                    disabled={loging}
+                >
                     {loging ? (
                         <CircularProgress sx={styles.loging} />
                     ) : (

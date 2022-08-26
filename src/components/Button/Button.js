@@ -36,7 +36,7 @@ const sizes = {
 }
 
 const FillButton = styled('button')(({ theme, ...props }) => ({
-	cursor: props.disable ? 'not-allowed' : 'pointer',
+	cursor: props.disabled ? 'not-allowed' : 'pointer',
 	color: '#fff',
 	minWidth: '70px',
 	border: `1px solid ${props.color ? colors[props.color] : colors.primary}`,
@@ -44,7 +44,7 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 	display: props.display === 'block' ? 'block' : null,
 	padding: props.size ? sizes[props.size].padding : sizes.md.padding,
 	fontSize: props.size ? sizes[props.size].fontSize : sizes.md.fontSize,
-	opacity: props.disable ? 0.6 : 1,
+	opacity: props.disabled ? 0.6 : 1,
 	borderRadius:
 		(props.pill
 			? sizes?.[props?.size]?.borderRadiusPill
@@ -54,12 +54,12 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 		marginLeft: props.display === 'inline-block' ? '10px' : '0'
 	},
 	'&:hover': {
-		opacity: props.disable ? 0.5 : 0.85
+		opacity: props.disabled ? 0.5 : 0.85
 	}
 }))
 
 const OutlineButton = styled('button')(({ theme, ...props }) => ({
-	cursor: props.disable ? 'not-allowed' : 'pointer',
+	cursor: props.disabled ? 'not-allowed' : 'pointer',
 	backgroundColor: 'transparent',
 	minWidth: '70px',
 	border: `1px solid ${colors[props.color]}`,
@@ -76,7 +76,7 @@ const OutlineButton = styled('button')(({ theme, ...props }) => ({
 		marginLeft: props.display === 'inline-block' ? '10px' : '0'
 	},
 	'&:hover': {
-		backgroundColor: props.disable ? 'transparent' : colors[props.color],
+		backgroundColor: props.disabled ? 'transparent' : colors[props.color],
 		color: '#fff'
 	}
 }))
@@ -93,7 +93,7 @@ const Button = ({
 	color,
 	pill,
 	size,
-	disable = false
+	disabled
 }) => {
 	return (
 		<>
@@ -103,11 +103,11 @@ const Button = ({
 					type={type}
 					className={className}
 					sx={sx}
-					onClick={disable ? DEFAULT_FUNC : onClick}
+					onClick={disabled ? DEFAULT_FUNC : onClick}
 					variant={variant}
 					color={color}
 					size={size}
-					disable={disable ? 'true' : undefined}
+					disabled={disabled}
 					display={display}
 					pill={pill ? 'true' : undefined}
 				>
@@ -119,11 +119,11 @@ const Button = ({
 					type={type}
 					className={className}
 					sx={sx}
-					onClick={disable ? DEFAULT_FUNC : onClick}
+					onClick={disabled ? DEFAULT_FUNC : onClick}
 					variant={variant}
 					color={color}
 					size={size}
-					disable={disable ? 'true' : undefined}
+					disabled={disabled}
 					display={display}
 					pill={pill ? 'true' : undefined}
 				>
@@ -154,7 +154,7 @@ Button.propTypes = {
 		'light'
 	]),
 	pill: PropTypes.bool,
-	disable: PropTypes.bool
+	disabled: PropTypes.bool
 }
 
 export default memo(Button)

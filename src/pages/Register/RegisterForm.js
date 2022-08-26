@@ -1,4 +1,5 @@
 import { useState, useEffect, memo, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import {
     Box,
@@ -9,43 +10,33 @@ import {
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { Link } from 'react-router-dom'
-import {
-    createUserWithEmailAndPassword,
-    sendEmailVerification,
-    onAuthStateChanged,
-    updateProfile
-} from 'firebase/auth'
 import { useSelector, useDispatch } from 'react-redux'
+import { useForm, Controller, useWatch } from 'react-hook-form'
+import * as yup from 'yup'
 
 import InputField from '@/components/form-control/InputField'
-import PhoneNumberField from '@/components/form-control/PhoneNumberField'
 import Button from '@/components/Button'
 import { auth } from '@/services/firebaseConfig'
-import { signIn } from '@/store/authSlice'
-import useToastMessage from '@/hooks/useToastMessage'
+import useYupValidationResolver from '@/hooks/useYupValidationResolver'
+import { toCapitalize } from '@/utils/common'
+import validationSchema from './validationSchema'
 
 const styles = {
     inputLabelGroup: {
-        display: 'flex',
-        justifyContent: 'space-between',
         px: 1,
         mt: {
-            xs: 3,
-            sm: 3.5
+            xs: 1,
+            sm: 2
         },
         '& > p': {
             color: '#fff',
-            fontSize: '15px',
             fontWeight: '500'
         }
-    },
-    inputLabelRight: {
-        cursor: 'pointer'
     },
     formContainer: {
         width: '360px',
         maxWidth: '98%',
-        mt: 1
+        mt: 3
     },
     inputField: {
         width: '100%',
@@ -56,7 +47,8 @@ const styles = {
         fontSize: '16px',
         fontWeight: '500',
         mt: 4,
-        backgroundColor: (theme) => theme.color.heading
+        backgroundColor: (theme) => theme.color.heading,
+        borderColor: (theme) => theme.color.heading
     },
     hadAccount: {
         color: (theme) => theme.color.nav,
@@ -73,22 +65,44 @@ const styles = {
         color: '#fff',
         width: '15px !important',
         height: '15px !important'
+    },
+    emailUsed: {
+        color: '#e92040',
+        fontSize: '14px',
+        mt: 2,
+        ml: 1.5
     }
 }
 
-function RegisterForm() {
+function RegisterForm({ onSubmit, registering, emailUsed }) {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const showToast = useToastMessage()
+    const yupResolver = useYupValidationResolver(validationSchema)
 
-    const [userFullName, setUserFullName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { errors }
+    } = useForm({
+        mode: 'onSubmit',
+        defaultValues: {
+            fullName: '',
+            email: '',
+            password: '',
+            passwordAgain: ''
+        },
+        resolver: yupResolver
+    })
+
+    const userFullName = useWatch({ name: 'fullName', control })
+    const email = useWatch({ name: 'email', control })
+    const password = useWatch({ name: 'password', control })
+    const passwordAgain = useWatch({ name: 'passwordAgain', control })
 
     const [validFullName, setValidFullName] = useState(false)
     const [isDisableSubmit, setIsDisableSubmit] = useState(true)
-    const [isRegisting, setIsRegisting] = useState(false)
 
     useEffect(() => {
         setValidFullName(() => {
@@ -98,81 +112,41 @@ function RegisterForm() {
     }, [userFullName])
 
     useEffect(() => {
-        const enableSubmit = validFullName && email && password
+        const enableSubmit = validFullName && email && password && passwordAgain
         setIsDisableSubmit(!enableSubmit)
-    }, [validFullName, email, password])
-
-    const handleUserNameChange = useCallback((e) => {
-        setUserFullName(e.target.value)
-    }, [])
-
-    const handleEmailChange = useCallback((e) => {
-        setEmail(e.target.value)
-    }, [])
-
-    const handlePasswordChange = useCallback((e) => {
-        setPassword(e.target.value)
-    }, [])
-
-    const handleSubmit = useCallback(async (e) => {
-        e.preventDefault()
-
-        const formData = new FormData(e.target)
-
-        const email = formData.get('email')
-        const password = formData.get('password')
-        const displayName = formData.get('username')
-
-        try {
-            setIsRegisting(true)
-            const credential = await createUserWithEmailAndPassword(
-                auth,
-                email,
-                password
-            )
-
-            const user = credential.user
-            await sendEmailVerification(user, {
-                url: 'http://localhost:3001'
-            })
-            await updateProfile(user, {
-                displayName
-            })
-            
-            // dispatch sign in action
-            dispatch(signIn(user))
-
-            showToast('Xác minh email của bạn!', {
-                variant: 'info',
-                autoHideDuration: 10000
-            })
-        } catch (error) {
-            showToast(error.code, {
-                variant: 'error',
-            })
-        } finally {
-            setIsRegisting(false)
-        }
-    }, [])
+    }, [validFullName, email, password, passwordAgain])
 
     return (
         <Box sx={styles.formContainer}>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
                 <Box
                     className="inputForm_labelGroup"
                     sx={styles.inputLabelGroup}
                 >
-                    <Typography className="inputForm_label">
+                    <Typography
+                        className="inputForm_label"
+                        sx={{ fontSize: '16px' }}
+                    >
                         Tên của bạn?
                     </Typography>
                 </Box>
-                <InputField
-                    name="username"
-                    onChange={handleUserNameChange}
-                    value={userFullName}
-                    sx={styles.inputField}
-                    pill
-                    placeholder="Họ và tên của bạn"
+                <Controller
+                    control={control}
+                    name="fullName"
+                    render={({ field }) => (
+                        <InputField
+                            {...field}
+                            value={toCapitalize(field.value)}
+                            onChange={(e) =>
+                                field.onChange(toCapitalize(e.target.value))
+                            }
+                            sx={styles.inputField}
+                            placeholder="Họ và tên của bạn"
+                            pill
+                            invalid={Boolean(errors.fullName)}
+                            errorMessage={errors.fullName?.message}
+                        />
+                    )}
                 />
                 <Box
                     className="inputForm_labelGroup"
@@ -180,56 +154,82 @@ function RegisterForm() {
                 >
                     <Typography
                         className="inputForm_label"
-                        sx={styles.inputLabelLeft}
+                        sx={{ fontSize: '16px' }}
                     >
                         Email
                     </Typography>
                 </Box>
-                <Box className="email_form">
-                    <InputField
-                        type="email"
-                        name="email"
-                        value={email}
-                        onChange={handleEmailChange}
-                        inputMode="email"
-                        sx={styles.inputField}
-                        placeholder="Địa chỉ email"
-                        pill
-                    />
-                    <InputField
-                        type="password"
-                        name="password"
-                        value={password}
-                        onChange={handlePasswordChange}
-                        sx={styles.inputField}
-                        placeholder="Mật khẩu"
-                        pill
-                    />
-                    <InputField
-                        type="password"
-                        name="passwordAgain"
-                        sx={styles.inputField}
-                        placeholder="Nhập lại mật khẩu"
-                        pill
-                    />
-                </Box>
-
+                <Controller
+                    control={control}
+                    name="email"
+                    render={({ field }) => (
+                        <InputField
+                            {...field}
+                            type="email"
+                            inputMode="email"
+                            sx={styles.inputField}
+                            placeholder="Email của bạn"
+                            pill
+                            invalid={Boolean(errors.email)}
+                            errorMessage={errors.email?.message}
+                        />
+                    )}
+                />
+                <Controller
+                    control={control}
+                    name="password"
+                    render={({ field }) => (
+                        <InputField
+                            {...field}
+                            type="password"
+                            sx={styles.inputField}
+                            placeholder="Mật khẩu"
+                            pill
+                            invalid={Boolean(errors.password)}
+                            errorMessage={errors.password?.message}
+                        />
+                    )}
+                />
+                <Controller
+                    control={control}
+                    name="passwordAgain"
+                    render={({ field }) => (
+                        <InputField
+                            {...field}
+                            type="password"
+                            sx={styles.inputField}
+                            placeholder="Nhập lại mật khẩu"
+                            pill
+                            invalid={Boolean(errors.passwordAgain)}
+                            errorMessage={errors.passwordAgain?.message}
+                        />
+                    )}
+                />
+                {emailUsed && (
+                    <Typography sx={styles.emailUsed}>
+                        Email này đã được sử dụng!
+                    </Typography>
+                )}
                 <Button
-                    disable={isDisableSubmit || isRegisting}
+                    disabled={isDisableSubmit || registering}
                     sx={styles.submitBtn}
                 >
-                    {isRegisting ? (
+                    {registering ? (
                         <CircularProgress sx={styles.registing} />
                     ) : (
                         'Đăng ký'
                     )}
                 </Button>
+                <Typography sx={styles.hadAccount}>
+                    Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+                </Typography>
             </form>
-            <Typography sx={styles.hadAccount}>
-                Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
-            </Typography>
         </Box>
     )
+}
+
+RegisterForm.propTypes = {
+    onSubmit: PropTypes.func.isRequired
 }
 
 export default memo(RegisterForm)

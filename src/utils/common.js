@@ -36,3 +36,11 @@ export const uniqBy = (arr, key) => {
 	}, [])
 }
 
+export const toCapitalize = (str) => {
+	const strArr = str.split('')
+	strArr.forEach((item, i) => {
+		if (i === 0) strArr[i] = item.toUpperCase()
+		else if (strArr[i - 1] === ' ') strArr[i] = item.toUpperCase()
+	})
+	return strArr.join('')
+}

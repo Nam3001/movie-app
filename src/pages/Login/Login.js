@@ -7,7 +7,7 @@ import {
     signInWithPopup,
     GoogleAuthProvider,
     FacebookAuthProvider,
-    promptUserForPassword
+    signInWithEmailAndPassword
 } from 'firebase/auth'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -123,6 +123,9 @@ function Login() {
     // use to determine current position is sign in method or login form
     const [isLoginForm, setIsLoginForm] = useState(false)
 
+    const [loging, setLoging] = useState(false)
+    const [wrongPassword, setWrongPassword] = useState('')
+
     const handleClickBack = useCallback(() => {
         if (isLoginForm) {
             setIsLoginForm(false)
@@ -135,8 +138,8 @@ function Login() {
         try {
             const googleProvider = new GoogleAuthProvider()
             const credential = await signInWithPopup(auth, googleProvider)
-            
-            // dispatch 
+
+            // dispatch
             dispatch(signIn(credential.user))
 
             showToast('Đăng nhập thành công!', {
@@ -174,6 +177,45 @@ function Login() {
         }
     }, [])
 
+    const handleLoginWithPassword = useCallback(
+        async (values) => {
+            try {
+                setLoging(true)
+                if (wrongPassword) setWrongPassword(false)
+
+                const email = values?.email
+                const password = values?.password
+
+                const credential = await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                )
+
+                // dispatch sign in action
+                dispatch(signIn(credential.user))
+
+                showToast('Đăng nhập thành công!', {
+                    variant: 'success',
+                    autoHideDuration: 3000
+                })
+                navigate('/')
+            } catch (err) {
+                if (err.code === 'auth/wrong-password') {
+                    setWrongPassword(true)
+                } else {
+                    showToast(err.code, {
+                        variant: 'error',
+                        autoHideDuration: 10000
+                    })
+                }
+            } finally {
+                setLoging(false)
+            }
+        },
+        [wrongPassword, loging]
+    )
+
     return (
         <Box sx={styles.container}>
             <Box sx={styles.heading}>
@@ -196,9 +238,7 @@ function Login() {
                     >
                         <Box sx={styles.btnContent}>
                             <PermIdentityIcon />
-                            <Typography>
-                                Sử dụng email / mật khẩu
-                            </Typography>
+                            <Typography>Sử dụng email / mật khẩu</Typography>
                         </Box>
                     </Button>
                     <Button
@@ -235,7 +275,13 @@ function Login() {
             )}
 
             {/* login form */}
-            {isLoginForm && <LoginForm />}
+            {isLoginForm && (
+                <LoginForm
+                    onSubmit={handleLoginWithPassword}
+                    loging={loging}
+                    wrongPassword={!!wrongPassword}
+                />
+            )}
         </Box>
     )
 }
