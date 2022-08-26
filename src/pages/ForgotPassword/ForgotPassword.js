@@ -1,8 +1,16 @@
 import { memo, useCallback, useState } from 'react'
-import { Box, IconButton, Typography, CardMedia } from '@mui/material'
+import {
+	Box,
+	IconButton,
+	Typography,
+	CardMedia,
+	CircularProgress
+} from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { sendPasswordResetEmail } from 'firebase/auth'
+import * as yup from 'yup'
+import { useForm, Controller } from 'react-hook-form'
 
 import Button from '@/components/Button'
 import InputField from '@/components/form-control/InputField'
@@ -10,6 +18,7 @@ import useToastMessage from '@/hooks/useToastMessage'
 import config from '@/configs'
 import logo from '@/assets/img/logo.png'
 import { auth } from '@/services/firebaseConfig'
+import useYupValidationResolver from '@/hooks/useYupValidationResolver'
 
 const styles = {
 	container: {
@@ -71,43 +80,84 @@ const styles = {
 		width: '100%',
 		fontSize: '16px',
 		fontWeight: '500',
-		mt: 4,
+		mt: 3,
 		backgroundColor: (theme) => theme.color.heading
+	},
+	userNotFound: {
+		color: '#e92040',
+		fontSize: '14px',
+		mt: 1,
+		ml: 1.5
+	},
+	loading: {
+		color: '#fff',
+		width: '15px !important',
+		height: '15px !important'
 	}
 }
 
 const ForgotPassword = () => {
 	const navigate = useNavigate()
 
+	// state
+	const [userNotFound, setUserNotFound] = useState(false)
+	const [loading, setLoading] = useState(false)
+
 	const showToast = useToastMessage()
 
-	const [email, setEmail] = useState('')
-
-	const handleChangeEmail = useCallback((e) => {
-		setEmail(e.target.value)
-	}, [])
+	const validationSchema = yup.object().shape({
+		email: yup
+			.string()
+			.email('Email không hợp lệ.')
+			.required('Hãy điền email của bạn')
+	})
+	const yupResolver = useYupValidationResolver(validationSchema)
+	const {
+		handleSubmit,
+		control,
+		formState: { errors }
+	} = useForm({
+		defaultValues: {
+			email: ''
+		},
+		resolver: yupResolver
+	})
 
 	const handleClickBack = useCallback(() => {
 		navigate(-1)
-		 // eslint-disable-next-line
+		// eslint-disable-next-line
 	}, [])
 
-	const handleSendPasswordResetEmail = useCallback(async () => {
-		try {
-			navigate(config.routes.login)
-			showToast('Kiểm tra hộp thư của bạn!', {
-				variant: 'success',
-				autoHideDuration: 5000
-			})
-			await sendPasswordResetEmail(auth, email)
-		} catch (error) {
-			showToast(error.code, {
-				variant: 'error',
-				autoHideDuration: 3000
-			})
-		}
-		 // eslint-disable-next-line
-	}, [email])
+	const handleSendPasswordResetEmail = useCallback(
+		async (values) => {
+			if (!values) return
+
+			try {
+				if (userNotFound) setUserNotFound(false)
+				if (!loading) setLoading(true)
+
+				await sendPasswordResetEmail(auth, values?.email)
+				navigate(config.routes.login)
+				showToast('Kiểm tra hộp thư của bạn!', {
+					variant: 'success',
+					autoHideDuration: 5000
+				})
+			} catch (error) {
+				if (error.code === 'auth/user-not-found') {
+					setUserNotFound(true)
+				} else {
+					showToast(error.code, {
+						variant: 'error',
+						autoHideDuration: 3000
+					})
+				}
+			} finally {
+				setLoading(false)
+			}
+		},
+		// eslint-disable-next-line
+		[userNotFound, loading]
+	)
 
 	return (
 		<Box sx={styles.container}>
@@ -119,22 +169,46 @@ const ForgotPassword = () => {
 				<CardMedia sx={styles.logo} image={logo} component="img" />
 			</Box>
 			<Box sx={styles.formContainer}>
-				<form onSubmit={handleSendPasswordResetEmail} noValidate>
+				<form
+					onSubmit={handleSubmit(handleSendPasswordResetEmail)}
+					noValidate
+				>
 					<Box>
-						<InputField
+						<Controller
+							control={control}
 							name="email"
-							type="email"
-							inputMode="email"
-							sx={styles.inputField}
-							placeholder="Địa chỉ email"
-							value={email}
-							onChange={handleChangeEmail}
-							pill
+							render={({ field }) => (
+								<InputField
+									{...field}
+									type="email"
+									inputMode="email"
+									sx={styles.inputField}
+									placeholder="Địa chỉ email"
+									pill
+									invalid={!!errors.email}
+									errorMessage={errors.email?.message}
+								/>
+							)}
 						/>
 					</Box>
 
-					<Button color="warning" sx={styles.submitBtn} type="submit">
-						Gửi mã
+					{userNotFound && (
+						<Typography sx={styles.userNotFound}>
+							Tài khoản không tồn tại
+						</Typography>
+					)}
+
+					<Button
+						color="warning"
+						sx={styles.submitBtn}
+						type="submit"
+						disabled={loading}
+					>
+						{loading ? (
+							<CircularProgress sx={styles.loading} />
+						) : (
+							'Gửi mã'
+						)}
 					</Button>
 				</form>
 			</Box>
@@ -143,3 +217,4 @@ const ForgotPassword = () => {
 }
 
 export default memo(ForgotPassword)
+

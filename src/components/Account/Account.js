@@ -22,7 +22,9 @@ const styles = {
         mt: 1,
         backgroundColor: '#333',
         color: '#fff',
-        px: 1.5
+        px: 1.5,
+        maxWidth: '180px',
+        minWidth: '120px'
     },
     menuItem: {
         justifyContent: 'center',
@@ -55,6 +57,11 @@ const styles = {
             width: '100%',
             height: '100%'
         }
+    },
+    truncate: {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
     }
 }
 
@@ -168,7 +175,11 @@ const Account = () => {
                                                 sx={styles.menuItem}
                                                 onClick={handleCloseMenu}
                                             >
-                                                {userInfo.displayName}
+                                                <Typography
+                                                    sx={styles.truncate}
+                                                >
+                                                    {userInfo.displayName}
+                                                </Typography>
                                             </MenuItem>
                                             <MenuItem
                                                 sx={styles.menuItem}

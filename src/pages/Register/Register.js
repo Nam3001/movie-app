@@ -1,11 +1,14 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useState, useCallback, useRef, useEffect } from 'react'
 import { Box, Typography, CardMedia, IconButton } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import {
     signInWithPopup,
     GoogleAuthProvider,
-    FacebookAuthProvider
+    FacebookAuthProvider,
+    sendEmailVerification,
+    createUserWithEmailAndPassword,
+    updateProfile
 } from 'firebase/auth'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -21,17 +24,21 @@ import useToastMessage from '@/hooks/useToastMessage'
 
 const styles = {
     container: {
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    inner: {
         bgcolor: (theme) => theme.color.primary.light,
         width: '600px',
         maxWidth: '90vw',
         minHeight: '480px',
         maxHeight: '100vh',
         position: 'absolute',
-        left: '50%',
-        top: '50%',
-        overflow: 'auto',
-        transform: 'translate(-50%, -50%)',
         borderRadius: '10px',
+        overflow: 'auto',
         py: '40px',
         px: {
             xs: '12px',
@@ -40,7 +47,10 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        alignItems: 'center'
+        alignItems: 'center',
+        '&::-webkit-scrollbar': {
+            display: 'none'
+        }
     },
     heading: {
         '& h1': {
@@ -132,6 +142,8 @@ function Register() {
 
     // use to determine current position is sign in method or login form
     const [isRegisterForm, setIsRegisterForm] = useState(false)
+    const [registering, setRegistering] = useState(false)
+    const [emailUsed, setEmailUsed] = useState(false)
 
     const handleClickBack = useCallback(() => {
         if (isRegisterForm) {
@@ -184,62 +196,124 @@ function Register() {
         }
     }, [])
 
+    const handleLoginWithPassword = useCallback(
+        async (values) => {
+            const email = values?.email
+            const password = values?.password
+            const fullName = values?.fullName?.trim()
+
+            try {
+                setRegistering(true)
+                if (emailUsed) setEmailUsed(false)
+
+                const credential = await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                )
+
+                const user = credential.user
+                await sendEmailVerification(user, {
+                    url: 'http://localhost:3001'
+                })
+                await updateProfile(user, {
+                    displayName: fullName
+                })
+
+                // dispatch sign in action
+                dispatch(signIn(user))
+
+                showToast('Xác minh email của bạn!', {
+                    variant: 'info',
+                    autoHideDuration: 3000
+                })
+                navigate('/')
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    setEmailUsed(true)
+                } else {
+                    showToast(error.code, {
+                        variant: 'error',
+                        autoHideDuration: 3000
+                    })
+                }
+            } finally {
+                setRegistering(false)
+            }
+        },
+        [registering, emailUsed]
+    )
+
     return (
         <Box sx={styles.container}>
-            <IconButton sx={styles.goBack} onClick={handleClickBack}>
-                <ArrowBackIosIcon />
-            </IconButton>
-            <Box sx={styles.heading}>
-                <Typography component="h1">Đăng ký tài khoản</Typography>
-                <CardMedia sx={styles.logo} image={logo} component="img" />
-            </Box>
-            {!isRegisterForm && (
-                <Box sx={styles.registerMethod}>
-                    <Button
-                        sx={styles.signInButton}
-                        onClick={() => setIsRegisterForm(true)}
-                        variant="outline"
-                        color="light"
-                        display="block"
-                        pill
-                    >
-                        <Box sx={styles.btnContent}>
-                            <PermIdentityIcon />
-                            <Typography>Sử dụng email / mật khẩu</Typography>
-                        </Box>
-                    </Button>
-                    <Button
-                        sx={styles.signInButton}
-                        onClick={handleLoginWithGoogle}
-                        variant="outline"
-                        color="light"
-                        display="block"
-                        pill
-                    >
-                        <Box sx={styles.btnContent}>
-                            <CardMedia component="img" image={googleIcon} />
-                            <Typography>Tiếp tục với Google</Typography>
-                        </Box>
-                    </Button>
-                    <Button
-                        sx={styles.signInButton}
-                        onClick={handleLoginWithFacebook}
-                        variant="outline"
-                        color="light"
-                        display="block"
-                        pill
-                    >
-                        <Box sx={styles.btnContent}>
-                            <CardMedia component="img" image={facebookIcon} />
-                            <Typography>Tiếp tục với Facebook</Typography>
-                        </Box>
-                    </Button>
-                    <Typography sx={styles.hadAccount}>
-                        Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
-                    </Typography>
+            <Box sx={styles.inner}>
+                <IconButton sx={styles.goBack} onClick={handleClickBack}>
+                    <ArrowBackIosIcon />
+                </IconButton>
+                <Box sx={styles.heading}>
+                    <Typography component="h1">Đăng ký tài khoản</Typography>
+                    <CardMedia sx={styles.logo} image={logo} component="img" />
                 </Box>
-            )}
-            {isRegisterForm && <RegisterForm />}
+                {!isRegisterForm && (
+                    <Box sx={styles.registerMethod}>
+                        <Button
+                            sx={styles.signInButton}
+                            onClick={() => setIsRegisterForm(true)}
+                            variant="outline"
+                            color="light"
+                            display="block"
+                            pill
+                        >
+                            <Box sx={styles.btnContent}>
+                                <PermIdentityIcon />
+                                <Typography>
+                                    Sử dụng email / mật khẩu
+                                </Typography>
+                            </Box>
+                        </Button>
+                        <Button
+                            sx={styles.signInButton}
+                            onClick={handleLoginWithGoogle}
+                            variant="outline"
+                            color="light"
+                            display="block"
+                            pill
+                        >
+                            <Box sx={styles.btnContent}>
+                                <CardMedia component="img" image={googleIcon} />
+                                <Typography>Tiếp tục với Google</Typography>
+                            </Box>
+                        </Button>
+                        <Button
+                            sx={styles.signInButton}
+                            onClick={handleLoginWithFacebook}
+                            variant="outline"
+                            color="light"
+                            display="block"
+                            pill
+                        >
+                            <Box sx={styles.btnContent}>
+                                <CardMedia
+                                    component="img"
+                                    image={facebookIcon}
+                                />
+                                <Typography>Tiếp tục với Facebook</Typography>
+                            </Box>
+                        </Button>
+                        <Typography sx={styles.hadAccount}>
+                            Bạn đã có tài khoản?{' '}
+                            <Link to="/login">Đăng nhập</Link>
+                        </Typography>
+                    </Box>
+                )}
+                {isRegisterForm && (
+                    <RegisterForm
+                        onSubmit={handleLoginWithPassword}
+                        registering={registering}
+                        emailUsed={emailUsed}
+                    />
+                )}
+            </Box>
         </Box>
     )
 }

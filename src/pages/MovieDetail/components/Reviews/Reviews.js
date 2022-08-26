@@ -44,7 +44,6 @@ const Reviews = (props) => {
         setReviews(sortedReviews)
         // eslint-disable-next-line
     }, [sortBy])
-    console.log(reviews)
 
     // Handle select event
     const handleChangeOption = useCallback((value) => {
