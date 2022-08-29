@@ -15,6 +15,8 @@ httpRequest.interceptors.request.use(config => {
 	if (accessToken) {
 		config.headers.Authorization = `Bearer ${accessToken}`
 	}
+
+	// add api key to params
 	config.params = {
 		...config.params,
 		api_key: process.env.REACT_APP_API_KEY_MOVIEDB

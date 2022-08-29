@@ -40,9 +40,7 @@ const styles = {
     }
 }
 
-const Overall = (props) => {
-    const { movieInfo } = props.data
-
+const Overall = ({ movieInfo }) => {
     const formatedDate = useMemo(() => {
         if (!movieInfo?.release_date) return ''
 

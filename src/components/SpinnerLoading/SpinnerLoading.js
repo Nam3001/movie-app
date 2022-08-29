@@ -6,7 +6,7 @@ const styles = {
 	container: {
 		display: 'flex',
 		justifyContent: 'center',
-		padding: '6px',
+		padding: '6px'
 	},
 	progress: {
 		width: '24px !important',
@@ -14,16 +14,26 @@ const styles = {
 	}
 }
 
-const SpinnerLoading = ({ color }) => {
+const SpinnerLoading = ({ color, sx }) => {
 	return (
 		<Box sx={styles.container}>
-			<CircularProgress sx={styles.progress} color={color || 'inherit'} />
+			<CircularProgress
+				sx={{ ...styles.progress, ...sx }}
+				color={color || 'inherit'}
+			/>
 		</Box>
 	)
 }
 
 SpinnerLoading.propTypes = {
-	color: PropTypes.oneOf(['primary', 'secondary', 'error', 'success', 'info'])
+	color: PropTypes.oneOf([
+		'primary',
+		'secondary',
+		'error',
+		'success',
+		'info'
+	]),
+	sx: PropTypes.object
 }
 
 export default memo(SpinnerLoading)

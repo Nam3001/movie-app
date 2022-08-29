@@ -1,13 +1,13 @@
-import React, { useState, memo, useCallback } from 'react'
+import React, { useState, memo, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import {
     Box,
     Typography,
     Card,
     CardHeader,
-    CardMedia,
     CardContent,
-    Rating
+    Rating,
+    CardMedia
 } from '@mui/material'
 import { lazy, Suspense } from 'react'
 import StarIcon from '@mui/icons-material/Star'
@@ -133,7 +133,7 @@ const MovieCard = ({
     genre,
     thumbnail,
     id,
-    isLazy = true
+    lazyImg = true
 }) => {
     const [fallback, setFallback] = useState(false)
 
@@ -150,15 +150,14 @@ const MovieCard = ({
 
     return (
         <Box sx={{ px: 2 }}>
-            <Box sx={styles.thumbnailWrapper}>
+            <Box onClick={handleClick} sx={styles.thumbnailWrapper}>
                 <CardMedia
-                    onClick={handleClick}
                     component="img"
                     className="thumbnail"
-                    lazy-src={isLazy ? thumbnail || thumbnailPlaceholder : null}
-                    image={isLazy ? null : thumbnail || thumbnailPlaceholder}
+                    lazy-src={lazyImg ? thumbnail || thumbnailPlaceholder : null}
+                    image={lazyImg ? '' : (thumbnail || thumbnailPlaceholder)}
                     sx={styles.thumbnail}
-                    className={clsx({ ['lazy-image']: isLazy })}
+                    className={clsx({ ['lazy-image']: lazyImg })}
                 />
                 <Box sx={styles.score}>{score.toFixed(1)}</Box>
             </Box>
@@ -201,7 +200,7 @@ MovieCard.propTypes = {
     onClick: PropTypes.func,
     genre: PropTypes.string,
     thumbnail: PropTypes.string,
-    isLazy: PropTypes.bool
+    lazyImg: PropTypes.bool
 }
 
 export default memo(MovieCard)

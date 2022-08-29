@@ -12,6 +12,8 @@ import TopRated from '@/pages/TopRated'
 import NotFound from '@/pages/NotFound'
 import SearchPage from '@/pages/SearchPage'
 import ForgotPassword from '@/pages/ForgotPassword'
+import Follow from '@/pages/Follow'
+
 
 const publicRoutes = [
     { path: config.routes.home, component: Home },
@@ -30,6 +32,8 @@ const publicRoutes = [
     { path: config.routes.notFound, component: NotFound }
 ]
 
-const privateRoutes = []
+const privateRoutes = [
+    { path: config.routes.follow + '/*', component: Follow },
+]
 
 export { publicRoutes, privateRoutes }

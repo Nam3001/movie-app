@@ -15,41 +15,46 @@ import styles from './styles'
 
 dayjs.extend(relativeTime)
 
-const Reviews = (props) => {
+const Reviews = ({ reviews }) => {
     const navigate = useNavigate()
     const location = useLocation()
 
-    const { reviews, setReviews } = props.data
+    const [reviewList, setReviewList] = useState(reviews)
 
     const params = queryString.parse(location.search)
 
-    const initSort = useMemo(() => {
-        if (!params.sort) return 'Ascending'
-        return params.sort === 'asc' ? 'Ascending' : 'Descending'
-    }, [params.sort])
-
-    const [sortBy, setSortBy] = useState(initSort)
+    const [sortBy, setSortBy] = useState({
+        label: 'Mới nhất',
+        value: 'asc'
+    })
 
     // Sort reviews by date
     useEffect(() => {
-        if (reviews.length === 0) return
+        if (reviewList.length === 0) return
 
-        const newReviews = [...reviews]
+        const newReviews = [...reviewList]
         const sortedReviews = sortByDate({
             arr: newReviews,
-            order: sortBy,
+            order: sortBy.value,
             key: 'updated_at'
         })
 
-        setReviews(sortedReviews)
+        setReviewList(sortedReviews)
         // eslint-disable-next-line
-    }, [sortBy])
+    }, [sortBy.value])
 
     // Handle select event
-    const handleChangeOption = useCallback((value) => {
-        setSortBy(value)
+    const handleChangeOption = useCallback((option) => {
+        setSortBy(option)
     }, [])
-    const handleResetOption = useCallback(() => setSortBy('Ascending'), [])
+    const handleResetOption = useCallback(
+        () =>
+            setSortBy({
+                label: 'Mới nhất',
+                value: 'asc'
+            }),
+        []
+    )
 
     const setFallback = useCallback((e) => {
         e.target.setAttribute('src', avatarPlaceholder)
@@ -70,17 +75,17 @@ const Reviews = (props) => {
             <Box sx={styles.selectContainer}>
                 <Select
                     className="select"
-                    onClear={handleResetOption}
-                    selectValue={sortBy}
-                    onChange={handleChangeOption}
+                    handleClear={handleResetOption}
+                    selected={sortBy}
+                    handleChange={handleChangeOption}
                 >
-                    <MenuItem value="Ascending">Ascending</MenuItem>
-                    <MenuItem value="Descending">Descending</MenuItem>
+                    <MenuItem value="asc">Mới nhất</MenuItem>
+                    <MenuItem value="desc">Cũ nhất</MenuItem>
                 </Select>
                 <Typography className="label">Sort by date: </Typography>
             </Box>
-            <Box ref={listRef} sx={{ maxHeight: '800px' }}>
-                {reviews.map((review) => (
+            <Box ref={listRef} sx={styles.reviewList}>
+                {reviewList.map((review) => (
                     <Box sx={styles.review} key={review.id}>
                         <Box sx={styles.avatar}>
                             <img

@@ -60,16 +60,14 @@ const styles = {
     }
 }
 
-const Casts = (props) => {
-    const { casts } = props.data
-
+const Casts = ({ casts }) => {
     const listRef = useRef()
 
     useLazyLoadImage(listRef)
 
     if (casts.length === 0)
         return (
-            <Typography sx={styles.emptyReview}>Not have any cast!</Typography>
+            <Typography sx={styles.emptyCast}>Not have any cast!</Typography>
         )
 
     return (

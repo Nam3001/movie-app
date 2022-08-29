@@ -119,7 +119,7 @@ const styles = {
             md: 0
         },
         '& > *': {
-            mt: 1.5,
+            mt: 1.5
         }
     },
     rating: {
@@ -187,6 +187,17 @@ const styles = {
         backgroundColor: '#505e68',
         '& span': {
             backgroundColor: (theme) => theme.color.nav
+        }
+    },
+    bookmarkBtn: {
+        p: '18px',
+        '& svg': {
+            color: (theme) => theme.color.nav
+        },
+        '&.followed': {
+            '& svg': {
+                color: (theme) => theme.color.heading
+            }
         }
     }
 }

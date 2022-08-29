@@ -1,4 +1,4 @@
-import { useState, useEffect, memo, useCallback } from 'react'
+import { useState, useEffect, memo, useCallback, useRef, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
 import {
@@ -6,13 +6,19 @@ import {
     CardMedia,
     Typography,
     Rating,
-    LinearProgress
+    LinearProgress,
+    IconButton
 } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star'
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined'
 import AccessTimeSharpIcon from '@mui/icons-material/AccessTimeSharp'
 import { styled } from '@mui/material/styles'
 import dayjs from 'dayjs'
+import { useSelector } from 'react-redux'
+import { setDoc, doc, getDoc } from 'firebase/firestore'
+import clsx from 'clsx'
 
+import checkeFollowedMovie from '@/utils/checkFollowedMovie'
 import Tabs from '@/components/Tabs'
 import { createPathname } from '@/utils/common'
 import config from '@/configs'
@@ -27,45 +33,61 @@ import Reviews from './components/Reviews'
 import Overall from './components/Overall'
 import Casts from './components/Casts'
 import Button from '@/components/Button'
+import BookmarkModal from '@/components/BookmarkModal'
+import { loggedSelector, userInfoSelector } from '@/store/selectors'
+import { db } from '@/services/firebaseConfig'
 
 function MovieDetail() {
     const params = useParams()
     const navigate = useNavigate()
+    const logged = useSelector(loggedSelector)
+    const userId = useSelector(userInfoSelector).uid
 
     const [isLoading, setIsLoading] = useState(true)
     const movieId = params.movieId
     const [movieInfo, setMovieInfo] = useState({})
     const [casts, setCasts] = useState([])
     const [reviews, setReviews] = useState([])
+    const [isFollowed, setIsFollowed] = useState(false)
 
-    const [tabs, setTabs] = useState([
-        { name: 'Overall', active: true, component: Overall },
-        { name: 'Casts', active: false, component: Casts },
-        { name: 'Reviews', active: false, component: Reviews }
-    ])
-
-    const handleClickTab = useCallback(
-        (name) => {
-            if (!name) return
-            const newTabs = Array.from(tabs)
-
-            for (let tab of newTabs) {
-                if (tab.name === name) {
-                    for (let t of newTabs) {
-                        if (t.active) t.active = false
-                    }
-                    tab.active = true
-                    break
-                }
+    const bookmarkStatus = config.bookmarkOptions
+    const panes = useMemo(() => {
+        return [
+            {
+                header: 'Overall',
+                render: () => <Overall movieInfo={movieInfo} />
+            },
+            { header: 'Casts', render: () => <Casts casts={casts} /> },
+            {
+                header: 'Reviews',
+                render: () => <Reviews reviews={reviews} />
             }
-            setTabs(newTabs)
-        },
-        [tabs]
-    )
+        ]
+    }, [casts, reviews, movieInfo])
 
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [])
+
+    useEffect(() => {
+        ;(async () => {
+            try {
+                setIsFollowed(false)
+                if (!userId) return
+
+                const docRef = doc(db, 'bookmarks', userId)
+                const docSnap = await getDoc(docRef)
+
+                const followedIds = docSnap.data()?.movieIds
+                if (!followedIds) return
+
+                const followed = followedIds?.includes(movieInfo?.id)
+                setIsFollowed(followed)
+            } catch (error) {
+                console.log(error.message)
+            }
+        })()
+    }, [userId, movieInfo])
 
     useEffect(() => {
         ;(async () => {
@@ -108,17 +130,25 @@ function MovieDetail() {
         navigate(pathname)
     }, [])
 
+    const [openBookmarkModal, setOpenBookmarkModal] = useState(false)
+
+    const handleClickBookmark = useCallback(() => {
+        if (logged) {
+            setOpenBookmarkModal(true)
+        } else {
+            navigate(config.routes.login)
+        }
+    }, [logged])
+
+    const handleHideBookmarkModal = useCallback(() => {
+        setOpenBookmarkModal(false)
+    }, [])
+
+    const setIsBookmarked = useCallback((value) => {
+        setIsFollowed(value)
+    }, [])
+
     if (isLoading) return <LinearProgress sx={styles.progress} />
-
-    const tabData = {
-        movieInfo,
-        casts,
-        reviews,
-        setCasts,
-        setReviews,
-        setMovieInfo
-    }
-
     return (
         <Box sx={{ paddingBottom: '50px' }}>
             <Box
@@ -165,19 +195,30 @@ function MovieDetail() {
                         <Box sx={styles.control}>
                             <Button color="info">Trailer</Button>
                             <Button color="danger">Xem Phim</Button>
+                            <IconButton
+                                onClick={handleClickBookmark}
+                                size="large"
+                                sx={styles.bookmarkBtn}
+                                className={clsx({ followed: isFollowed })}
+                            >
+                                <BookmarkBorderOutlinedIcon />
+                            </IconButton>
                         </Box>
                     </Box>
                 </Box>
                 <Box sx={styles.pageContent}>
-                    <Tabs tabs={tabs} onClick={handleClickTab} />
-                    {tabs.map((tab) => {
-                        const Component = tab.component
-                        if (tab.active)
-                            return <Component key={tab.name} data={tabData} />
-                    })}
+                    <Tabs panes={panes} />
                 </Box>
                 <RecommendsMovie movieId={movieId} onClick={handleClickMovie} />
             </Wrapper>
+            <BookmarkModal
+                movieInfo={movieInfo}
+                open={openBookmarkModal}
+                bookmarkStatus={bookmarkStatus}
+                handleCloseModal={handleHideBookmarkModal}
+                bookmarked={isFollowed}
+                setIsBookmarked={setIsBookmarked}
+            />
         </Box>
     )
 }

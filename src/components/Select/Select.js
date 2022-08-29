@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from 'react'
 import PropTypes from 'prop-types'
-import {
-    Box,
-    ClickAwayListener,
-    Chip
-} from '@mui/material'
+import { Box, ClickAwayListener, Chip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import CloseIcon from '@mui/icons-material/Close'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
@@ -70,11 +66,11 @@ const ShowMore = styled(Box)(({ theme }) => ({
 const Select = ({
     className,
     isMultiple = false,
-    selectValue,
-    onChange = DEFAULT_FUNC,
+    selected = {},
+    handleChange = DEFAULT_FUNC,
     children,
-    onClear = DEFAULT_FUNC,
-    onRemove = DEFAULT_FUNC,
+    handleClear = DEFAULT_FUNC,
+    handleRemove = DEFAULT_FUNC,
     sx = {}
 }) => {
     const [isFocus, setIsFocus] = useState(false)
@@ -88,43 +84,84 @@ const Select = ({
         setOpenOptionList(false)
     }, [])
 
+    const handleChangeMultiple = useCallback(
+        (option) => {
+            const changedSelects = [...selected, option]
+            handleChange(changedSelects)
+        },
+        [selected]
+    )
+
+    const handleRemoveMultiple = useCallback(
+        (optionValue) => {
+            const newSelects = selected.filter(
+                (select) => select?.value !== optionValue
+            )
+            handleRemove(newSelects)
+        },
+        [selected]
+    )
+
     const handleClickSelectControl = useCallback((e) => {
         if (e.target.closest('.clear-indicator')) return
 
-        setIsFocus(prev => !prev)
+        setIsFocus((prev) => !prev)
         setOpenOptionList((prev) => !prev)
     }, [])
 
-    const handleClickOption = useCallback((e) => {
-        const optionValue = e.target.getAttribute('value')
+    const handleClickOption = useCallback(
+        (e) => {
+            const optionValue = e.target.getAttribute('value')
+            const optionLabel = e.target.textContent
 
-        if (isMultiple) {
-            if (selectValue.includes(optionValue)) onRemove(optionValue)
-            else onChange(optionValue)
-        } else {
-            onChange(optionValue)
-            handleCloseOptionList()
-        }
-        // eslint-disable-next-line
-    }, [isMultiple, selectValue, onChange])
+            if (isMultiple) {
+                // toggle selecte value
+                const valueExisted = selected.some(
+                    (item) => item.value === optionValue
+                )
+                if (valueExisted) {
+                    handleRemoveMultiple(optionValue)
+                } else {
+                    handleChangeMultiple({
+                        value: optionValue,
+                        label: optionLabel
+                    })
+                }
+            } else {
+                handleChange({
+                    value: optionValue,
+                    label: optionLabel
+                })
+                handleCloseOptionList()
+            }
+            // eslint-disable-next-line
+        },
+        [isMultiple, selected]
+    )
 
     useEffect(() => {
         // mark selected option
-        const menuItems = Array.from(menuRef.current.children)
-        for (let item of menuItems) {
-            const itemValue = item.getAttribute('value')
+        // render selected ui when option change
+        const optionsElement = Array.from(menuRef.current.children)
+        for (let optionEl of optionsElement) {
+            const optionValue = optionEl.getAttribute('value')
+            if (!optionValue) break
 
-            if (Array.isArray(selectValue)) {
-                if (selectValue?.includes(itemValue)) {
-                    item.classList.add('active')
-                } else item.classList.remove('active')
+            if (isMultiple) {
+                console.log(optionValue)
+                const itemActived = selected.some(
+                    (item) => item?.value === optionValue
+                )
+                if (itemActived) {
+                    optionEl.classList.add('active')
+                } else optionEl.classList.remove('active')
             } else {
-                if (selectValue?.toString().includes(itemValue)) {
-                    item.classList.add('active')
-                } else item.classList.remove('active')
+                if (selected?.value?.toString() === optionValue) {
+                    optionEl.classList.add('active')
+                } else optionEl.classList.remove('active')
             }
         }
-    }, [selectValue])
+    }, [selected])
 
     return (
         <ClickAwayListener onClickAway={handleCloseOptionList}>
@@ -138,25 +175,23 @@ const Select = ({
                         className="select-value-container"
                         sx={styles.selectValueContainer}
                     >
-                        {isMultiple && Array.isArray(selectValue) ? (
+                        {isMultiple && Array.isArray(selected) ? (
                             <>
-                                {selectValue?.length > 0 && (
+                                {selected?.length > 0 && (
                                     <Chip
                                         sx={styles.selectMultiLabel}
-                                        label={
-                                            isMultiple
-                                                ? selectValue?.[0]
-                                                : selectValue
-                                        }
+                                        label={selected?.[0].label}
                                         deleteIcon={<CloseIcon />}
                                         onDelete={() =>
-                                            onRemove(selectValue?.[0])
+                                            handleRemoveMultiple(
+                                                selected?.[0].value
+                                            )
                                         }
                                     />
                                 )}
-                                {selectValue?.length > 1 && (
+                                {selected?.length > 1 && (
                                     <ShowMore>{`+${
-                                        selectValue?.length - 1
+                                        selected?.length - 1
                                     }`}</ShowMore>
                                 )}
                             </>
@@ -165,7 +200,7 @@ const Select = ({
                                 className="selectValue"
                                 sx={styles.selectValue}
                             >
-                                {selectValue}
+                                {selected?.label}
                             </Box>
                         )}
                     </Box>
@@ -174,9 +209,9 @@ const Select = ({
                         className="select-indicator-container"
                         sx={styles.selectIndicatorContainer}
                     >
-                        {selectValue && (
+                        {selected && (
                             <CloseIcon
-                                onClick={onClear}
+                                onClick={handleClear}
                                 className={clsx('clear-indicator', {
                                     muted: openOptionList
                                 })}
@@ -193,8 +228,9 @@ const Select = ({
                     </Box>
                 </SelectControl>
 
-                <MenuList ref={menuRef} show={openOptionList}>
+                <MenuList show={openOptionList}>
                     <Box
+                        ref={menuRef}
                         onClick={handleClickOption}
                         className="option-list"
                         sx={{ overflow: 'auto', maxHeight: '300px' }}
@@ -207,17 +243,18 @@ const Select = ({
     )
 }
 
+const selectType = PropTypes.shape({
+    value: PropTypes.string,
+    label: PropTypes.string
+})
 Select.propTypes = {
     isMultiple: PropTypes.bool,
-    selectValue: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-        PropTypes.array
-    ]).isRequired,
-    onChange: PropTypes.func.isRequired,
+    selected: PropTypes.oneOfType([selectType, PropTypes.arrayOf(selectType)])
+        .isRequired,
+    handleChange: PropTypes.func.isRequired,
     children: PropTypes.arrayOf(PropTypes.element).isRequired,
-    onClear: PropTypes.func,
-    onRemove: PropTypes.func,
+    handleClear: PropTypes.func,
+    handleRemove: PropTypes.func,
     sx: PropTypes.object,
     className: PropTypes.string
 }

@@ -36,7 +36,7 @@ const styles = {
 	}
 }
 
-const ResultSkeletonList = () => {
+const MovieListSkeleton = () => {
 	return (
 		<Box>
 			{Array(2)
@@ -77,4 +77,4 @@ const ResultSkeletonList = () => {
 	)
 }
 
-export default memo(ResultSkeletonList)
+export default memo(MovieListSkeleton)

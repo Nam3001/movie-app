@@ -1,4 +1,4 @@
-import { useCallback, useRef, memo } from 'react'
+import { useCallback, useRef, memo, lazy, Suspense } from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import { Grid } from '@mui/material'
@@ -37,7 +37,7 @@ function CardList({ movies = [], isLoading = true, genres }) {
                         score={movie.vote_average}
                         title={movie.title}
                         thumbnail={movie.poster_path}
-                        genre={genres[movie.genre_ids[0]]}
+                        genre={genres?.[movie?.genre_ids?.[0]] || movie?.genres[0]?.name}
                     />
                 </Grid>
             ))}

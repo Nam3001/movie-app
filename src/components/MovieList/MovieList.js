@@ -1,94 +1,62 @@
-import { useState, useEffect, useRef } from 'react'
-import { memo, useCallback, useMemo } from 'react'
+import { useEffect, useState, useRef, memo } from 'react'
 import PropTypes from 'prop-types'
-import { Box, Grid, Typography, MenuItem, Pagination } from '@mui/material'
-import { useSelector } from 'react-redux'
-import queryString from 'query-string'
+import { Box } from '@mui/material'
+import { useLocation } from 'react-router-dom'
 
-import movieApi from '@/utils/api/movieApi'
-import Wrapper from '@/components/Wrapper'
-import { MovieSkeleton } from '@/components/MovieCard'
-import { genresSelector } from '@/store/selectors'
-import usePagination from '@/hooks/usePagination'
-import thumbnailPlaceholder from '@/assets/img/placeholder.png'
-import CardList from './CardList'
+import MovieItem from '@/components/MovieItem'
+import useInfiniteScroll from '@/hooks/useInfiniteScroll'
+import SpinnerLoading from '@/components/SpinnerLoading'
+import MovieListSkeleton from '@/components/MovieListSkeleton'
 
-const styles = {
-    wrapper: {
-        marginTop: '20px',
-        py: '40px',
-        px: '16px'
-    },
-    pagination: {
-        marginTop: '80px',
-        marginBottom: '10px',
 
-        '.MuiPaginationItem-root': {
-            color: '#fff',
-            borderColor: (theme) => theme.color.nav
-        },
+const MovieList = ({ onClick, loading, movies, lastElementRef }) => {
+	const location = useLocation()
 
-        '.MuiPagination-ul': {
-            justifyContent: 'center'
-        },
-        '& .Mui-selected': {
-            backgroundColor: (theme) => `${theme.color.nav} !important`
-        },
-        '& .Mui-selected:hover': {
-            backgroundColor: (theme) => `${theme.color.nav} !important`
-        }
-    }
-}
+	useEffect(() => {
+		const scrollTop = window.scrollY || document.documentElement.scrollTop
+		if (scrollTop <= 0) return
+		window.scrollTo(0, 0)
+	}, [location.search])
 
-function MovieList({ movies = [], isLoading = false, maxPage = 1 }) {
-    const [currentPage, onPageChange] = usePagination()
-    const genres = useSelector(genresSelector)
-
-    // scroll to top when change page
-    useEffect(() => {
-        window.scrollTo(0, 0)
-    }, [movies, isLoading])
-
-    const skeletonList = (
-        <Grid container rowSpacing={8} columnSpacing={{ lg: 8 }}>
-            {Array(4)
-                .fill(null)
-                .map((item, idx) => (
-                    <Grid sx={{ p: '0' }} key={idx} item xs={12} sm={6} lg={3}>
-                        <MovieSkeleton />
-                    </Grid>
-                ))}
-        </Grid>
-    )
-
-    return (
-        <Box sx={styles.wrapper}>
-            {isLoading && skeletonList}
-            {!isLoading && (
-                <CardList
-                    movies={movies}
-                    isLoading={isLoading}
-                    genres={genres}
-                />
-            )}
-
-            {!isLoading && (
-                <Pagination
-                    shape="rounded"
-                    page={currentPage}
-                    onChange={onPageChange}
-                    sx={styles.pagination}
-                    count={maxPage}
-                />
-            )}
-        </Box>
-    )
+	return (
+		<Box component="ul" sx={{ mt: 3 }}>
+			{movies.length > 0 &&
+				movies.map((movie, idx) => {
+					if (idx === movies.length - 1) {
+						return (
+							<MovieItem
+								ref={lastElementRef}
+								id={movie.id}
+								onClick={onClick}
+								key={movie.id}
+								title={movie.title}
+								thumbnail={movie.poster_path}
+								overview={movie.overview}
+							/>
+						)
+					} else {
+						return (
+							<MovieItem
+								id={movie.id}
+								onClick={onClick}
+								key={movie.id}
+								title={movie.title}
+								thumbnail={movie.poster_path}
+								overview={movie.overview}
+							/>
+						)
+					}
+				})}
+			{movies.length === 0 && loading && <MovieListSkeleton />}
+			{loading && movies.length > 0 && <SpinnerLoading color="primary" />}
+		</Box>
+	)
 }
 
 MovieList.propTypes = {
-    maxPage: PropTypes.number,
-    isLoading: PropTypes.bool,
-    movies: PropTypes.array
+	movies: PropTypes.array,
+	loading: PropTypes.bool,
+	hasMore: PropTypes.bool
 }
 
 export default memo(MovieList)

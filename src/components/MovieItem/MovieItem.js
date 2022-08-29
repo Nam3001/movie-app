@@ -62,7 +62,7 @@ const styles = {
 	}
 }
 
-const ResultItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }, ref) => {
+const MovieItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }, ref) => {
 	const thumbnailBaseURL = 'https://image.tmdb.org/t/p/original'
 	thumbnail &&= thumbnailBaseURL + thumbnail
 
@@ -91,7 +91,7 @@ const ResultItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }, 
 	)
 }
 
-const Component = forwardRef(ResultItem)
+const Component = forwardRef(MovieItem)
 
 Component.propTypes = {
 	title: PropTypes.string.isRequired,

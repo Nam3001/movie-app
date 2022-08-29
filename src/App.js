@@ -1,20 +1,38 @@
 import './App.scss'
-import { useEffect, memo, Fragment } from 'react'
-import { publicRoutes as routes } from '@/routes'
+import { useEffect, memo, Fragment, useState } from 'react'
+import { publicRoutes, privateRoutes } from '@/routes'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import MainLayout from './layouts/MainLayout'
 import { useDispatch, useSelector } from 'react-redux'
+
+import MainLayout from './layouts/MainLayout'
 import { getGenres } from '@/store/genresSlice'
-import { genresSelector } from '@/store/selectors'
+import { signIn } from '@/store/authSlice'
+import {
+    genresSelector,
+    userInfoSelector,
+    loggedSelector
+} from '@/store/selectors'
+import { db, auth } from '@/services/firebaseConfig'
+import { onAuthStateChanged } from 'firebase/auth'
 
 function App() {
     const dispatch = useDispatch()
     const genres = useSelector(genresSelector)
+    const userInfo = useSelector(userInfoSelector)
+    const logged = useSelector(loggedSelector)
 
-    // get genre list
+    // INIT NEEDED GLOBAL STATE
     useEffect(() => {
-        if (Object.keys(genres).length > 0) return
+        // Initial user infomation
+        onAuthStateChanged(auth, (user) => {
+            const hadUserInfo = Object.keys(userInfo) > 0
+            if (user && logged && !hadUserInfo) {
+                dispatch(signIn(user))
+            } else return
+        })
 
+        // Get genres list
+        if (Object.keys(genres).length > 0) return
         dispatch(getGenres())
         // eslint-disable-next-line
     }, [])
@@ -24,7 +42,8 @@ function App() {
             <Router>
                 <div className="app">
                     <Routes>
-                        {routes.map((route, idx) => {
+                        {/* public routes */}
+                        {publicRoutes.map((route, idx) => {
                             let Element = route.component
 
                             let Layout = MainLayout
@@ -42,6 +61,27 @@ function App() {
                                 />
                             )
                         })}
+
+                        {/* private routes */}
+                        {logged &&
+                            privateRoutes.map((route, idx) => {
+                                let Element = route.component
+
+                                let Layout = MainLayout
+                                if (route.layout === null) Layout = Fragment
+                                else if (route.layout) Layout = route.layout
+                                return (
+                                    <Route
+                                        key={idx}
+                                        path={route.path}
+                                        element={
+                                            <Layout>
+                                                <Element />
+                                            </Layout>
+                                        }
+                                    />
+                                )
+                            })}
                     </Routes>
                 </div>
             </Router>

@@ -1,8 +1,8 @@
 const styles = {
     reviewList: {
-        display: 'flex',
-        flexFlow: 'row wrap',
-        m: 'auto'
+        mt: 4,
+        maxHeight: '800px',
+        overflow: 'auto'
     },
     review: {
         flex: {

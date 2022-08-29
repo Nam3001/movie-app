@@ -7,7 +7,7 @@ import Wrapper from '@/components/Wrapper'
 import Heading from '@/components/Heading'
 import Select from '@/components/Select'
 import movieApi from '@/utils/api/movieApi'
-import MovieList from '@/components/MovieList'
+import MovieListGrid from '@/components/MovieListGrid'
 import useLoadingMovie from '@/hooks/useLoadingMovie'
 
 function Home() {
@@ -21,16 +21,16 @@ function Home() {
     const { isLoading, movies } = useLoadingMovie({
         movieApi: movieApi.getAll,
         reloadOnPageChange: true
-    }) 
+    })
 
     return (
         <Wrapper>
             <Heading>Phim Mới Cập Nhật</Heading>
-                <MovieList
-                    maxPage={200}
-                    movies={movies}
-                    isLoading={isLoading}
-                />
+            <MovieListGrid
+                maxPage={200}
+                movies={movies}
+                isLoading={isLoading}
+            />
         </Wrapper>
     )
 }

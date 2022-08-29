@@ -12,7 +12,12 @@ const routes = {
 	login: '/login',
 	register: '/register',
 	forgotPassword: '/forgot-password',
-	notFound: '*'
+	follow: '/follow',
+	notFound: '*',
+	watching: 'watching',
+	completed: 'completed',
+	paused: 'paused',
+	intended: 'intended'
 }
 
 export default routes
