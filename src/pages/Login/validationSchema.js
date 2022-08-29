@@ -7,6 +7,7 @@ const validationSchema = yup.object().shape({
         .required('Vui lòng điển email của bạn.'),
     password: yup
         .string()
+        .min(6, 'Mật khẩu ít nhất phải chứa 6 kí tự')
         .test(
             'must-have-number',
             'Mật khẩu phải chứa số và chữ cái.',

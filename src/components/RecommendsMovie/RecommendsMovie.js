@@ -89,7 +89,7 @@ const RecommendsMovie = ({ movieId, onClick }) => {
                         thumbnail={item.poster_path}
                         genre={genres?.[item.genre_ids?.[0]]}
                         id={item.id}
-                        isLazy={false}
+                        lazyImg={false}
                     />
                 ))}
             </Carousel>

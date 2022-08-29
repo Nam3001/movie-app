@@ -53,7 +53,7 @@ const styles = {
         width: '15px !important',
         height: '15px !important'
     },
-    wrongPassword: {
+    logingErrorMessage: {
         color: '#e92040',
         mt: 2,
         ml: 2,
@@ -61,7 +61,7 @@ const styles = {
     }
 }
 
-function LoginForm({ loging, onSubmit, wrongPassword }) {
+function LoginForm({ loging, onSubmit, wrongPassword, userNotFound }) {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -125,8 +125,14 @@ function LoginForm({ loging, onSubmit, wrongPassword }) {
                     />
                 </Box>
                 {wrongPassword && (
-                    <Typography sx={styles.wrongPassword}>
+                    <Typography sx={styles.logingErrorMessage}>
                         Mật khẩu không chính xác!
+                    </Typography>
+                )}
+
+                {userNotFound && (
+                    <Typography sx={styles.logingErrorMessage}>
+                        Tài khoản không tồn tại!
                     </Typography>
                 )}
 

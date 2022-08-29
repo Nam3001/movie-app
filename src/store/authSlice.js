@@ -9,14 +9,12 @@ const authSlice = createSlice({
 	reducers: {
 		signIn: (state, action) => {
 			localStorage.setItem('access_token', action.payload.accessToken)
-			localStorage.setItem('user_info', JSON.stringify(action.payload))
 
 			state.logged = true
 			state.userInfo = JSON.parse(JSON.stringify(action.payload))
 		},
 		signOut: (state) => {
 			localStorage.removeItem('access_token')
-			localStorage.removeItem('user_info')
 
 			state.logged = false
 			state.userInfo = {}

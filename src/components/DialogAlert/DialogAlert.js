@@ -17,7 +17,13 @@ const styles = {
     }
 }
 
-function DialogAlert({ open, title, content, onAllow, onClose }) {
+function DialogAlert({
+    open,
+    title,
+    content,
+    onAllow = DEFAULT_FUNC,
+    onClose = DEFAULT_FUNC
+}) {
     return (
         <div>
             <Dialog sx={styles.container} open={open} onClose={onClose}>

@@ -1,19 +1,19 @@
+// create pathname for pathname has params. 
+// Ex: movieDetail/:movieId -> movieDetail/123
 export function createPathname(route, id) {
 	const pathname = route.split(':')?.[0] + id
 	return pathname
 }
 
-export function sortByDate({ arr, order = 'ascending', key }) {
+export function sortByDate({ arr, order = 'asc', key }) {
 	if (!Array.isArray(arr)) return arr
 
-	order = order.toLowerCase()
-
-	if (order === 'ascending') {
+	if (order === 'asc') {
 		arr.sort((a, b) => {
 			if (key) return Date.parse(b[key]) - Date.parse(a[key])
 			else return Date.parse(a) - Date.parse(b)
 		})
-	} else if (order === 'descending') {
+	} else if (order === 'desc') {
 		arr.sort((a, b) => {
 			if (key) return Date.parse(a[key]) - Date.parse(b[key])
 			else return Date.parse(b) - Date.parse(a)

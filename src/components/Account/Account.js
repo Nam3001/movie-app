@@ -115,12 +115,18 @@ const Account = () => {
         setShowSignOutConfirm(true)
     }, [])
 
-    const handleCloseMenuConfirm = useCallback(() => {
+    const handleCloseConfirm = useCallback(() => {
         setShowSignOutConfirm(false)
     }, [])
 
     const handleNavigateLoginPage = useCallback(() => {
+        setOpenMenu(false)
         navigate(config.routes.login)
+    }, [])
+
+    const handleNavigateFollowPage = useCallback(async () => {
+        setOpenMenu(false)
+        navigate(config.routes.follow)
     }, [])
 
     return (
@@ -183,7 +189,7 @@ const Account = () => {
                                             </MenuItem>
                                             <MenuItem
                                                 sx={styles.menuItem}
-                                                onClick={handleCloseMenu}
+                                                onClick={handleNavigateFollowPage}
                                             >
                                                 <BookmarkBorderOutlinedIcon />
                                                 <Typography variant="body2">
@@ -225,7 +231,7 @@ const Account = () => {
             )}
             <DialogAlert
                 open={showSignOutConfirm}
-                onClose={handleCloseMenuConfirm}
+                onClose={handleCloseConfirm}
                 onAllow={handleSignOut}
                 title="Đăng xuất tài khoản"
                 content="Bạn có chắc đăng xuất tài khoản này không?"

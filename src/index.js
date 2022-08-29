@@ -10,7 +10,6 @@ import store from './store'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-    <React.StrictMode>
         <GlobalStyles>
             <Provider store={store}>
                 <SnackbarProvider
@@ -24,7 +23,7 @@ root.render(
                 </SnackbarProvider>
             </Provider>
         </GlobalStyles>
-    </React.StrictMode>
+    
 )
 
 // If you want to start measuring performance in your app, pass a function

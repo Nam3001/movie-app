@@ -125,6 +125,7 @@ function Login() {
 
     const [loging, setLoging] = useState(false)
     const [wrongPassword, setWrongPassword] = useState('')
+    const [userNotFound, setUserNotFound] = useState(false)
 
     const handleClickBack = useCallback(() => {
         if (isLoginForm) {
@@ -182,6 +183,7 @@ function Login() {
             try {
                 setLoging(true)
                 if (wrongPassword) setWrongPassword(false)
+                if (userNotFound) setUserNotFound(false)
 
                 const email = values?.email
                 const password = values?.password
@@ -200,13 +202,15 @@ function Login() {
                     autoHideDuration: 3000
                 })
                 navigate('/')
-            } catch (err) {
-                if (err.code === 'auth/wrong-password') {
+            } catch (error) {
+                if (error.code === 'auth/wrong-password') {
                     setWrongPassword(true)
+                } else if (error.code === 'auth/user-not-found') {
+                    setUserNotFound(true)
                 } else {
-                    showToast(err.code, {
+                    showToast(error.code, {
                         variant: 'error',
-                        autoHideDuration: 10000
+                        autoHideDuration: 3000
                     })
                 }
             } finally {
@@ -280,6 +284,7 @@ function Login() {
                     onSubmit={handleLoginWithPassword}
                     loging={loging}
                     wrongPassword={!!wrongPassword}
+                    userNotFound={!!userNotFound}
                 />
             )}
         </Box>

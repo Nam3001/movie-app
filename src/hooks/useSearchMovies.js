@@ -1,18 +1,12 @@
-import { useCallback, useRef, useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 import movieApi from '@/utils/api/movieApi'
-import useDebounce from '@/hooks/useDebounce'
 import useInfiniteScroll from './useInfiniteScroll'
-import config from '@/configs'
 import { uniqBy } from '@/utils/common'
-import { createPathname } from '@/utils/common'
 
-export default function useSearchMovies({
-	searchTerm,
-	lastElementRef = {},
-	rootRef = {}
-}) {
+export default function useSearchMovies(props) {
+	const { searchTerm, lastElementRef = {}, rootRef = {} } = props
+	
 	const [suggests, setSuggests] = useState([])
 	const [hasMore, setHasMore] = useState(true)
 
@@ -49,12 +43,12 @@ export default function useSearchMovies({
 				console.log(err)
 			}
 		})()
+		 // eslint-disable-next-line
 	}, [searchTerm])
 
 	// load suggest when page change
 	useEffect(() => {
 		if (suggests.length === 0) return
-
 		;(async () => {
 			try {
 				if (!searchTerm) {
@@ -82,13 +76,12 @@ export default function useSearchMovies({
 				console.log(err)
 			}
 		})()
+		 // eslint-disable-next-line
 	}, [currentPage])
 
 	return {
 		hasMore,
 		suggests,
-		// openSuggest,
-		// setOpenSuggest,
 		loading
 	}
 }

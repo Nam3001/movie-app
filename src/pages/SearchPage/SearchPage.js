@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { useRef, memo, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, Fab } from '@mui/material'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import queryString from 'query-string'
 
 import Wrapper from '@/components/Wrapper'
 import Heading from '@/components/Heading'
 import movieApi from '@/utils/api/movieApi'
-import ResultItem from './components/ResultItem'
+import MovieList from '@/components/MovieList'
+import MovieItem from '@/components/MovieItem'
 import config from '@/configs'
-import ResultSkeletonList from './components/ResultSkeletonList'
+import MovieListSkeleton from '@/components/MovieListSkeleton'
 import { createPathname } from '@/utils/common'
 import useInfiniteScroll from '@/hooks/useInfiniteScroll'
 import SpinnerLoading from '@/components/SpinnerLoading'
 import { uniqBy } from '@/utils/common'
+import ScrollTop from '@/components/ScrollTop'
 
 const styles = {
     searchList: {
@@ -31,13 +34,11 @@ const Search = () => {
     const location = useLocation()
     const navigate = useNavigate()
 
-    const movieListRef = useRef()
-
     const [movies, setMovies] = useState([])
     const [loading, setLoading] = useState(true)
     const [hasMore, setHasMore] = useState(true)
 
-    const lastElementRef = useRef(null)
+    const lastElementRef = useRef()
 
     const { currentPage, resetCurrentPage } = useInfiniteScroll({
         hasMore,
@@ -45,13 +46,9 @@ const Search = () => {
         lastElementRef
     })
 
+    // Load new movies when page change
     useEffect(() => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop
-        if (scrollTop <= 0) return
-        window.scrollTo(0, 0)
-    }, [location.search])
-
-    useEffect(() => {
+        // not load movie on the first time
         if (currentPage === 1) return
 
         const queryParams = queryString.parse(location.search)
@@ -81,6 +78,7 @@ const Search = () => {
         // eslint-disable-next-line
     }, [currentPage])
 
+    // Load movie on the first time page load, and when user search again
     useEffect(() => {
         const queryParams = queryString.parse(location.search)
         ;(async () => {
@@ -94,6 +92,8 @@ const Search = () => {
                 const data = res.data
                 setMovies(data.results)
                 setHasMore(!!(data.page < data.total_pages))
+
+                // reset current page when next search
                 resetCurrentPage()
             } catch (err) {
                 console.log(err)
@@ -115,44 +115,24 @@ const Search = () => {
     return (
         <Wrapper>
             <Heading>Tìm Phim</Heading>
-            <Box ref={movieListRef} sx={styles.searchList}>
-                {movies.length > 0 &&
-                    movies.map((movie, idx) => {
-                        if (idx === movies.length - 1) {
-                            return (
-                                <ResultItem
-                                    ref={lastElementRef}
-                                    id={movie.id}
-                                    onClick={handleClickMovie}
-                                    key={movie.id}
-                                    title={movie.title}
-                                    thumbnail={movie.poster_path}
-                                    overview={movie.overview}
-                                />
-                            )
-                        } else {
-                            return (
-                                <ResultItem
-                                    id={movie.id}
-                                    onClick={handleClickMovie}
-                                    key={movie.id}
-                                    title={movie.title}
-                                    thumbnail={movie.poster_path}
-                                    overview={movie.overview}
-                                />
-                            )
-                        }
-                    })}
-                {movies.length === 0 && loading && <ResultSkeletonList />}
-                {loading && movies.length > 0 && (
-                    <SpinnerLoading color="primary" />
-                )}
-                {movies.length === 0 && (
+            <Box sx={styles.searchList}>
+                <MovieList
+                    loading={loading}
+                    movies={movies}
+                    onClick={handleClickMovie}
+                    lastElementRef={lastElementRef}
+                />
+                {movies.length === 0 && !loading && (
                     <Typography sx={styles.notFound}>
-                        No matching results.
+                        Không có kết quả phù hợp.
                     </Typography>
                 )}
             </Box>
+            <ScrollTop>
+                <Fab size="small" aria-label="scroll back to top">
+                    <KeyboardArrowUpIcon />
+                </Fab>
+            </ScrollTop>
         </Wrapper>
     )
 }

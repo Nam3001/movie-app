@@ -7,11 +7,14 @@ import {
     IconButton,
     Toolbar,
     Typography,
-    Container
+    Container,
+    Tabs,
+    Tab
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import { Link, NavLink } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import clsx from 'clsx'
 
 import logo from '@/assets/img/logo.png'
 import Search from '@/components/Search'
@@ -36,8 +39,10 @@ function Header() {
     // reference to footer of nav item
     const navItemFooterRef = useRef()
     const navListRef = useRef()
+    const activeRef = useRef()
 
     const location = useLocation()
+    const navigate = useNavigate()
 
     const renderNavItemFooter = useCallback(() => {
         const itemActived = navListRef.current.querySelector('.active')
@@ -64,6 +69,7 @@ function Header() {
         window.addEventListener('resize', renderNavItemFooter)
         return () => window.removeEventListener('resize', renderNavItemFooter)
     }, [])
+
 
     return (
         <HideOnScroll>
@@ -93,6 +99,7 @@ function Header() {
                                 {categories.map((item, index) => (
                                     <Box
                                         component={NavLink}
+                                        ref={activeRef}
                                         className={({ isActive }) =>
                                             isActive && 'active'
                                         }
