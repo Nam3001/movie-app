@@ -23,10 +23,22 @@ function CardList({ movies = [], isLoading = true, genres }) {
         [navigate]
     )
 
+    const getGenre = useCallback((movie) => {
+        let genreName = null
+        if (movie?.genre_ids) {
+            const genreId = movie?.genre_ids?.[0]
+            // genres: object
+            genreName = genres?.[genreId]
+        } else {
+            genreName = movie?.genres?.[0]?.name
+        }
+        return genreName
+    // eslint-disable-next-line
+    }, [genres])
+
     // lazy loading image
     const movieListRef = useRef()
     useLazyLoadImage(movieListRef, isLoading)
-
     return (
         <Grid ref={movieListRef} container rowSpacing={7} columnSpacing={10}>
             {movies.map((movie) => (
@@ -37,7 +49,7 @@ function CardList({ movies = [], isLoading = true, genres }) {
                         score={movie.vote_average}
                         title={movie.title}
                         thumbnail={movie.poster_path}
-                        genre={genres?.[movie?.genre_ids?.[0]] || movie?.genres[0]?.name}
+                        genre={getGenre(movie)}
                     />
                 </Grid>
             ))}

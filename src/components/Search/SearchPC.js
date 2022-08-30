@@ -17,7 +17,7 @@ const SearchPC = ({ placeholder, SuggestComponent }) => {
     const [openSuggest, setOpenSuggest] = useState(true)
 
     const [searchTerm, setSearchTerm] = useState('')
-    const debouncedSearch = useDebounce(searchTerm, 300)
+    const debouncedSearch = useDebounce(searchTerm, 200)
 
     const lastElementRef = useRef()
     const rootRef = useRef()

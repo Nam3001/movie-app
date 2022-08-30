@@ -9,10 +9,6 @@ class MovieApi {
 		return httpRequest.get(`/movie/now_playing`, { params })
 	}
 
-	getCredits(movieId) {
-		return httpRequest.get(`/movie/${movieId}/credits`)
-	}
-
 	getPopular(params) {
 		return httpRequest.get(`/movie/popular`, { params })
 	}
@@ -33,8 +29,8 @@ class MovieApi {
 		return httpRequest.get(`/movie/${id}`, { params })
 	}
 
-	getAcountState(id, params) {
-		return httpRequest.get(`/movie/${id}/account_states`, { params })
+	getCredits(movieId) {
+		return httpRequest.get(`/movie/${movieId}/credits`)
 	}
 
 	getReviews(id, params) {
@@ -59,6 +55,10 @@ class MovieApi {
 
 	getGenres() {
 		return httpRequest.get('genre/movie/list')
+	}
+
+	getTrailer(movieId) {
+		return httpRequest.get(`/movie/${movieId}/videos`)
 	}
 }
 

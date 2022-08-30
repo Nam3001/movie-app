@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-function useDebounce(term, duration = 300) {
+function useDebounce(term, duration = 100) {
 	const [debounced, setDebounced] = useState('')
 
     const timeoutId = useRef(null)
