@@ -84,7 +84,7 @@ const Select = ({
         setOpenOptionList(false)
     }, [])
 
-    const handleChangeMultiple = useCallback(
+    const handleMultipleChange = useCallback(
         (option) => {
             const changedSelects = [...selected, option]
             handleChange(changedSelects)
@@ -92,7 +92,7 @@ const Select = ({
         [selected]
     )
 
-    const handleRemoveMultiple = useCallback(
+    const handleMultipleRemove = useCallback(
         (optionValue) => {
             const newSelects = selected.filter(
                 (select) => select?.value !== optionValue
@@ -120,9 +120,9 @@ const Select = ({
                     (item) => item.value === optionValue
                 )
                 if (valueExisted) {
-                    handleRemoveMultiple(optionValue)
+                   handleMultipleRemove(optionValue)
                 } else {
-                    handleChangeMultiple({
+                    handleMultipleChange({
                         value: optionValue,
                         label: optionLabel
                     })
@@ -182,8 +182,7 @@ const Select = ({
                                         sx={styles.selectMultiLabel}
                                         label={selected?.[0].label}
                                         deleteIcon={<CloseIcon />}
-                                        onDelete={() =>
-                                            handleRemoveMultiple(
+                                        onDelete={() => handleMultipleRemove(
                                                 selected?.[0].value
                                             )
                                         }

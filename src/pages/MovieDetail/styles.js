@@ -199,6 +199,13 @@ const styles = {
                 color: (theme) => theme.color.heading
             }
         }
+    },
+    buttonText: {
+        color: '#fff',
+        textDecoration: 'none',
+        display: 'block',
+        width: '100%',
+        height: '100%',
     }
 }
 

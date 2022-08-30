@@ -1,8 +1,7 @@
 import React, { memo } from 'react'
 import PropTypes from 'prop-types'
+import { Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
-
-import { DEFAULT_FUNC } from '@/utils/constants/common'
 
 const colors = {
 	primary: '#0D6EFD',
@@ -50,8 +49,8 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 			? sizes?.[props?.size]?.borderRadiusPill
 			: sizes?.[props?.size]?.borderRadius) ||
 		(props.pill ? sizes?.md?.borderRadiusPill : sizes?.md?.borderRadius),
-	'& + button': {
-		marginLeft: props.display === 'inline-block' ? '10px' : '0'
+	'& + .button-container': {
+		marginLeft: props.inline ? '10px' : '0'
 	},
 	'&:hover': {
 		opacity: props.disabled ? 0.5 : 0.85
@@ -72,8 +71,8 @@ const OutlineButton = styled('button')(({ theme, ...props }) => ({
 			? sizes?.[props?.size]?.borderRadiusPill
 			: sizes?.[props?.size]?.borderRadius) ||
 		(props.pill ? sizes?.md?.borderRadiusPill : sizes?.md?.borderRadius),
-	'& + button': {
-		marginLeft: props.display === 'inline-block' ? '10px' : '0'
+	'& + .button-container': {
+		marginLeft: props.inline ? '10px' : '0'
 	},
 	'&:hover': {
 		backgroundColor: props.disabled ? 'transparent' : colors[props.color],
@@ -86,50 +85,69 @@ const Button = ({
 	id,
 	sx,
 	children,
-	onClick = DEFAULT_FUNC,
+	onClick,
 	type,
-	display = 'inline-block',
+	inline,
 	variant,
 	color,
 	pill,
 	size,
-	disabled
+	disabled,
+	href
 }) => {
+	let component = 'div'
+	const props = {}
+	if (href) {
+		component = 'a'
+		props.href = href
+	}
+	if (onClick) props.onClick = onClick
+
 	return (
 		<>
-			{variant !== 'outline' ? (
-				<FillButton
-					id={id}
-					type={type}
-					className={className}
-					sx={sx}
-					onClick={disabled ? DEFAULT_FUNC : onClick}
-					variant={variant}
-					color={color}
-					size={size}
-					disabled={disabled}
-					display={display}
-					pill={pill ? 'true' : undefined}
-				>
-					{children}
-				</FillButton>
-			) : (
-				<OutlineButton
-					id={id}
-					type={type}
-					className={className}
-					sx={sx}
-					onClick={disabled ? DEFAULT_FUNC : onClick}
-					variant={variant}
-					color={color}
-					size={size}
-					disabled={disabled}
-					display={display}
-					pill={pill ? 'true' : undefined}
-				>
-					{children}
-				</OutlineButton>
-			)}
+			<Box
+				component={component}
+				href={href}
+				className="button-container"
+				sx={{
+					display: 'inline-block',
+					'& + .button-container': {
+						marginLeft: inline ? '10px' : '0'
+					}
+				}}
+			>
+				{variant !== 'outline' ? (
+					<FillButton
+						id={id}
+						type={type}
+						className={className}
+						sx={sx}
+						variant={variant}
+						color={color}
+						size={size}
+						disabled={disabled}
+						inline={inline}
+						pill={pill ? 'true' : undefined}
+					>
+						{children}
+					</FillButton>
+				) : (
+					<OutlineButton
+						id={id}
+						type={type}
+						className={className}
+						sx={sx}
+						variant={variant}
+						color={color}
+						size={size}
+						inline={inline}
+						disabled={disabled}
+						pill={pill ? 'true' : undefined}
+					>
+						{children}
+					</OutlineButton>
+				)}
+			</Box>
 		</>
 	)
 }
@@ -154,7 +172,8 @@ Button.propTypes = {
 		'light'
 	]),
 	pill: PropTypes.bool,
-	disabled: PropTypes.bool
+	disabled: PropTypes.bool,
+	href: PropTypes.string
 }
 
 export default memo(Button)

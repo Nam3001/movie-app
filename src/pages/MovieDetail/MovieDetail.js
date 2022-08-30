@@ -33,6 +33,7 @@ import Reviews from './components/Reviews'
 import Overall from './components/Overall'
 import Casts from './components/Casts'
 import Button from '@/components/Button'
+import TrailerPlayer from '@/components/TrailerPlayer'
 import BookmarkModal from '@/components/BookmarkModal'
 import { loggedSelector, userInfoSelector } from '@/store/selectors'
 import { db } from '@/services/firebaseConfig'
@@ -193,8 +194,12 @@ function MovieDetail() {
                             </Box>
                         </Box>
                         <Box sx={styles.control}>
-                            <Button color="info">Trailer</Button>
-                            <Button color="danger">Xem Phim</Button>
+                            <Button color="info" inline href="#trailer-player">
+                                Trailer
+                            </Button>
+                            <Button color="danger" inline>
+                                Xem phim
+                            </Button>
                             <IconButton
                                 onClick={handleClickBookmark}
                                 size="large"
@@ -209,6 +214,7 @@ function MovieDetail() {
                 <Box sx={styles.pageContent}>
                     <Tabs panes={panes} />
                 </Box>
+                <TrailerPlayer id="trailer-player" movieId={movieId} />
                 <RecommendsMovie movieId={movieId} onClick={handleClickMovie} />
             </Wrapper>
             <BookmarkModal
