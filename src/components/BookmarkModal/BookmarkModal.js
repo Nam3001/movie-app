@@ -98,6 +98,7 @@ const BookmarkModal = ({
 	return (
 		<Dialog
 			fullScreen
+			transitionDuration={100}
 			sx={styles.modal}
 			open={open}
 			onClose={handleCloseModal}
@@ -158,7 +159,7 @@ const BookmarkModal = ({
 								disabled={loading}
 								sx={styles.btn}
 								onClick={onRemove}
-								autoFocus
+								inline
 							>
 								Xóa
 							</Button>
@@ -166,7 +167,7 @@ const BookmarkModal = ({
 								disabled={loading}
 								sx={styles.btn}
 								onClick={onUpdate}
-								autoFocus
+								inline
 							>
 								Cập nhật
 							</Button>

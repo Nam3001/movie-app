@@ -18,9 +18,12 @@ const authSlice = createSlice({
 
 			state.logged = false
 			state.userInfo = {}
+		},
+		updateAvatar: (state, action) => {
+			state.userInfo.photoURL = action.payload
 		}
 	}
 })
 
-export const { signIn, signOut } = authSlice.actions
+export const { signIn, signOut, updateAvatar } = authSlice.actions
 export default authSlice.reducer

@@ -1,4 +1,4 @@
-import { useState, useCallback, memo, useRef } from 'react'
+import { useState, useCallback, memo, useRef, useMemo } from 'react'
 import { IconButton, Avatar, Menu } from '@mui/material'
 import { Paper, ClickAwayListener, Typography, CardMedia } from '@mui/material'
 import { MenuItem, Popper, Grow, Box, MenuList } from '@mui/material'
@@ -14,8 +14,10 @@ import { signOut as signOutAction } from '@/store/authSlice'
 import { userInfoSelector, loggedSelector } from '@/store/selectors'
 import avatarPlaceholder from '@/assets/img/avatar-placeholder.png'
 import config from '@/configs'
+import AvatarModifier from '@/components/AvatarModifier'
 import useToastMessage from '@/hooks/useToastMessage'
 import DialogAlert from '@/components/DialogAlert'
+import { DEFAULT_FUNC } from '@/utils/constants/common'
 
 const styles = {
     menu: {
@@ -23,8 +25,14 @@ const styles = {
         backgroundColor: '#333',
         color: '#fff',
         px: 1.5,
-        maxWidth: '180px',
-        minWidth: '120px'
+        width: '180px'
+    },
+    menuHeader: {
+        justifyContent: 'center',
+        p: '6px 16px',
+        '& + li': {
+            mt: 0.5
+        }
     },
     menuItem: {
         justifyContent: 'center',
@@ -73,6 +81,7 @@ const Account = () => {
 
     const logged = useSelector(loggedSelector)
     const userInfo = useSelector(userInfoSelector)
+    const photoURL = userInfo?.photoURL
 
     // fallback for avatar
     const [fallback, setFallback] = useState('')
@@ -86,19 +95,27 @@ const Account = () => {
         setOpenMenu((prev) => !prev)
     }, [openMenu])
 
-    const handleCloseMenu = useCallback(() => {
-        setOpenMenu(false)
-    }, [openMenu])
+    const handleCloseMenu = useCallback(
+        (e) => {
+            if (e.target.closest('.SnackbarContent-root')) return
+            setOpenMenu(false)
+        },
+        [openMenu]
+    )
 
-    const handleSignOut = useCallback(async () => {
+    const handleSignOut = useCallback(async (event) => {
         try {
-            handleCloseMenu()
+            handleCloseMenu(event)
             setShowSignOutConfirm(false)
             await signOut(auth)
+
+            // navigate to home page
+            navigate('/')
 
             // dispatch sign out action
             dispatch(signOutAction())
 
+            // notify logout success
             showToast('Đăng xuất thành công!', {
                 variant: 'success',
                 autoHideDuration: 3000
@@ -129,6 +146,8 @@ const Account = () => {
         navigate(config.routes.follow)
     }, [])
 
+    const hasUserInfo = useMemo(() => Object.keys(userInfo).length > 0, [userInfo])
+
     return (
         <>
             {logged && (
@@ -140,7 +159,7 @@ const Account = () => {
                         aria-label="account"
                         size="large"
                         sx={styles.accountButton}
-                        onClick={handleToggleMenu}
+                        onClick={hasUserInfo ? handleToggleMenu : DEFAULT_FUNC}
                     >
                         <Avatar sx={styles.avatarIcon}>
                             {userInfo.photoURL && (
@@ -176,20 +195,24 @@ const Account = () => {
                                         onClickAway={handleCloseMenu}
                                     >
                                         <MenuList>
-                                            <MenuItem
+                                            <Box
                                                 sx={{ mb: 1.2 }}
-                                                sx={styles.menuItem}
-                                                onClick={handleCloseMenu}
+                                                sx={styles.menuHeader}
                                             >
+                                                <AvatarModifier
+                                                    imageUrl={photoURL}
+                                                />
                                                 <Typography
                                                     sx={styles.truncate}
                                                 >
                                                     {userInfo.displayName}
                                                 </Typography>
-                                            </MenuItem>
+                                            </Box>
                                             <MenuItem
                                                 sx={styles.menuItem}
-                                                onClick={handleNavigateFollowPage}
+                                                onClick={
+                                                    handleNavigateFollowPage
+                                                }
                                             >
                                                 <BookmarkBorderOutlinedIcon />
                                                 <Typography variant="body2">

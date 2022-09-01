@@ -37,7 +37,7 @@ const sizes = {
 const FillButton = styled('button')(({ theme, ...props }) => ({
 	cursor: props.disabled ? 'not-allowed' : 'pointer',
 	color: '#fff',
-	minWidth: '70px',
+	width: '100%',
 	border: `1px solid ${props.color ? colors[props.color] : colors.primary}`,
 	backgroundColor: props.color ? colors[props.color] : colors.primary,
 	display: props.display === 'block' ? 'block' : null,
@@ -60,10 +60,10 @@ const FillButton = styled('button')(({ theme, ...props }) => ({
 const OutlineButton = styled('button')(({ theme, ...props }) => ({
 	cursor: props.disabled ? 'not-allowed' : 'pointer',
 	backgroundColor: 'transparent',
-	minWidth: '70px',
 	border: `1px solid ${colors[props.color]}`,
 	display: props.display === 'block' ? 'block' : null,
 	color: colors[props.color],
+	width: '100%',
 	padding: props.size ? sizes[props.size].padding : sizes.md.padding,
 	fontSize: props.size ? sizes[props.size].fontSize : sizes.md.fontSize,
 	borderRadius:
@@ -79,6 +79,15 @@ const OutlineButton = styled('button')(({ theme, ...props }) => ({
 		color: '#fff'
 	}
 }))
+
+const styles = {
+	container: {
+		border: 'none',
+		display: 'inline-block',
+		minWidth: '70px',
+		backgroundColor: 'transparent'
+	}
+}
 
 const Button = ({
 	className,
@@ -107,13 +116,14 @@ const Button = ({
 		<>
 			<Box
 				component={component}
-				href={href}
+				{...props}
 				className="button-container"
 				sx={{
-					display: 'inline-block',
 					'& + .button-container': {
 						marginLeft: inline ? '10px' : '0'
-					}
+					},
+					...styles.container,
+					...sx
 				}}
 			>
 				{variant !== 'outline' ? (
@@ -121,12 +131,11 @@ const Button = ({
 						id={id}
 						type={type}
 						className={className}
-						sx={sx}
 						variant={variant}
 						color={color}
 						size={size}
 						disabled={disabled}
-						inline={inline}
+						inline={inline ? 'true' : undefined}
 						pill={pill ? 'true' : undefined}
 					>
 						{children}
@@ -136,11 +145,10 @@ const Button = ({
 						id={id}
 						type={type}
 						className={className}
-						sx={sx}
 						variant={variant}
 						color={color}
 						size={size}
-						inline={inline}
+						inline={inline ? 'true' : undefined}
 						disabled={disabled}
 						pill={pill ? 'true' : undefined}
 					>

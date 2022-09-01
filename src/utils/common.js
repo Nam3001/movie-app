@@ -44,3 +44,4 @@ export const toCapitalize = (str) => {
 	})
 	return strArr.join('')
 }
+

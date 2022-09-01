@@ -26,10 +26,12 @@ const styles = {
     },
     submitBtn: {
         width: '100%',
-        fontSize: '16px',
-        fontWeight: '500',
-        mt: 3,
-        backgroundColor: (theme) => theme.color.heading
+        '& button': {
+            fontSize: '16px',
+            fontWeight: '500',
+            mt: 3,
+            backgroundColor: (theme) => theme.color.heading
+        }
     },
     donHaveAccount: {
         color: (theme) => theme.color.nav,
