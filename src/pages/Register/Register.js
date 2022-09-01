@@ -76,14 +76,16 @@ const styles = {
         alignItems: 'center'
     },
     signInButton: {
-        fontSize: '15px',
-        py: '10px',
-        px: {
-            sm: '18px'
-        },
         width: '98%',
-        mt: 2,
-        '&:hover': { color: '#333' }
+        '& button': {
+            fontSize: '15px',
+            py: '10px',
+            px: {
+                sm: '18px'
+            },
+            mt: 2,
+            '&:hover': { color: '#333' }
+        }
     },
     btnContent: {
         display: 'flex',

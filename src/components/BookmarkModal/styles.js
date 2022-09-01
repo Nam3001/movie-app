@@ -30,8 +30,10 @@ const styles = {
 		}
 	},
 	btn: {
-		backgroundColor: (theme) => theme.color.heading,
-		borderColor: (theme) => theme.color.heading
+		'& button': {
+			backgroundColor: (theme) => theme.color.heading,
+			borderColor: (theme) => theme.color.heading
+		}
 	},
 	title: {
 		fontSize: '30px',
