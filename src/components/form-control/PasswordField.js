@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import { forwardRef, memo } from 'react'
 import PropTypes from 'prop-types'
 import { styled } from '@mui/material/styles'
 import { DEFAULT_FUNC } from '@/utils/constants/common'
@@ -19,37 +19,26 @@ const Input = styled('input')(({ theme, ...props }) => ({
 	}
 }))
 
-const PasswordField = forwardRef(
-	(
-		{
-			placeholder,
-			pill,
-			sx,
-			invalid,
-			name,
-			value = '',
-			onChange = DEFAULT_FUNC,
-			onBlur = DEFAULT_FUNC
-		},
-		ref
-	) => {
-		return (
-			<Input
-				placeholder={placeholder}
-				sx={sx}
-				pill={pill ? 'true' : undefined}
-				invalid={invalid ? 'true' : undefined}
-				name={name}
-				type="password"
-				inputMode="password"
-				onChange={onChange}
-				value={value}
-				onBlur={onBlur}
-				ref={ref}
-			/>
-		)
-	}
-)
+const PasswordField = forwardRef((props, ref) => {
+	const { placeholder, pill, sx, invalid, name, value = '' } = props
+	const { onChange = DEFAULT_FUNC, onBlur = DEFAULT_FUNC } = props
+
+	return (
+		<Input
+			placeholder={placeholder}
+			sx={sx}
+			pill={pill ? 'true' : undefined}
+			invalid={invalid ? 'true' : undefined}
+			name={name}
+			type="password"
+			inputMode="password"
+			onChange={onChange}
+			value={value}
+			onBlur={onBlur}
+			ref={ref}
+		/>
+	)
+})
 
 PasswordField.propTypes = {
 	placeholder: PropTypes.string,
@@ -63,4 +52,4 @@ PasswordField.propTypes = {
 	name: PropTypes.string
 }
 
-export default PasswordField
+export default memo(PasswordField)

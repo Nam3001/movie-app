@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, memo } from 'react'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
 import { NavLink } from 'react-router-dom'
@@ -78,4 +78,4 @@ Tabs.propTypes = {
     tabSx: PropTypes.object
 }
 
-export default Tabs
+export default memo(Tabs)

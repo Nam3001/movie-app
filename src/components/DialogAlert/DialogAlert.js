@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { memo } from 'react'
 import PropTypes from 'prop-types'
 import { IconButton, Dialog, DialogActions, Button } from '@mui/material'
 import { DialogContent, DialogContentText, DialogTitle } from '@mui/material'
@@ -78,4 +78,4 @@ DialogAlert.propTypes = {
     onAllow: PropTypes.func
 }
 
-export default DialogAlert
+export default memo(DialogAlert)

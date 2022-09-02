@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react'
+import { memo } from 'react'
 import PropTypes from 'prop-types'
 import { Skeleton, Box } from '@mui/material'
 import { alpha } from '@mui/material/styles'
@@ -76,6 +76,4 @@ const MovieSkeleton = () => {
     )
 }
 
-MovieSkeleton.propTypes = {}
-
-export default MovieSkeleton
+export default memo(MovieSkeleton)

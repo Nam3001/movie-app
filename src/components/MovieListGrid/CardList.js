@@ -1,4 +1,4 @@
-import { useCallback, useRef, memo, lazy, Suspense } from 'react'
+import { useCallback, useRef, memo } from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import { Grid } from '@mui/material'
@@ -6,7 +6,6 @@ import { Grid } from '@mui/material'
 import config from '@/configs'
 import MovieCard from '@/components/MovieCard'
 import { createPathname } from '@/utils/common'
-import useLazyLoadImage from '@/hooks/useLazyLoadImage'
 
 function CardList({ movies = [], isLoading = true, genres }) {
     const navigate = useNavigate()
@@ -20,7 +19,8 @@ function CardList({ movies = [], isLoading = true, genres }) {
             const pathname = createPathname(config.routes.movieDetail, id)
             navigate(pathname)
         },
-        [navigate]
+        // eslint-disable-next-line
+        []
     )
 
     const getGenre = useCallback((movie) => {
@@ -36,11 +36,8 @@ function CardList({ movies = [], isLoading = true, genres }) {
     // eslint-disable-next-line
     }, [genres])
 
-    // lazy loading image
-    const movieListRef = useRef()
-    useLazyLoadImage(movieListRef, isLoading)
     return (
-        <Grid ref={movieListRef} container rowSpacing={7} columnSpacing={10}>
+        <Grid container rowSpacing={7} columnSpacing={10}>
             {movies.map((movie) => (
                 <Grid key={movie.id} item xs={12} sm={6} lg={3}>
                     <MovieCard

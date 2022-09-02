@@ -67,7 +67,9 @@ function MovieDetail() {
     }, [casts, reviews, movieInfo])
 
     useEffect(() => {
+        document.documentElement.style.scrollBehavior = 'smooth'
         window.scrollTo(0, 0)
+        return () => (document.documentElement.style.scrollBehavior = 'auto')
     }, [])
 
     useEffect(() => {
@@ -222,13 +224,12 @@ function MovieDetail() {
                 open={openBookmarkModal}
                 bookmarkStatus={bookmarkStatus}
                 handleCloseModal={handleHideBookmarkModal}
-                bookmarked={isFollowed}
+                isBookmarked={isFollowed}
                 setIsBookmarked={setIsBookmarked}
             />
         </Box>
     )
 }
 
-MovieDetail.propTypes = {}
 
 export default memo(MovieDetail)

@@ -1,6 +1,6 @@
 const styles = {
 	modal: {
-		backdropFilter: 'blur(4px)',
+		// backdropFilter: 'blur(4px)',
 		'& .MuiDialog-container': {
 			alignItems: 'center !important'
 		},
@@ -26,6 +26,10 @@ const styles = {
 			maxHeight: {
 				xs: '100vh',
 				sm: '95vh'
+			},
+			mx: {
+				xs: 0,
+				sm: '32px'
 			}
 		}
 	},

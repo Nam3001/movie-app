@@ -1,4 +1,4 @@
-import React, { memo, useCallback, forwardRef } from 'react'
+import { memo, useCallback, forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import { Box, CardMedia, Typography } from '@mui/material'
 
@@ -68,7 +68,8 @@ const MovieItem = ({ id, title, overview, thumbnail, onClick = DEFAULT_FUNC }, r
 
 	const handleClick = useCallback(() => {
 		if (id) onClick(id)
-	}, [id, onClick])
+		// eslint-disable-next-line
+	}, [id])
 
 	return (
 		<Box sx={styles.container} onClick={handleClick} ref={ref}>

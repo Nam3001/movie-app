@@ -1,7 +1,7 @@
 const styles = {
     reviewList: {
         mt: 4,
-        maxHeight: '800px',
+        maxHeight: '500px',
         overflow: 'auto'
     },
     review: {

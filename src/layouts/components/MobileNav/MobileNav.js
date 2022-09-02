@@ -51,35 +51,34 @@ const styles = {
     }
 }
 
-const NavList = ({ items, display }) => {
+
+// nav list for mobile
+const MobileNav = ({ items, displaySx }) => {
     const [isShowMenu, setIsShowMenu] = useState(false)
-    const toggleShowMenu = useCallback(
-        (value) => {
-            setIsShowMenu(value)
-        },
-        [isShowMenu]
-    )
+
+    const showMenu = useCallback(value => setIsShowMenu(true), [])
+    const hideMenu = useCallback(value => setIsShowMenu(false), [])
 
     return (
         <>
             <IconButton
-                onClick={() => toggleShowMenu(true)}
+                onClick={showMenu}
                 edge="start"
                 color="inherit"
                 aria-label="menu"
                 size="large"
-                sx={{ ...styles.menuIconBtn, display }}
+                sx={{ ...styles.menuIconBtn, display: displaySx || 'block' }}
             >
                 <MenuIcon />
             </IconButton>
             <Drawer
                 anchor="left"
                 open={isShowMenu}
-                onClose={() => toggleShowMenu(false)}
+                onClose={hideMenu}
                 PaperProps={{ sx: styles.paper }}
             >
                 <IconButton
-                    onClick={() => toggleShowMenu(false)}
+                    onClick={hideMenu}
                     color="inherit"
                     sx={styles.closeBtn}
                 >
@@ -87,7 +86,7 @@ const NavList = ({ items, display }) => {
                 </IconButton>
                 <List
                     sx={styles.menuList}
-                    onClick={() => toggleShowMenu(false)}
+                    onClick={hideMenu}
                 >
                     {items.map((item, idx) => (
                         <ListItem key={idx} sx={styles.menuItem}>
@@ -107,9 +106,9 @@ const NavList = ({ items, display }) => {
     )
 }
 
-NavList.propTypes = {
+MobileNav.propTypes = {
     items: PropTypes.array,
-    display: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+    displaySx: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 }
 
-export default memo(NavList)
+export default memo(MobileNav)

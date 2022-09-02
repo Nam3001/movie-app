@@ -10,12 +10,15 @@ import { genresSelector } from '@/store/selectors'
 import movieApi from '@/utils/api/movieApi'
 import Heading from '@/components/Heading'
 import MovieCard from '@/components/MovieCard'
+import { DEFAULT_FUNC } from '@/utils/constants/common'
 
 
-const RecommendsMovie = ({ movieId, onClick }) => {
+const RecommendsMovie = ({ movieId, onClick = DEFAULT_FUNC }) => {
     const [slideAmount, setSlideAmount] = useState(4)
     const genres = useSelector(genresSelector)
+    const [similarMovieList, setSimilarMovieList] = useState([])
 
+    // handle slide amount when breakpoint change
     useEffect(() => {
         const handleSetSlideAmount = () => {
             if (window.innerWidth > 1024) setSlideAmount(4)
@@ -32,14 +35,14 @@ const RecommendsMovie = ({ movieId, onClick }) => {
     }, [])
 
 
-    const [list, setList] = useState([])
+    // get movies when movie Id change
     useEffect(() => {
         ;(async () => {
             try {
                 const res = await movieApi.getSimilarMovie(movieId)
                 const data = res.data.results
 
-                setList(data)
+                setSimilarMovieList(data)
             } catch (err) {
                 console.log(err)
             }
@@ -50,7 +53,7 @@ const RecommendsMovie = ({ movieId, onClick }) => {
     const prevBtn = <ArrowBackIosNewIcon sx={{ fontSize: '18px' }} />
     const containerRef = useRef()
 
-    if (!list) return null
+    if (!similarMovieList) return null
 
     return (
         <Box>
@@ -80,7 +83,7 @@ const RecommendsMovie = ({ movieId, onClick }) => {
                     prevButtonText: prevBtn
                 }}
             >
-                {list.map((item) => (
+                {similarMovieList.map((item) => (
                     <MovieCard
                         key={item.id}
                         score={item.vote_average}
@@ -99,7 +102,8 @@ const RecommendsMovie = ({ movieId, onClick }) => {
 
 RecommendsMovie.propTypes = {
     movieId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired
+        .isRequired,
+    onClick: PropTypes.func
 }
 
 export default memo(RecommendsMovie)

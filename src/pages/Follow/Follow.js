@@ -108,6 +108,7 @@ const Follow = (props) => {
 	// gridMode -> show grid, !gridMode -> show list
 	const [gridMode, setGridMode] = useState(true)
 
+	// update followed movie when user login again
 	useEffect(() => {
 		;(async () => {
 			if (!userId) return
@@ -134,6 +135,8 @@ const Follow = (props) => {
 		[movies]
 	)
 
+
+	// filter movie when followed movie status change
 	useEffect(() => {
 		;(async () => {
 			if (!userId) return
@@ -230,6 +233,7 @@ const Follow = (props) => {
 				))}
 			</Box>
 
+			{/* display mode control */}
 			<Box sx={styles.displayModeContainer}>
 				<Box
 					sx={styles.displayMode}

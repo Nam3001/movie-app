@@ -74,8 +74,8 @@ const Select = ({
     sx = {}
 }) => {
     const [isFocus, setIsFocus] = useState(false)
-
     const [openOptionList, setOpenOptionList] = useState(false)
+
     const anchorRef = React.useRef(null)
     const menuRef = React.useRef(null)
 
@@ -85,8 +85,8 @@ const Select = ({
     }, [])
 
     const handleMultipleChange = useCallback(
-        (option) => {
-            const changedSelects = [...selected, option]
+        (newOption) => {
+            const changedSelects = [...selected, newOption]
             handleChange(changedSelects)
         },
         [selected]
@@ -139,23 +139,24 @@ const Select = ({
         [isMultiple, selected]
     )
 
+    // mark selected option
+    // render selected ui when option change
     useEffect(() => {
-        // mark selected option
-        // render selected ui when option change
         const optionsElement = Array.from(menuRef.current.children)
         for (let optionEl of optionsElement) {
             const optionValue = optionEl.getAttribute('value')
             if (!optionValue) break
 
             if (isMultiple) {
-                console.log(optionValue)
                 const itemActived = selected.some(
                     (item) => item?.value === optionValue
                 )
                 if (itemActived) {
                     optionEl.classList.add('active')
                 } else optionEl.classList.remove('active')
-            } else {
+            }
+
+            if (!isMultiple) {
                 if (selected?.value?.toString() === optionValue) {
                     optionEl.classList.add('active')
                 } else optionEl.classList.remove('active')

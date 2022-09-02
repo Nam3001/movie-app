@@ -1,4 +1,4 @@
-import React from 'react'
+import {memo} from 'react'
 import PropTypes from 'prop-types'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import { Box, Typography } from '@mui/material'
@@ -39,4 +39,4 @@ Genre.propTypes = {
 	sx: PropTypes.object
 }
 
-export default Genre
+export default memo(Genre)

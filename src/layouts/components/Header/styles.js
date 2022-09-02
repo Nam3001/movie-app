@@ -29,17 +29,28 @@ const styles = {
             md: 'flex'
         },
         alignItems: 'center',
+        height: '100%',
         marginRight: {
             lg: 2
         }
     },
     navItem: {
+        height: 'calc(100% - 4px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        '&.active': {
+            boxShadow: (theme) => `0 2px ${theme.color.heading}`
+        }
+    },
+    navLink: {
+        display: 'block',
         color: (theme) => theme.color.nav,
         fontWeight: '500',
         fontSize: '15.4px',
         cursor: 'pointer',
-        height: '42px',
-        lineHeight: '42px',
+        height: '48px',
+        lineHeight: '48px',
         mx: '8px',
         userSelect: 'none',
         textDecoration: 'none',
@@ -60,8 +71,8 @@ const styles = {
         bottom: 0,
         display: {
             xs: 'none',
-            md: 'block',
-        },
+            md: 'block'
+        }
     },
     search: {
         height: '32px',

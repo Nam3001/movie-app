@@ -13,6 +13,23 @@ const styles = {
 const ScrollTop = ({ children }) => {
 	const [trigger, setTrigger] = useState(false)
 
+	const setSmoothScrollBehavior = useCallback(() => {
+		const scrollBehavior = document.documentElement.style.scrollBehavior
+		const isSmooth = scrollBehavior === 'smooth'
+		document.documentElement.style.scrollBehavior = 'smooth'
+	}, [])
+
+
+	const disableSmoothScrollBehavior = useCallback(() => {
+		document.documentElement.style.scrollBehavior = 'auto'
+	}, [])
+
+
+	useEffect(() => {
+		setSmoothScrollBehavior()
+		return () => disableSmoothScrollBehavior()
+	}, [])
+
 	const handleClick = useCallback(() => {
 		window.scrollTo(0, 0)
 	}, [])

@@ -3,7 +3,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 // Add movie method
 export const handleAddMovie = async ({
-	bookmarked,
+	isBookmarked,
 	loading,
 	setLoading,
 	setIsBookmarked,
@@ -13,16 +13,24 @@ export const handleAddMovie = async ({
 	showToast,
 	saveOption
 }) => {
-	if (bookmarked) return
+	if (isBookmarked) return
 	try {
 		if (!loading) setLoading(true)
+
+		// create document ref firebase
 		const docRef = doc(db, 'bookmarks', userId)
+
+		// movie data to add
 		const movieData = {
 			movieInfo,
 			category: saveOption.value,
 			created_at: Date.now()
 		}
+		// get document snap
 		const docSnap = await getDoc(docRef)
+
+		// detect whether document snap have any movie or not
+		// to create movie data to update
 		const collectionData = docSnap.data()?.movies
 			? {
 					movies: [...docSnap.data()?.movies, movieData],
@@ -32,6 +40,7 @@ export const handleAddMovie = async ({
 					movies: [movieData],
 					movieIds: [movieInfo?.id]
 			  }
+		// add movie and notify
 		await setDoc(docRef, collectionData)
 		showToast('Đã lưu!', {
 			variant: 'success',
@@ -52,7 +61,7 @@ export const handleAddMovie = async ({
 
 // Update movie method
 export const handleUpdateMovie = async ({
-	bookmarked,
+	isBookmarked,
 	loading,
 	setLoading,
 	setIsBookmarked,
@@ -62,19 +71,25 @@ export const handleUpdateMovie = async ({
 	showToast,
 	saveOption
 }) => {
-	if (!bookmarked) return
+	if (!isBookmarked) return
 	try {
 		if (!loading) setLoading(true)
 
+		// create document ref
 		const docRef = doc(db, 'bookmarks', userId)
+
+		// movie data to update
 		const movieData = {
 			movieInfo,
 			category: saveOption.value,
 			created_at: Date.now()
 		}
+
+		// get movies from firebase
 		const docSnap = await getDoc(docRef)
 		const docMovies = docSnap.data()?.movies
 
+		// update movie
 		const updateMovies = () => {
 			const result = docMovies.filter(
 				(movie) => movie.movieInfo.id !== movieInfo.id
@@ -109,7 +124,7 @@ export const handleUpdateMovie = async ({
 
 // Remove movie method
 export const handleRemoveMovie = async ({
-	bookmarked,
+	isBookmarked,
 	loading,
 	setLoading,
 	setIsBookmarked,
@@ -119,11 +134,14 @@ export const handleRemoveMovie = async ({
 	showToast,
 	saveOption
 }) => {
-	if (!bookmarked) return
+	if (!isBookmarked) return
 	try {
 		if (!loading) setLoading(true)
 
+		// create document ref
 		const docRef = doc(db, 'bookmarks', userId)
+
+		// get movies from firebase
 		const docSnap = await getDoc(docRef)
 		
 		const docMovies = docSnap.data()?.movies
@@ -141,6 +159,7 @@ export const handleRemoveMovie = async ({
 			movieIds: [...removedMovieIds]
 		}
 
+		// remove movie on firestore
 		await setDoc(docRef, newData)
 		showToast('Đã bỏ theo dõi!', {
 			variant: 'success',
