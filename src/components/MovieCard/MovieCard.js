@@ -1,14 +1,7 @@
-import React, { useState, memo, useCallback, useEffect } from 'react'
+import { useState, memo, useCallback, useEffect, useMemo } from 'react'
 import PropTypes from 'prop-types'
-import {
-    Box,
-    Typography,
-    Card,
-    CardHeader,
-    CardContent,
-    Rating,
-    CardMedia
-} from '@mui/material'
+import { Box, Typography, Card, CardHeader } from '@mui/material'
+import { CardContent, Rating, CardMedia } from '@mui/material'
 import { lazy, Suspense } from 'react'
 import StarIcon from '@mui/icons-material/Star'
 import AcUnitIcon from '@mui/icons-material/AcUnit'
@@ -16,7 +9,7 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import clsx from 'clsx'
 
 import Genre from '@/components/Genre'
-import { BASE_URL_IMAGE } from '@/utils/constants/common'
+import { BASE_URL_IMAGE, DEFAULT_FUNC } from '@/utils/constants/common'
 import thumbnailPlaceholder from '@/assets/img/placeholder.png'
 
 const LazyRating = lazy(() => import('@mui/material/Rating'))
@@ -41,9 +34,6 @@ const styles = {
         }
     },
     thumbnail: {
-        '&.lazy-image': {
-            visibility: 'hidden'
-        },
         borderRadius: {
             xs: '8px',
             lg: '6px'
@@ -124,17 +114,11 @@ const styles = {
     }
 }
 
-const DEFAULT_FUNC = () => {}
+const MovieCard = (props) => {
+    const { score = 0, title } = props
+    const { genre, id, onClick = DEFAULT_FUNC } = props
+    let { thumbnail } = props
 
-const MovieCard = ({
-    score = 0,
-    title,
-    onClick = DEFAULT_FUNC,
-    genre,
-    thumbnail,
-    id,
-    lazyImg = true
-}) => {
     const [fallback, setFallback] = useState(false)
 
     thumbnail &&= BASE_URL_IMAGE + thumbnail
@@ -142,11 +126,11 @@ const MovieCard = ({
     // set default thumbnail when not pass thumbnail prop
     thumbnail ||= thumbnailPlaceholder
 
-    const rating = parseFloat(score) / 2
+    const rating = useMemo(() => parseFloat(score) / 2, [score])
 
     const handleClick = useCallback(() => {
         onClick(id)
-    })
+    }, [id])
 
     return (
         <Box sx={{ px: 2 }}>
@@ -154,10 +138,8 @@ const MovieCard = ({
                 <CardMedia
                     component="img"
                     className="thumbnail"
-                    lazy-src={lazyImg ? thumbnail || thumbnailPlaceholder : null}
-                    image={lazyImg ? '' : (thumbnail || thumbnailPlaceholder)}
+                    image={thumbnail || thumbnailPlaceholder}
                     sx={styles.thumbnail}
-                    className={clsx({ ['lazy-image']: lazyImg })}
                 />
                 <Box sx={styles.score}>{score.toFixed(1)}</Box>
             </Box>
@@ -199,8 +181,7 @@ MovieCard.propTypes = {
     title: PropTypes.string,
     onClick: PropTypes.func,
     genre: PropTypes.string,
-    thumbnail: PropTypes.string,
-    lazyImg: PropTypes.bool
+    thumbnail: PropTypes.string
 }
 
 export default memo(MovieCard)

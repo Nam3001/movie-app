@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useMemo, memo } from 'react'
-import PropTypes from 'prop-types'
+import { useEffect, useState, useMemo, memo } from 'react'
 import { useLocation } from 'react-router-dom'
 import queryString from 'query-string'
-import { Typography } from '@mui/material'
 
 import Wrapper from '@/components/Wrapper'
 import movieApi from '@/utils/api/movieApi'

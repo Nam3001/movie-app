@@ -11,7 +11,7 @@ const styles = {
         display: 'flex',
         flexFlow: 'row wrap',
         m: 'auto',
-        maxHeight: '800px',
+        maxHeight: '500px',
         overflow: 'auto'
     },
     cast: {

@@ -38,6 +38,10 @@ const Pagination = ({ maxPage = 1, page = 1, onPageChange = DEFAULT_FUNC}) => {
 	)
 }
 
-Pagination.propTypes = {}
+Pagination.propTypes = {
+	maxPage: PropTypes.number,
+	page: PropTypes.number,
+	onPageChange: PropTypes.func
+}
 
 export default Pagination

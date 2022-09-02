@@ -1,16 +1,10 @@
-import { useState, useCallback, memo, useEffect, useRef } from 'react'
+import { memo,  } from 'react'
 import PropTypes from 'prop-types'
 import { styled } from '@mui/material/styles'
-import { Box, Typography, MenuItem } from '@mui/material'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Box } from '@mui/material'
 
 import SearchMobile from './SearchMobile'
 import SearchPC from './SearchPC'
-import movieApi from '@/utils/api/movieApi'
-import useDebounce from '@/hooks/useDebounce'
-import config from '@/configs'
-import { createPathname } from '@/utils/common'
-import useInfiniteScroll from '@/hooks/useInfiniteScroll'
 
 const SearchSuggest = styled('div')(
     ({ theme, bgcolor, color, font_size, width, max_height, mobile, pc }) => ({

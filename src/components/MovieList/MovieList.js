@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, memo } from 'react'
+import { useEffect, useState, memo } from 'react'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
 import { useLocation } from 'react-router-dom'
@@ -12,6 +12,7 @@ import MovieListSkeleton from '@/components/MovieListSkeleton'
 const MovieList = ({ onClick, loading, movies, lastElementRef }) => {
 	const location = useLocation()
 
+	// scroll to top when change query params
 	useEffect(() => {
 		const scrollTop = window.scrollY || document.documentElement.scrollTop
 		if (scrollTop <= 0) return
@@ -56,7 +57,8 @@ const MovieList = ({ onClick, loading, movies, lastElementRef }) => {
 MovieList.propTypes = {
 	movies: PropTypes.array,
 	loading: PropTypes.bool,
-	hasMore: PropTypes.bool
+	hasMore: PropTypes.bool,
+	lastElementRef: PropTypes.object
 }
 
 export default memo(MovieList)

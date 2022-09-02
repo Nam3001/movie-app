@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { Box, CardMedia, Typography, Skeleton } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 

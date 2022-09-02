@@ -14,11 +14,12 @@ const SearchPC = ({ placeholder, SuggestComponent }) => {
     const navigate = useNavigate()
     const location = useLocation()
 
+    // states
     const [openSuggest, setOpenSuggest] = useState(true)
-
     const [searchTerm, setSearchTerm] = useState('')
     const debouncedSearch = useDebounce(searchTerm, 200)
 
+    // refs
     const lastElementRef = useRef()
     const rootRef = useRef()
 
@@ -49,14 +50,12 @@ const SearchPC = ({ placeholder, SuggestComponent }) => {
 
     const handleClickSuggestItem = useCallback((id) => {
         if (!id) return
+        // movie detail pathname
+        const pathname = createPathname(config.routes.movieDetail, id)
+        navigate(pathname)
+
         setOpenSuggest(false)
         setSearchTerm('')
-
-        setTimeout(() => {
-            // movie detail pathname
-            const pathname = createPathname(config.routes.movieDetail, id)
-            navigate(pathname)
-        }, 0)
         // eslint-disable-next-line
     }, [])
 
@@ -99,6 +98,7 @@ const SearchPC = ({ placeholder, SuggestComponent }) => {
                         pc="true"
                     >
                         {suggests.map((suggest, idx) => {
+                            {/* add lastElementRef at last suggest item to implement infinite scroll */}
                             if (idx === suggests.length - 1) {
                                 return (
                                     <MenuItem

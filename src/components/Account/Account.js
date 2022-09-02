@@ -79,24 +79,26 @@ const Account = () => {
 
     const showToast = useToastMessage()
 
+    // state
     const logged = useSelector(loggedSelector)
     const userInfo = useSelector(userInfoSelector)
     const photoURL = userInfo?.photoURL
-
-    // fallback for avatar
-    const [fallback, setFallback] = useState('')
-
     const [openMenu, setOpenMenu] = useState(false)
     const [showSignOutConfirm, setShowSignOutConfirm] = useState(false)
 
     const anchorRef = useRef(null)
 
+    // fallback for avatar
+    const [fallback, setFallback] = useState('')
+
+    // events
     const handleToggleMenu = useCallback(() => {
         setOpenMenu((prev) => !prev)
     }, [openMenu])
 
     const handleCloseMenu = useCallback(
         (e) => {
+            // prevent close popover when close toast message
             if (e.target.closest('.SnackbarContent-root')) return
             setOpenMenu(false)
         },

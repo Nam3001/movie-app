@@ -115,6 +115,7 @@ SearchInput.propTypes = {
     xs: PropTypes.oneOf(['block', 'none', 'flex', 'inline-block']),
     lg: PropTypes.oneOf(['block', 'none', 'flex', 'inline-block']),
     autoFocus: PropTypes.bool,
+    onSearch: PropTypes.func,
     searchTerm: PropTypes.string,
     onSearchChange: PropTypes.func,
     onFocus: PropTypes.func,

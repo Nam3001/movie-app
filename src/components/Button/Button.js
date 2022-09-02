@@ -95,7 +95,6 @@ const Button = ({
 	sx,
 	children,
 	onClick,
-	type,
 	inline,
 	variant,
 	color,
@@ -129,7 +128,6 @@ const Button = ({
 				{variant !== 'outline' ? (
 					<FillButton
 						id={id}
-						type={type}
 						className={className}
 						variant={variant}
 						color={color}
@@ -143,7 +141,6 @@ const Button = ({
 				) : (
 					<OutlineButton
 						id={id}
-						type={type}
 						className={className}
 						variant={variant}
 						color={color}
@@ -165,7 +162,6 @@ Button.propTypes = {
 	id: PropTypes.string,
 	children: PropTypes.any,
 	sx: PropTypes.object,
-	type: PropTypes.string,
 	onClick: PropTypes.func,
 	size: PropTypes.oneOf(['sm', 'md', 'lg']),
 	variant: PropTypes.oneOf(['outline', 'fill', 'link']),

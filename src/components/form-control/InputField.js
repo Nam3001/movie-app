@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import { forwardRef, memo } from 'react'
 import { Typography, Box, InputBase } from '@mui/material'
 import PropTypes from 'prop-types'
 import { styled } from '@mui/material/styles'
@@ -39,48 +39,35 @@ const styles = {
 	}
 }
 
-const InputField = forwardRef(
-	(
-		{
-			placeholder,
-			pill,
-			sx,
-			type = 'text',
-			inputMode = 'text',
-			value = '',
-			onChange = DEFAULT_FUNC,
-			onBlur = DEFAULT_FUNC,
-			name,
-			invalid,
-			errorMessage
-		},
-		ref
-	) => {
-		return (
-			<Box className="form-group">
-				<Input
-					placeholder={placeholder}
-					sx={sx}
-					pill={pill ? 'true' : undefined}
-					invalid={invalid ? 'true' : undefined}
-					name={name}
-					type={type}
-					value={value}
-					inputMode={inputMode}
-					onChange={onChange}
-					onBlur={onBlur}
-					ref={ref}
-				/>
-				<Typography
-					sx={styles.feedback}
-					className={clsx('feedback', { invalid })}
-				>
-					{errorMessage}
-				</Typography>
-			</Box>
-		)
-	}
-)
+const InputField = forwardRef((props, ref) => {
+	const { placeholder, pill, sx, value = '', name, invalid } = props
+	const { type = 'text', inputMode = 'text', errorMessage } = props
+	const { onChange = DEFAULT_FUNC, onBlur = DEFAULT_FUNC } = props
+	
+	return (
+		<Box className="form-group">
+			<Input
+				placeholder={placeholder}
+				sx={sx}
+				pill={pill ? 'true' : undefined}
+				invalid={invalid ? 'true' : undefined}
+				name={name}
+				type={type}
+				value={value}
+				inputMode={inputMode}
+				onChange={onChange}
+				onBlur={onBlur}
+				ref={ref}
+			/>
+			<Typography
+				sx={styles.feedback}
+				className={clsx('feedback', { invalid })}
+			>
+				{errorMessage}
+			</Typography>
+		</Box>
+	)
+})
 
 InputField.propTypes = {
 	placeholder: PropTypes.string,
@@ -96,4 +83,4 @@ InputField.propTypes = {
 	errorMessage: PropTypes.string
 }
 
-export default InputField
+export default memo(InputField)

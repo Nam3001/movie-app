@@ -38,11 +38,12 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
     const navigate = useNavigate()
     const location = useLocation()
 
+    // states
     const [openSuggest, setOpenSuggest] = useState(false)
-
     const [searchTerm, setSearchTerm] = useState('')
     const debouncedSearch = useDebounce(searchTerm, 200)
 
+    // refs
     const lastElementRef = useRef()
     const rootRef = useRef()
 
@@ -74,15 +75,12 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
     const handleClickSuggestItem = useCallback(
         (id) => {
             if (!id) return
+            const pathname = createPathname(config.routes.movieDetail, id)
+            navigate(pathname)
+
             setOpenSuggest(false)
             setOpenModal(false)
             setSearchTerm('')
-
-            setTimeout(() => {
-                // movie detail pathname
-                const pathname = createPathname(config.routes.movieDetail, id)
-                navigate(pathname)
-            }, 0)
         },
         // eslint-disable-next-line
         []
@@ -100,6 +98,7 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
 
     return (
         <Box className="search-mobile">
+            {/* search button */}
             <IconButton
                 onClick={handleShowModal}
                 color="inherit"
@@ -113,6 +112,7 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
                     }}
                 />
             </IconButton>
+
             {openModal && (
                 <Dialog
                     PaperProps={{ sx: styles.innerStyles }}
@@ -141,6 +141,7 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
                                 mobile="true"
                             >
                                 {suggests.map((result, idx) => {
+                                    {/* add lastElementRef at last suggest item to implement infinite scroll */}
                                     if (idx === suggests.length - 1) {
                                         return (
                                             <MenuItem
@@ -183,13 +184,7 @@ const SearchMobile = ({ placeholder, SuggestComponent }) => {
 }
 
 SearchMobile.propTypes = {
-    openSuggest: PropTypes.bool,
-    suggests: PropTypes.array,
-    onChange: PropTypes.func,
-    onSearch: PropTypes.func,
-    onClickSuggestItem: PropTypes.func,
     placeholder: PropTypes.string,
-    searchTerm: PropTypes.string,
     SuggestComponent: PropTypes.elementType
 }
 

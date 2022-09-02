@@ -1,17 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import {
-	Dialog,
-	DialogActions,
-	DialogTitle,
-	DialogContent,
-	IconButton,
-	Box,
-	CardMedia,
-	Typography,
-	MenuItem,
-	CircularProgress
-} from '@mui/material'
+import { Dialog, DialogActions, DialogTitle } from '@mui/material'
+import { Typography, MenuItem, CircularProgress } from '@mui/material'
+import { DialogContent, IconButton, Box, CardMedia } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useSelector, useDispatch } from 'react-redux'
 import { setDoc, doc, getDoc } from 'firebase/firestore'
@@ -32,11 +23,11 @@ const BookmarkModal = ({
 	movieInfo = {},
 	handleCloseModal = DEFAULT_FUNC,
 	bookmarkStatus = [],
-	bookmarked,
+	isBookmarked,
 	setIsBookmarked = DEFAULT_FUNC
 }) => {
 	const showToast = useToastMessage()
-	// user infomation to save
+	// user infomation to save movie
 	const userId = useSelector(userInfoSelector).uid
 
 	// state
@@ -45,6 +36,7 @@ const BookmarkModal = ({
 	const [fallback, setFallback] = useState('')
 	const [loading, setLoading] = useState(false)
 
+	// events
 	const getFallback = useCallback(() => {
 		setFallback(imagePlaceholder)
 	}, [])
@@ -55,7 +47,7 @@ const BookmarkModal = ({
 
 	const onAdd = useCallback(() => {
 		handleAddMovie({
-			bookmarked,
+			isBookmarked,
 			loading,
 			setLoading,
 			setIsBookmarked,
@@ -65,11 +57,11 @@ const BookmarkModal = ({
 			showToast,
 			saveOption
 		})
-	}, [bookmarked, saveOption, userId])
+	}, [isBookmarked, saveOption, userId])
 
 	const onUpdate = useCallback(() => {
 		handleUpdateMovie({
-			bookmarked,
+			isBookmarked,
 			loading,
 			setLoading,
 			setIsBookmarked,
@@ -79,11 +71,11 @@ const BookmarkModal = ({
 			showToast,
 			saveOption
 		})
-	}, [bookmarked, saveOption, userId])
+	}, [isBookmarked, saveOption, userId])
 
 	const onRemove = useCallback(() => {
 		handleRemoveMovie({
-			bookmarked,
+			isBookmarked,
 			loading,
 			setLoading,
 			setIsBookmarked,
@@ -93,12 +85,10 @@ const BookmarkModal = ({
 			showToast,
 			saveOption
 		})
-	}, [bookmarked, saveOption, userId])
+	}, [isBookmarked, saveOption, userId])
 
 	return (
 		<Dialog
-			fullScreen
-			transitionDuration={100}
 			sx={styles.modal}
 			open={open}
 			onClose={handleCloseModal}
@@ -149,7 +139,7 @@ const BookmarkModal = ({
 					</Box>
 				</Box>
 			</DialogContent>
-			{bookmarked && (
+			{isBookmarked && (
 				<DialogActions>
 					{loading ? (
 						<SpinnerLoading sx={styles.loading} />
@@ -175,7 +165,7 @@ const BookmarkModal = ({
 					)}
 				</DialogActions>
 			)}
-			{!bookmarked && (
+			{!isBookmarked && (
 				<DialogActions>
 					{loading ? (
 						<SpinnerLoading sx={styles.loading} />
@@ -200,7 +190,7 @@ BookmarkModal.propTypes = {
 	movieInfo: PropTypes.object,
 	handleClose: PropTypes.func,
 	bookmarkStatus: PropTypes.array,
-	bookmarked: PropTypes.bool,
+	isBookmarked: PropTypes.bool,
 	setIsBookmarked: PropTypes.func
 }
 

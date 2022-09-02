@@ -1,16 +1,7 @@
-import React, { memo, useState, useCallback, useEffect } from 'react'
-import {
-	CardMedia,
-	Dialog,
-	DialogActions,
-	DialogTitle,
-	DialogContent,
-	Typography,
-	IconButton,
-	Box,
-	InputLabel,
-	Avatar
-} from '@mui/material'
+import { memo, useState, useCallback, useEffect } from 'react'
+import { CardMedia, Dialog, DialogActions, DialogTitle } from '@mui/material'
+import { DialogContent, InputLabel } from '@mui/material'
+import { Typography, IconButton, Box, Avatar } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import PropTypes from 'prop-types'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -40,7 +31,6 @@ const styles = {
 		mb: 1
 	},
 	modal: {
-		backdropFilter: 'blur(4px)',
 		'& .MuiDialog-container': {
 			alignItems: 'center !important'
 		},
@@ -66,6 +56,10 @@ const styles = {
 			maxHeight: {
 				xs: '100vh',
 				sm: '95vh'
+			},
+			m: {
+				xs: 0,
+				sm: '32px',
 			}
 		}
 	},
@@ -114,8 +108,10 @@ const styles = {
 	}
 }
 
-const AvatarModifier = ({ imageUrl, sx }) => {
+const AvatarModifier = ({ imageUrl = '' }) => {
 	const dispatch = useDispatch()
+	const userId = useSelector(userInfoSelector)?.uid
+	const showToast = useToastMessage()
 
 	// state
 	const [openModal, setOpenModal] = useState(false)
@@ -123,10 +119,7 @@ const AvatarModifier = ({ imageUrl, sx }) => {
 	const [image, setImage] = useState({})
 	const [loading, setLoading] = useState(false)
 
-	const userId = useSelector(userInfoSelector)?.uid
-
-	const showToast = useToastMessage()
-
+	// events
 	const handleError = useCallback(() => {
 		setFallback(avatarPlaceholder)
 	}, [])
@@ -136,7 +129,7 @@ const AvatarModifier = ({ imageUrl, sx }) => {
 	}, [])
 
 	const handleCloseModal = useCallback((e) => {
-		setImage({})
+		setImage({}) // reset image preview and file
 		setOpenModal(false)
 	}, [])
 
@@ -164,13 +157,8 @@ const AvatarModifier = ({ imageUrl, sx }) => {
 		e.target.value = null
 	}, [])
 
-	useEffect(() => {
-		return () => {
-			if (image.preview) URL.revokeObjectURL(image.preview)
-		}
-	}, [image])
-
 	const handleUploadAvatar = useCallback(async () => {
+		// detect file chosen or not
 		if (!image.file) {
 			showToast('Bạn chưa chọn hình', {
 				variant: 'error',
@@ -185,17 +173,20 @@ const AvatarModifier = ({ imageUrl, sx }) => {
 			// storage ref
 			const storageRef = ref(storage, userId)
 
-			const snapshot = await uploadBytes(storageRef, image.file)
-			const photoURL = await getDownloadURL(storageRef)
+			const snapshot = await uploadBytes(storageRef, image.file) // upload image to firebase storage
+			const photoURL = await getDownloadURL(storageRef) // get image url from firebase storage
 
+			// update user avatar
 			const user = auth.currentUser
 			await updateProfile(user, {
 				photoURL
 			})
 
+			// dispatch action and show notify
 			dispatch(updateAvatar(photoURL))
 			setLoading(false)
 			setOpenModal(false)
+			setImage({})
 			showToast('Cập nhật thành công!', {
 				variant: 'success',
 				autoHideDuration: 3000
@@ -207,6 +198,13 @@ const AvatarModifier = ({ imageUrl, sx }) => {
 			})
 		}
 	}, [image, userId])
+
+	// clean up preview avatar url
+	useEffect(() => {
+		return () => {
+			if (image.preview) URL.revokeObjectURL(image.preview)
+		}
+	}, [image])
 
 	return (
 		<Box sx={styles.container}>
@@ -221,8 +219,6 @@ const AvatarModifier = ({ imageUrl, sx }) => {
 				/>
 			)}
 			<Dialog
-				fullScreen
-				transitionDuration={100}
 				sx={styles.modal}
 				open={openModal}
 				onClose={handleCloseModal}
@@ -282,8 +278,7 @@ const AvatarModifier = ({ imageUrl, sx }) => {
 }
 
 AvatarModifier.propTypes = {
-	imageUrl: PropTypes.string,
-	sx: PropTypes.object
+	imageUrl: PropTypes.string
 }
 
 export default memo(AvatarModifier)

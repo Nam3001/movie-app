@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useMemo, memo } from 'react'
-import PropTypes from 'prop-types'
+import { useEffect, useState, useMemo, memo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Typography } from '@mui/material'
 import queryString from 'query-string'
@@ -30,7 +29,5 @@ const Upcoming = () => {
         </Wrapper>
     )
 }
-
-Upcoming.propTypes = {}
 
 export default memo(Upcoming)

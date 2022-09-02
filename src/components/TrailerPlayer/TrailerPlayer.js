@@ -41,6 +41,7 @@ const styles = {
 const TrailerPlayer = ({ movieId, id }) => {
 	const [trailerUrl, setTrailerUrl] = useState('')
 
+	// get trailer link
 	useEffect(() => {
 		;(async () => {
 			const res = await movieApi.getTrailer(movieId)
