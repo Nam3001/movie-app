@@ -216,7 +216,7 @@ function Register() {
 
                 const user = credential.user
                 await sendEmailVerification(user, {
-                    url: 'http://localhost:3001'
+                    url: 'https://movie-app-3001.netlify.app/'
                 })
                 await updateProfile(user, {
                     displayName: fullName
